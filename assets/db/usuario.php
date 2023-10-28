@@ -51,5 +51,46 @@ class Usuario {
             $query->execute(array(':id'=>$id_usuario,':nombre'=>$nombre));
             return $this->objetos;
     }
+    function buscar(){
+        if (!empty($_POST['consulta'])) {
+            $consulta=$_POST['consulta'];
+            $sql="SELECT * FROM usuario join tipo_us ON us_tipo=id_tipo_us where nombre_us LIKE :consulta";
+            $query = $this->acceso->prepare($sql);
+            $query->execute(array(':consulta'=>"%$consulta%"));
+            $this->objetos=$query->fetchAll();
+            return $this->objetos;
+        } else {
+            $sql="SELECT * FROM usuario join tipo_us ON us_tipo=id_tipo_us where nombre_us NOT LIKE '' ORDER BY id_usuario LIMIT 25";
+            $query = $this->acceso->prepare($sql);
+            $query->execute();
+            $this->objetos=$query->fetchAll();
+            return $this->objetos;
+        }
+    }
+    function crear($nombre, $apellido, $edad, $ci, $genero, $pass, $tipo, $avatar) {
+        $sql = "SELECT id_usuario FROM usuario WHERE ci_us = :ci";
+        $query = $this->acceso->prepare($sql);
+        $query->execute(array(':ci' => $ci));
+        $this->objetos = $query->fetchAll();
+        
+        if (!empty($this->objetos)) {
+            echo 'no add';
+        }else {
+            $sql = "INSERT INTO usuario (nombre_us, apellidos_us, edad, ci_us, genero_us, contrasena_us, us_tipo, avatar) VALUES (:nombre, :apellido, :edad, :ci, :genero, :pass, :tipo, :avatar)";
+            $query = $this->acceso->prepare($sql);
+            if ($query->execute(array(
+                ':nombre' => $nombre,
+                ':apellido' => $apellido,
+                ':edad' => $edad,
+                ':ci' => $ci,
+                ':genero' => $genero,
+                ':pass' => $pass,
+                ':tipo' => $tipo,
+                ':avatar' => $avatar
+            )));
+            $this->objetos=$query->fetchAll();
+            echo 'add';
+        }
+    }
 }
 ?>

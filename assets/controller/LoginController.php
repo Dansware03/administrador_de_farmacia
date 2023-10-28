@@ -11,6 +11,9 @@ if (isset($_SESSION['us_tipo'])) {
         case 2:
             header('Location: ../pages/tec_catalogo.php');
             exit; // Importante: detiene la ejecución del script
+        case 3:
+                header('Location: ../pages/adm_catalogo.php');
+                exit; // Importante: detiene la ejecución del script
     }
 }
 // Si el usuario no ha iniciado sesión y está enviando un formulario de inicio de sesión
@@ -34,6 +37,9 @@ if (isset($_POST['user']) && isset($_POST['pass'])) {
                 case 2:
                     header('Location: ../pages/tec_catalogo.php');
                 exit; // Importante: detiene la ejecución del script
+                case 3:
+                    header('Location: ../pages/adm_catalogo.php');
+                    exit; // Importante: detiene la ejecución del script
             }
         }
     } else {

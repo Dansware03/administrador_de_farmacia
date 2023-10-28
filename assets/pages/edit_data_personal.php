@@ -1,4 +1,4 @@
-<?php session_start(); if ($_SESSION['us_tipo']==1) { include_once 'layouts/header.php'; ?>
+<?php session_start(); if ($_SESSION['us_tipo']==1||$_SESSION['us_tipo']==3) { include_once 'layouts/header.php'; ?>
 <title><?php echo $_SESSION['nombre_us']; ?> | Editar Datos</title>
 <?php include_once 'layouts/nav.php'; ?>
 <!-- Modal Contraseña-->
@@ -112,17 +112,17 @@
                                     <button type="button" data-toggle="modal" data-target="#cambiofoto" class="btn bg-gradient-primary btn-sm"><i class="fa-solid fa-image m-1"></i>Cambiar Avatar</button>
                                 </div>
                                 <input id="id_usuario"type="hidden" value="<?php echo $_SESSION['usuario']?>">
-                            <h3 id="nombre_us" class="profile-username text-center text-primary">Nombre</h3>
-                                <p id="apellidos_us" class="text-muted text-center">Apellido</p>
+                            <h3 id="nombre_us" class="profile-username text-center text-primary"></h3>
+                                <p id="apellidos_us" class="text-muted text-center"></p>
                                 <ul class="list-group list-group-unbordered md-3">
                                     <li class="list-group-item">
-                                        <b style="color:#007bff">Edad</b><a id="edad" class="float-right">20</a>
+                                        <b style="color:#007bff">Edad</b><a id="edad" class="float-right"></a>
                                     </li>
                                     <li class="list-group-item">
-                                        <b style="color:#007bff">C.i</b><a id="ci_us" class="float-right">20</a>
+                                        <b style="color:#007bff">C.i</b><a id="ci_us" class="float-right"></a>
                                     </li>
                                     <li class="list-group-item">
-                                        <b style="color:#007bff">Tipo de Usuario</b><span id="us_tipo" class="float-right badge badge-primary">Administrador</span>
+                                        <b style="color:#007bff">Tipo de Usuario</b><span id="tipo_us" class="float-right badge badge-primary"></span>
                                     </li>
                                     <!-- Button trigger modal -->
                                     <button data-toggle="modal" data-target="#cambiarcontrasena" type="button" class="btn btn-block btn-outline-warning btn-sm" ><i class="fa-solid fa-key m-1"></i>Cambiar Contraseña</button>
@@ -147,7 +147,7 @@
                                 <strong style="color:#007bff">
                                     <i class="fas fa-smile-wink mr-1"></i>Genero
                                 </strong>
-                                <p id="genero_us" class="text-muted">Seleccionar</p>
+                                <p id="genero_us" class="text-muted"></p>
                                 <strong style="color:#007bff">
                                     <i class="fas fa-pencil-alt mr-1"></i>Informqción Adicional
                                 </strong>
@@ -185,11 +185,16 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="genero" class="col-sm-2 col-form-label"><i class="fas fa-smile-wink mr-1"></i>Genero</label>
+                                        <label for="genero" class="col-sm-2 col-form-label"><i class="fas fa-smile-wink mr-1"></i>Género</label>
                                         <div class="col-sm-10">
-                                            <input type="text" id="genero" class="form-control">
+                                            <select id="genero" class="form-control">
+                                                <option value="hombre">Hombre</option>
+                                                <option value="mujer">Mujer</option>
+                                                <option value="otro">Otro</option>
+                                            </select>
                                         </div>
                                     </div>
+
                                     <div class="form-group row">
                                         <label for="info-adicional" class="col-sm-2 col-form-label"><i class="fas fa-pencil-alt mr-1"></i>Información Adicional</label>
                                         <div class="col-sm-10">

@@ -1,4 +1,4 @@
-<?php session_start(); if ($_SESSION['us_tipo']==1) { include_once 'layouts/header.php'; ?>
+<?php session_start(); if ($_SESSION['us_tipo']==1||$_SESSION['us_tipo']==3) { include_once 'layouts/header.php'; ?>
 <title><?php echo $_SESSION['nombre_us']; ?> | Farmacia</title>
 <?php include_once 'layouts/nav.php'; ?>
   <!-- Content Wrapper. Contains page content -->

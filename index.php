@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html> <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,15 +7,7 @@
     <link rel="stylesheet" type="text/css" href="assets/libs/css/poppins-font/stylesheet.css">
     <link rel="stylesheet" type="text/css" href="assets/libs/css/styles.css">
 </head>
-<?php
-    session_start();
-    if (!empty($_SESSION['us_tipo'])) {
-            header('Location: assets/controller/LoginController.php');
-    }
-    else {
-        session_destroy();
-    }
-    ?>
+<?php session_start(); if (!empty($_SESSION['us_tipo'])) { header('Location: assets/controller/LoginController.php'); }else { session_destroy(); } ?>
 <body>
     <img src="#" alt="" class="wave">
     <div class="contenedor">
@@ -45,6 +36,6 @@
             </form>
         </div>
     </div>
-    <script src="assets/libs/js/login.js"></script>
+<script src="assets/libs/js/login.js"></script>
 </body>
 </html>
