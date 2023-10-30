@@ -75,12 +75,12 @@
             </p>
           </a>
         </li>
-        <li class="nav-header">EXAMPLES</li>
+        <li class="nav-header">Deposito de Farmacia</li>
         <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="nav-icon far fa-image"></i>
+          <a href="adm_atributos.php" class="nav-link">
+            <i class="nav-icon fas fa-vials"></i>
             <p>
-              Gallery
+              Gestion de Atributos
             </p>
           </a>
         </li>

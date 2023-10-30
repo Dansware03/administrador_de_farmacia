@@ -12,7 +12,7 @@
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">INICIO</a></li>
+              <li class="breadcrumb-item"><a href="adm_catalogo.php">INICIO</a></li>
               <li class="breadcrumb-item active">TITULO DEL CONTENIDO</li>
             </ol>
           </div>

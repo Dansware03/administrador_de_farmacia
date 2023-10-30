@@ -1,6 +1,44 @@
 <?php session_start(); if ($_SESSION['us_tipo']==1||$_SESSION['us_tipo']==3) { include_once 'layouts/header.php'; ?>
-<title><?php echo $_SESSION['nombre_us']; ?> | Editar Datos</title>
+<title><?php echo $_SESSION['nombre_us']; ?> | Usuarios</title>
 <?php include_once 'layouts/nav.php'; ?>
+<!-- Modal Rol-->
+<div class="modal fade" id="check" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"><i class="fa-solid fa-key m-1"></i>Permsos Acender/Descender</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center">
+            <img id="avatar3" src="../libs/img/avatars/user-default.png" class="profile-user-img img-fluid img-circle">
+        </div>
+        <div class="text-center"><b><?php echo $_SESSION['nombre_us']?></b></div><span>Escribe Tus Credenciales</span>
+        <div class="alert alert-primary text-center" id="yes-rol" style="display: none;">
+            <span><i class="fas fa-check m-1"></i>Cambio Realizado con Exito</span>
+        </div>
+        <div class="alert alert-danger text-center" id="no-rol" style="display: none;">
+            <span><i class="fas fa-times m-1"></i>Contraseña Incorrecta!!</span>
+        </div>
+    <form id="form-check">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-unlock-alt"></i></span>
+                </div>
+                    <input class="form-control" type="password" id="oldpass" placeholder="Ingrese Contraseña Actual">
+                    <input type="hidden" id="id_user_rol"> <input type="hidden" id="funcion">
+            </div>
+        </div>
+        <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn bg-gradient-primary">Cambiar</button>
+        </div>
+    </form>
+    </div>
+  </div>
+</div>
 <!-- Modal Usuario-->
 <div class="modal fade" id="newuser" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">

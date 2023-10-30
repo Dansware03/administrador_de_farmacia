@@ -122,7 +122,7 @@
                                         <b style="color:#007bff">C.i</b><a id="ci_us" class="float-right"></a>
                                     </li>
                                     <li class="list-group-item">
-                                        <b style="color:#007bff">Tipo de Usuario</b><span id="tipo_us" class="float-right badge badge-primary"></span>
+                                        <b style="color:#007bff">Tipo de Usuario</b><span id="tipo_us" class="float-right"></span>
                                     </li>
                                     <!-- Button trigger modal -->
                                     <button data-toggle="modal" data-target="#cambiarcontrasena" type="button" class="btn btn-block btn-outline-warning btn-sm" ><i class="fa-solid fa-key m-1"></i>Cambiar Contraseña</button>

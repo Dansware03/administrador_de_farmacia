@@ -93,6 +93,7 @@ if ($_POST['funcion'] == 'buscar_usuario_adm') {
         $edad = $nacimiento->diff($fecha_actual);
         $edad_year = $edad->y;
         $json[] = array(
+            'id'=>$objeto->id_usuario,
             'nombre' => $objeto->nombre_us,
             'apellidos' => $objeto->apellidos_us,
             'edad' => $edad_year,
@@ -120,4 +121,20 @@ if ($_POST['funcion'] == 'crear_usuario') {
     $avatar='user-default.png';
     $usuario->crear($nombre,$apellido,$edad,$ci,$genero,$pass,$tipo,$avatar);
 }
+if ($_POST['funcion']=='ascender') {
+    $pass = $_POST['pass'];
+    $id_up = $_POST['id_usuario'];
+    $usuario->ascender($pass,$id_up,$id_usuario);
+}
+if ($_POST['funcion']=='descender') {
+    $pass = $_POST['pass'];
+    $id_donw = $_POST['id_usuario'];
+    $usuario->descender($pass,$id_donw,$id_usuario);
+}
+if ($_POST['funcion']=='delete_user') {
+    $pass = $_POST['pass'];
+    $id_delete = $_POST['id_usuario'];
+    $usuario->delete($pass,$id_delete,$id_usuario);
+}
+
 ?>

@@ -23,7 +23,15 @@ $(document).ready(function() {
                 apellidos+=`${usuario.apellidos}`;
                 edad+=`${usuario.edad}`;
                 ci+=`${usuario.ci}`;
-                tipo+=`${usuario.tipo}`;
+                if (usuario.tipo=='Root') {
+                    tipo+=`<h1 class="badge badge-danger">${usuario.tipo}</h1>`;
+                }
+                if (usuario.tipo=='Administrador') {
+                    tipo+=`<h1 class="badge badge-primary">${usuario.tipo}</h1>`;
+                }
+                if (usuario.tipo=='Farmaceutico') {
+                    tipo+=`<h1 class="badge badge-success">${usuario.tipo}</h1>`;
+                }
                 telefono+=`${usuario.telefono}`;
                 correo+=`${usuario.correo}`;
                 genero+=`${usuario.genero}`;
