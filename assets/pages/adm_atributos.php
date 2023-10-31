@@ -9,10 +9,10 @@
             <div class="card-header"><h3 class="card-title">Crear Laboratorio</h3><button data-dismiss="modal" aria-label="close" class="close"><span aria-hidden="true">&times;</span></button></div>
         </div>
         <div class="card-body">
-            <div class="alert alert-primary text-center" id="add" style="display: none;">
+            <div class="alert alert-primary text-center" id="add-lab" style="display: none;">
               <span><i class="fas fa-check m-1"></i>Laboratorio Agregado Con Exito!!</span>
             </div>
-            <div class="alert alert-danger text-center" id="noadd" style="display: none;">
+            <div class="alert alert-danger text-center" id="noadd-lab" style="display: none;">
               <span><i class="fas fa-times m-1"></i>Error !!</span>
             </div>
             <form id="form-crear-laboratorio">
@@ -174,3 +174,4 @@
   </div>
   <!-- /.content-wrapper -->
 <?php include_once 'layouts/footer.php'; } else { header('Location: ../../index.php'); } ?>
+<script src="../libs/js/laboratory.js"></script>
