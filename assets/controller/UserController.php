@@ -22,7 +22,6 @@ if ($_POST['funcion']=='buscar_usuario'){
             'genero'=>$objeto->genero_us,
             'info'=>$objeto->info_us,
             'avatar'=>'../libs/img/avatars/'.$objeto->avatar
-
         );
     }
     $jsonstring = json_encode($json[0]);

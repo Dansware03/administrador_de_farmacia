@@ -116,9 +116,9 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="tab-pane active" id="laboratory">
-                                <div class="card card-success">
+                                <div class="card card-primary">
                                     <div class="card-header">
-                                        <div class="card-title">Buscar Laboratorio <button type="button" data-toggle="modal" data-target="#crear-laboratorio" class="btn bg-gradient-primary btn-sm m-2"><i class="fa-solid fa-flask mr-2"></i>Crear Laboratorio</button></div>
+                                        <div class="card-title">Buscar Laboratorio <button type="button" data-toggle="modal" data-target="#crear-laboratorio" class="btn bg-gradient-success btn-sm m-2"><i class="fa-solid fa-flask mr-2"></i>Crear Laboratorio</button></div>
                                         <div class="input-group">
                                             <input id="buscar-laboratory" type="text" class="form-control float left" placeholder="Ingrese Nombre">
                                             <div class="input-group-append">
@@ -126,14 +126,24 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-body"></div>
+                                    <div class="card-body">
+                                      <table class="table table-over text-nowrap">
+                                        <thead class="table-primary">
+                                          <tr>
+                                            <th>Laboratorio</th>
+                                            <th>Logo</th>
+                                            <th>Acciones</th>
+                                          </tr>
+                                        </thead>
+                                      </table>
+                                    </div>
                                     <div class="card-footer"></div>
                                 </div>
                             </div>
                             <div class="tab-pane" id="tipo">
-                                <div class="card card-success">
+                                <div class="card card-primary">
                                     <div class="card-header">
-                                        <div class="card-title">Buscar Tipo<button type="button" data-toggle="modal" data-target="#crear-tipo" class="btn bg-gradient-primary btn-sm m-2"><i class="fa-solid fa-file-medical mr-2"></i>Crear Tipo</button></div>
+                                        <div class="card-title">Buscar Tipo<button type="button" data-toggle="modal" data-target="#crear-tipo" class="btn bg-gradient-success btn-sm m-2"><i class="fa-solid fa-file-medical mr-2"></i>Crear Tipo</button></div>
                                         <div class="input-group">
                                             <input id="buscar-tipo" type="text" class="form-control float left" placeholder="Ingrese Nombre">
                                             <div class="input-group-append">
@@ -146,9 +156,9 @@
                                 </div>
                             </div>
                             <div class="tab-pane" id="presentacion">
-                                <div class="card card-success">
+                                <div class="card card-primary">
                                     <div class="card-header">
-                                        <div class="card-title">Buscar Presentación<button type="button" data-toggle="modal" data-target="#crear-presentacion" class="btn bg-gradient-primary btn-sm m-2"><i class="fa-solid fa-prescription-bottle-medical mr-2"></i>Crear Presentación</button></div>
+                                        <div class="card-title">Buscar Presentación<button type="button" data-toggle="modal" data-target="#crear-presentacion" class="btn bg-gradient-success btn-sm m-2"><i class="fa-solid fa-prescription-bottle-medical mr-2"></i>Crear Presentación</button></div>
                                         <div class="input-group">
                                             <input id="buscar-presentacion" type="text" class="form-control float left" placeholder="Ingrese Nombre">
                                             <div class="input-group-append">

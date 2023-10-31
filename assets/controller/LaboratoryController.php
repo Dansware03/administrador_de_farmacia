@@ -6,6 +6,17 @@ if ($_POST['funcion']=='crear') {
     $avatar='LabDefault.png';
     $laboratorio->crear($nombre,$avatar);
 }
-session_start();
-
+if ($_POST['funcion']=='buscar') {
+    $laboratorio->buscar();
+    $json=array();
+    foreach ($laboratorio->objetos as $objeto) {
+        $json[]=array(
+            'id'=>$objeto->id_laboratorio,
+            'nombre'=>$objeto->nombre,
+            'avatar'=>'../libs/img/laboratory/'.$objeto->avatar
+        );
+    }
+    $jsonstring = json_encode($json);
+    echo $jsonstring;
+}
 ?>

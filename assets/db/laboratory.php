@@ -26,5 +26,21 @@ class laboratorio {
             echo 'add';
         }
     }
+    function buscar(){
+        if (!empty($_POST['consulta'])) {
+            $consulta=$_POST['consulta'];
+            $sql="SELECT * FROM laboratorio where nombre LIKE :consulta";
+            $query = $this->acceso->prepare($sql);
+            $query->execute(array(':consulta'=>"%$consulta%"));
+            $this->objetos=$query->fetchAll();
+            return $this->objetos;
+        } else {
+            $sql="SELECT * FROM laboratorio where nombre NOT LIKE '' ORDER BY id_laboratorio LIMIT 10";
+            $query = $this->acceso->prepare($sql);
+            $query->execute();
+            $this->objetos=$query->fetchAll();
+            return $this->objetos;
+        }
+    }
 };
 ?>

@@ -5,7 +5,7 @@
 --
 -- Estructura de tabla para la tabla `laboratorio`
 --
-CREATE TABLE `laboratorio` ( `avatar` varchar(255) DEFAULT NULL )
+ALTER TABLE `laboratorio` ADD `avatar` VARCHAR(255) NULL AFTER `nombre`;
 --
 -- Volcado de datos para la tabla `laboratorio`
 --
