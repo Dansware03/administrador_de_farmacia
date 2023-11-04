@@ -6,7 +6,6 @@ $(document).ready(function() {
     function buscar_usuario(dato) {
         funcion='buscar_usuario';
         $.post('../controller/UserController.php', { dato, funcion }, (Response) => {
-            // console.log(Response)
             let nombre='';
             let apellidos='';
             let edad='';
@@ -60,7 +59,6 @@ $(document).ready(function() {
         funcion='capturar_datos';
         edit=true;
         $.post('../controller/UserController.php',{funcion,id_usuario},(Response)=>{
-            // console.log(Response);
             const usuario = JSON.parse(Response);
             $('#telefono').val(usuario.telefono);
             $('#email').val(usuario.correo);
@@ -108,7 +106,6 @@ $(document).ready(function() {
     $('#form-pass').submit(e => {
         let oldpass = $('#oldpass').val();
         let newpass = $('#newpass').val();
-        // console.log(oldpass + newpass);
         funcion='cambiar_contra';
         $.post('../controller/UserController.php',{id_usuario,funcion,oldpass,newpass},(Response)=>{
             if (Response === 'update') {
@@ -141,7 +138,6 @@ $(document).ready(function() {
             processData: false,
             contentType:false
         }).done(function(Response){
-            console.log(Response);
             const json = JSON.parse(Response);
             if (json.alert=='edit') {
                 $('#avatar1').attr('src',json.ruta);
@@ -162,8 +158,6 @@ $(document).ready(function() {
                     });
                 });
             }
-            
-            // console.log(Response)
         });
         e.preventDefault();
     })

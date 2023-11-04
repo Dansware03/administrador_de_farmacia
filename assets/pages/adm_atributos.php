@@ -28,6 +28,44 @@
     </div>
   </div>
 </div>
+<!-- Modal Cambiar Foto de Laboratorio-->
+<div class="modal fade" id="cambiar-foto-lab" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Cambiar Imagen</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <div class="alert alert-primary text-center" id="edit" style="display: none;">
+            <span><i class="fas fa-check m-1"></i>Avatar Cambiada Con Exito</span>
+        </div>
+        <div class="alert alert-danger text-center" id="noedit" style="display: none;">
+            <span><i class="fas fa-times m-1"></i>Error al Subir Imagen!!</span>
+        </div>
+        <div class="text-center">
+            <img id="lab-actual" src="../libs/img/laboratory/LabDefault.png" class="profile-user-img img-fluid img-circle">
+        </div>
+          <div class="text-center">
+            <b id="nombre_logo"></b>
+          </div>
+        <form id="form-cambiar-foto-laboratorio" enctype="multipart/form-data">
+            <div class="input-group mb-3 ml-5 mt-2">
+                    <input type="file" class="input-group" name="foto">
+                    <input type="hidden" name="id_logo_lab" id="id_logo_lab">
+                    <input type="hidden" name="funcion" value="cambiar_logo">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn bg-gradient-primary">Guardar</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- Modal Tipo-->
 <div class="modal fade" id="crear-tipo" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -36,10 +74,10 @@
             <div class="card-header"><h3 class="card-title">Crear Tipo</h3><button data-dismiss="modal" aria-label="close" class="close"><span aria-hidden="true">&times;</span></button></div>
         </div>
         <div class="card-body">
-            <div class="alert alert-primary text-center" id="add" style="display: none;">
+            <div class="alert alert-primary text-center" id="add-type" style="display: none;">
               <span><i class="fas fa-check m-1"></i>Tipo Agregado Con Exito!!</span>
             </div>
-            <div class="alert alert-danger text-center" id="noadd" style="display: none;">
+            <div class="alert alert-danger text-center" id="noadd-type" style="display: none;">
               <span><i class="fas fa-times m-1"></i>Error !!</span>
             </div>
             <form id="form-crear-tipo">
@@ -63,10 +101,10 @@
             <div class="card-header"><h3 class="card-title">Crear Presentación</h3><button data-dismiss="modal" aria-label="close" class="close"><span aria-hidden="true">&times;</span></button></div>
         </div>
         <div class="card-body">
-            <div class="alert alert-primary text-center" id="add" style="display: none;">
+            <div class="alert alert-primary text-center" id="add-presentacion" style="display: none;">
               <span><i class="fas fa-check m-1"></i>Presentación Agregado Con Exito!!</span>
             </div>
-            <div class="alert alert-danger text-center" id="noadd" style="display: none;">
+            <div class="alert alert-danger text-center" id="noadd-presentacion" style="display: none;">
               <span><i class="fas fa-times m-1"></i>Error !!</span>
             </div>
             <form id="form-crear-presentacion">
@@ -113,7 +151,7 @@
                             <li class="nav-item"><a href="#presentacion" class="nav-link" data-toggle="tab"><i class="fa-solid fa-prescription-bottle-medical mr-2"></i>Presentación</a></li>
                         </ul>
                     </div>
-                    <div class="card-body">
+                    <div class="card-bodyp-0">
                         <div class="tab-content">
                             <div class="tab-pane active" id="laboratory">
                                 <div class="card card-primary">
@@ -126,8 +164,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-body">
-                                      <table class="table table-over text-nowrap">
+                                    <div class="card-body p-0 table-responsive">
+                                      <table class="table table-hover text-nowrap">
                                         <thead class="table-primary">
                                           <tr>
                                             <th>Laboratorio</th>
@@ -135,6 +173,8 @@
                                             <th>Acciones</th>
                                           </tr>
                                         </thead>
+                                        <tbody class="table-active" id="laboratorios">
+                                        </tbody>
                                       </table>
                                     </div>
                                     <div class="card-footer"></div>
@@ -151,7 +191,18 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-body"></div>
+                                    <div class="card-body p-0 table-responsive">
+                                      <table class="table table-hover text-nowrap">
+                                        <thead class="table-primary">
+                                          <tr>
+                                            <th>Tipos</th>
+                                            <th>Acciones</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody class="table-active" id="tipos">
+                                        </tbody>
+                                      </table>
+                                    </div>
                                     <div class="card-footer"></div>
                                 </div>
                             </div>
@@ -166,14 +217,24 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-body"></div>
+                                    <div class="card-body p-0 table-responsive">
+                                      <table class="table table-hover text-nowrap">
+                                        <thead class="table-primary">
+                                          <tr>
+                                            <th>Presentaciones</th>
+                                            <th>Acciones</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody class="table-active" id="presentaciones">
+                                        </tbody>
+                                      </table>
+                                    </div>
                                     <div class="card-footer"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="card-footer">
-
                     </div>
                 </div>
             </div>
@@ -185,3 +246,5 @@
   <!-- /.content-wrapper -->
 <?php include_once 'layouts/footer.php'; } else { header('Location: ../../index.php'); } ?>
 <script src="../libs/js/laboratory.js"></script>
+<script src="../libs/js/type.js"></script>
+<script src="../libs/js/presentaciones.js"></script>

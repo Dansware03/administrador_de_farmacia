@@ -28,7 +28,7 @@ if (isset($_POST['user']) && isset($_POST['pass'])) {
             $_SESSION['usuario'] = $objeto->id_usuario;
             $_SESSION['us_tipo'] = $objeto->us_tipo;
             $_SESSION['nombre_us'] = $objeto->nombre_us;
-            
+
             // Redirige según el tipo de usuario
             switch ($_SESSION['us_tipo']) {
                 case 1:
