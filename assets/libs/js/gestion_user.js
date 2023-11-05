@@ -109,32 +109,27 @@ $(document).ready(function() {
       };
       $.post('../controller/UserController.php', formData, function (response) {
         if (response === 'add') {
-          showSuccessMessage();
           $('#form-crear').trigger('reset');
+          Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Usuario Creado Con Exito',
+            showConfirmButton: false,
+            timer: 1500
+        })
           buscar_datos();
         } else {
-          showErrorMessage();
+          $('#form-crear').trigger('reset');
+          Swal.fire({
+            position: 'center',
+            icon: 'error',
+            title: 'Error al Crear Usuario!!',
+            showConfirmButton: false,
+            timer: 1500
+        })
         }
       });
     });
-    function showSuccessMessage() {
-      $('#add').hide('slow', function () {
-        $(this).show(1000, function () {
-          $(this).hide(2000, function () {
-            $('#form-crear').trigger('reset');
-          });
-        });
-      });
-    }
-    function showErrorMessage() {
-      $('#noadd').hide('slow', function () {
-        $(this).show(1000, function () {
-          $(this).hide(2000, function () {
-            $('#form-crear').trigger('reset');
-          });
-        });
-      });
-    }
     $(document).on('click','.ascender',(e)=>{
       const elemento= $(this)[0].activeElement.parentElement.parentElement.parentElement.parentElement;
       const id=$(elemento).attr('usuarioId');
@@ -162,21 +157,23 @@ $(document).ready(function() {
       funcion=$('#funcion').val();
       $.post('../controller/UserController.php',{pass,id_usuario,funcion},(response)=>{
         if (response=='up' || response=='donw' || response=='delete') {
-          $('#yes-rol').hide('slow', function () {
-            $(this).show(1000, function () {
-            $(this).hide(2000, function () {
                 $('#form-check').trigger('reset');
-                });
-            });
-        });
+                Swal.fire({
+                  position: 'center',
+                  icon: 'success',
+                  title: 'Realizado Exito',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
         } else {
-          $('#no-rol').hide('slow', function () {
-            $(this).show(1000, function () {
-            $(this).hide(2000, function () {
                 $('#form-check').trigger('reset');
-                });
-            });
-        });
+                Swal.fire({
+                  position: 'center',
+                  icon: 'error',
+                  title: 'Ah Ocurrido Un Error!!',
+                  showConfirmButton: false,
+                  timer: 1500
+              })
         }
       buscar_datos();
       });

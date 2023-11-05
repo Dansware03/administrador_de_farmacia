@@ -6,22 +6,24 @@ $(document).ready(function() {
         funcion='crear';
         $.post('../controller/LaboratoryController.php',{nombre_laboratory,funcion},(Response)=>{
             if (Response=='add') {
-                $('#add-lab').hide('slow', function () {
-                    $(this).show(1000, function () {
-                    $(this).hide(2000, function () {
-                        $('#form-crear-laboratorio').trigger('reset');
-                        });
-                    });
-                    buscar_lab();
-                });
+                $('#form-crear-laboratorio').trigger('reset');
+                buscar_lab();
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Laboratorio Creado Con Exito',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
                 } else {
-                $('#noadd-lab').hide('slow', function () {
-                    $(this).show(1000, function () {
-                    $(this).hide(2000, function () {
-                        $('#form-crear-laboratorio').trigger('reset');
-                        });
-                    });
-                });
+                    $('#form-crear-laboratorio').trigger('reset');
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            title: 'Error al Crear Laboratorio!!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
                 }
         });
         e.preventDefault();
@@ -81,23 +83,69 @@ $(document).ready(function() {
             if (json.alert=='edit') {
                 $('#lab-actual').attr('src',json.ruta);
                 buscar_lab();
-                $('#edit').hide('slow', function () {
-                    $('#form-cambiar-foto-laboratorio').trigger('reset');
-                    $(this).show(1000, function () {
-                    $(this).hide(2000, function () {
-                        });
-                    });
-                });
+                $('#form-cambiar-foto-laboratorio').trigger('reset');
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Avatar Cambiada Con Exito',
+                    showConfirmButton: false,
+                    timer: 1500
+                  })
             } else{
                 $('#form-cambiar-foto-laboratorio').trigger('reset');
-                $('#noedit').hide('slow', function () {
-                    $(this).show(1000, function () {
-                    $(this).hide(2000, function () {
-                        });
-                    });
-                });
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Error al Subir Imagen!!',
+                    showConfirmButton: false,
+                    timer: 1500
+                  })
             }
         });
         e.preventDefault();
+    })
+    $(document).on('click','.borrar',(e)=>{
+        funcion="borrar";
+        const elemento = $(this)[0].activeElement.parentElement.parentElement;
+        const id = $(elemento).attr('labId');
+        const nombre = $(elemento).attr('labNombre');
+        const avatar = $(elemento).attr('labAvatar');
+
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger mr-1'
+            },
+            buttonsStyling: false
+        })
+        swalWithBootstrapButtons.fire({
+            title: 'Estas seguro que desea eliminar '+nombre+'?',
+            text: "¡No podrás revertir esto!",
+            
+            showCancelButton: true,
+            confirmButtonText: '¡Sí, bórralo!',
+            cancelButtonText: '¡No, cancela!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+            swalWithBootstrapButtons.fire(
+                'Eliminado!',
+                'Su Laboratorio '+nombre+' ha sido eliminado.',
+                'success'
+            )
+            } else if (
+              /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+            ) {
+            swalWithBootstrapButtons.fire(
+                'Cancelado',
+                'Tu Laboratorio '+nombre+' imaginario está a salvo :)',
+                'error'
+            )
+            }
+        })
+        // $('#lab-actual').attr('src',avatar);
+        // $('#nombre_logo').html(nombre);
+        // $('#id_logo_lab').val(id);
     })
 });

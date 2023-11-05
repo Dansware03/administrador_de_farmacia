@@ -1,6 +1,7 @@
 <?php
 if (!headers_sent()) {
-    header('Content-Type: application/json');
+# Establecer el tipo de contenido a JSON
+    // header('Content-Type: application/json');
 // Content Security Policy (CSP)
     header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';");
 // HTTP Strict Transport Security (HSTS)

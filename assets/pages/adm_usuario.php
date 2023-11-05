@@ -16,12 +16,6 @@
             <img id="avatar3" src="../libs/img/avatars/user-default.png" class="profile-user-img img-fluid img-circle">
         </div>
         <div class="text-center"><b><?php echo $_SESSION['nombre_us']?></b></div><span>Escribe Tus Credenciales</span>
-        <div class="alert alert-primary text-center" id="yes-rol" style="display: none;">
-            <span><i class="fas fa-check m-1"></i>Cambio Realizado con Exito</span>
-        </div>
-        <div class="alert alert-danger text-center" id="no-rol" style="display: none;">
-            <span><i class="fas fa-times m-1"></i>Contraseña Incorrecta!!</span>
-        </div>
     <form id="form-check">
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
@@ -47,12 +41,6 @@
             <div class="card-header"><h3 class="card-title">Crear Usuario</h3><button data-dismiss="modal" aria-label="close" class="close"><span aria-hidden="true">&times;</span></button></div>
         </div>
         <div class="card-body">
-            <div class="alert alert-primary text-center" id="add" style="display: none;">
-              <span><i class="fas fa-check m-1"></i>Usuario Agregado Con Exito!!</span>
-            </div>
-            <div class="alert alert-danger text-center" id="noadd" style="display: none;">
-              <span><i class="fas fa-times m-1"></i>Error Cedula Ya Existe!!</span>
-            </div>
             <form id="form-crear">
                 <div class="from-group">
                     <label for="nombre">Nombre</label>

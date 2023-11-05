@@ -17,7 +17,6 @@ $(document).ready(function() {
             let info='';
             try {
             const usuario = JSON.parse(Response);
-                // El código para mostrar la información del usuario aquí...
                 nombre+=`${usuario.nombre}`;
                 apellidos+=`${usuario.apellidos}`;
                 edad+=`${usuario.edad}`;
@@ -51,7 +50,6 @@ $(document).ready(function() {
                 $('#avatar4').attr('src', usuario.avatar);
             } catch (error) {
                 console.error('La respuesta no es un JSON válido:', error);
-                // Puedes mostrar un mensaje de error o realizar alguna otra acción adecuada.
             }
         })
     }
@@ -67,7 +65,7 @@ $(document).ready(function() {
         })
     });
     $('#form-usuario').submit(e=>{
-        e.preventDefault(); // Evita que el formulario se envíe de inmediato
+        e.preventDefault();
         if (edit==true) {
             let telefono=$('#telefono').val();
             let correo=$('#email').val();
@@ -79,13 +77,14 @@ $(document).ready(function() {
                 { id_usuario, funcion, telefono, correo, genero, info },
                 function (Response) {
                     if (Response === 'editado') {
-                        $('#editado').hide('slow', function () {
-                            $(this).show(1000, function () {
-                                $(this).hide(2000, function () {
-                                    $('#form-usuario').trigger('reset');
-                                });
-                            });
-                        });
+                        $('#form-usuario').trigger('reset');
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'Realizado Exito',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
                     }
                     edit = false;
                     buscar_usuario(id_usuario);
@@ -93,13 +92,14 @@ $(document).ready(function() {
             );
         }
         else{
-            $('#noeditado').hide('slow', function () {
-                $(this).show(1000, function () {
-                    $(this).hide(3000, function () {
-                        $('#form-usuario').trigger('reset');
-                    });
-                });
-            });
+        $('#form-usuario').trigger('reset');
+        Swal.fire({
+            position: 'center',
+            icon: 'error',
+            title: 'Ah Ocurrido Un Error!!',
+            showConfirmButton: false,
+            timer: 1500
+        })
         }
         e.preventDefault();
     });
@@ -109,21 +109,23 @@ $(document).ready(function() {
         funcion='cambiar_contra';
         $.post('../controller/UserController.php',{id_usuario,funcion,oldpass,newpass},(Response)=>{
             if (Response === 'update') {
-                $('#update').hide('slow', function () {
-                    $(this).show(1000, function () {
-                        $('#form-pass').trigger('reset');
-                    $(this).hide(2000, function () {
-                        });
-                    });
-                });
+            $('#form-pass').trigger('reset');
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                title: 'Realizado Exito',
+                showConfirmButton: false,
+                timer: 1500
+            })
             } else {
-                $('#noupdate').hide('slow', function () {
-                    $(this).show(1000, function () {
-                        $('#form-pass').trigger('reset');
-                        $(this).hide(3000, function () {
-                        });
-                    });
-                });
+            $('#form-pass').trigger('reset');
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Ah Ocurrido Un Error!!',
+                showConfirmButton: false,
+                timer: 1500
+            })
             }
         })
         e.preventDefault();
@@ -142,21 +144,23 @@ $(document).ready(function() {
             if (json.alert=='edit') {
                 $('#avatar1').attr('src',json.ruta);
                 buscar_usuario(id_usuario);
-                $('#edit').hide('slow', function () {
-                    $(this).show(1000, function () {
-                    $(this).hide(2000, function () {
-                        $('#form-foto').trigger('reset');
-                        });
-                    });
-                });
+                $('#form-foto').trigger('reset');
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Realizado Exito',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
             } else{
                 $('#form-foto').trigger('reset');
-                $('#noedit').hide('slow', function () {
-                    $(this).show(1000, function () {
-                    $(this).hide(2000, function () {
-                        });
-                    });
-                });
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Ah Ocurrido Un Error!!',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
             }
         });
         e.preventDefault();

@@ -16,12 +16,6 @@
             <img id="avatar3" src="../libs/img/avatars/user-default.png" class="profile-user-img img-fluid img-circle">
         </div>
         <div class="text-center"><b><?php echo $_SESSION['nombre_us']?></b></div>
-        <div class="alert alert-primary text-center" id="update" style="display: none;">
-            <span><i class="fas fa-check m-1"></i>Contraseña Cambiada Con Exito</span>
-        </div>
-        <div class="alert alert-danger text-center" id="noupdate" style="display: none;">
-            <span><i class="fas fa-times m-1"></i>Contraseña Incorrecta!!</span>
-        </div>
     <form id="form-pass">
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
@@ -55,12 +49,6 @@
         </button>
       </div>
       <div class="modal-body">
-      <div class="alert alert-primary text-center" id="edit" style="display: none;">
-            <span><i class="fas fa-check m-1"></i>Avatar Cambiada Con Exito</span>
-        </div>
-        <div class="alert alert-danger text-center" id="noedit" style="display: none;">
-            <span><i class="fas fa-times m-1"></i>Error al Subir Imagen!!</span>
-        </div>
         <div class="text-center">
             <img id="avatar1" src="../libs/img/avatars/user-default.png" class="profile-user-img img-fluid img-circle">
             </div>

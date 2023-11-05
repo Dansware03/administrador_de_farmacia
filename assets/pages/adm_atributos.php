@@ -9,12 +9,6 @@
             <div class="card-header"><h3 class="card-title">Crear Laboratorio</h3><button data-dismiss="modal" aria-label="close" class="close"><span aria-hidden="true">&times;</span></button></div>
         </div>
         <div class="card-body">
-            <div class="alert alert-primary text-center" id="add-lab" style="display: none;">
-              <span><i class="fas fa-check m-1"></i>Laboratorio Agregado Con Exito!!</span>
-            </div>
-            <div class="alert alert-danger text-center" id="noadd-lab" style="display: none;">
-              <span><i class="fas fa-times m-1"></i>Error !!</span>
-            </div>
             <form id="form-crear-laboratorio">
                 <div class="from-group">
                     <label for="nombre-laboratorio">Nombre</label>
@@ -39,12 +33,6 @@
         </button>
       </div>
       <div class="modal-body">
-      <div class="alert alert-primary text-center" id="edit" style="display: none;">
-            <span><i class="fas fa-check m-1"></i>Avatar Cambiada Con Exito</span>
-        </div>
-        <div class="alert alert-danger text-center" id="noedit" style="display: none;">
-            <span><i class="fas fa-times m-1"></i>Error al Subir Imagen!!</span>
-        </div>
         <div class="text-center">
             <img id="lab-actual" src="../libs/img/laboratory/LabDefault.png" class="profile-user-img img-fluid img-circle">
         </div>
@@ -74,12 +62,6 @@
             <div class="card-header"><h3 class="card-title">Crear Tipo</h3><button data-dismiss="modal" aria-label="close" class="close"><span aria-hidden="true">&times;</span></button></div>
         </div>
         <div class="card-body">
-            <div class="alert alert-primary text-center" id="add-type" style="display: none;">
-              <span><i class="fas fa-check m-1"></i>Tipo Agregado Con Exito!!</span>
-            </div>
-            <div class="alert alert-danger text-center" id="noadd-type" style="display: none;">
-              <span><i class="fas fa-times m-1"></i>Error !!</span>
-            </div>
             <form id="form-crear-tipo">
                 <div class="from-group">
                     <label for="nombre-tipo">Nombre</label>
@@ -101,12 +83,6 @@
             <div class="card-header"><h3 class="card-title">Crear Presentación</h3><button data-dismiss="modal" aria-label="close" class="close"><span aria-hidden="true">&times;</span></button></div>
         </div>
         <div class="card-body">
-            <div class="alert alert-primary text-center" id="add-presentacion" style="display: none;">
-              <span><i class="fas fa-check m-1"></i>Presentación Agregado Con Exito!!</span>
-            </div>
-            <div class="alert alert-danger text-center" id="noadd-presentacion" style="display: none;">
-              <span><i class="fas fa-times m-1"></i>Error !!</span>
-            </div>
             <form id="form-crear-presentacion">
                 <div class="from-group">
                     <label for="nombre-presentacion">Nombre</label>

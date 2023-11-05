@@ -16,7 +16,8 @@
   </footer>
 </div> -->
 <!-- ./wrapper -->
-
+<!-- SweetAlert2 -->
+<script src="../libs/js/sweetalert2.js"></script>
 <!-- jQuery -->
 <script src="../libs/js/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->

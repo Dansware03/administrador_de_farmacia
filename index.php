@@ -1,3 +1,4 @@
+<?php session_start(); if (!empty($_SESSION['us_tipo'])) { header('Location: assets/controller/LoginController.php'); }else { session_destroy(); } include_once 'headers.php'; ?>
 <!DOCTYPE html> <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -7,7 +8,6 @@
     <link rel="stylesheet" type="text/css" href="assets/libs/css/poppins-font/stylesheet.css">
     <link rel="stylesheet" type="text/css" href="assets/libs/css/styles.css">
 </head>
-<?php session_start(); if (!empty($_SESSION['us_tipo'])) { header('Location: assets/controller/LoginController.php'); }else { session_destroy(); } ?>
 <body>
     <img src="#" alt="" class="wave">
     <div class="contenedor">
