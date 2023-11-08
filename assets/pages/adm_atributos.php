@@ -6,17 +6,18 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
         <div class="card card-primary">
-            <div class="card-header"><h3 class="card-title">Crear Laboratorio</h3><button data-dismiss="modal" aria-label="close" class="close"><span aria-hidden="true">&times;</span></button></div>
+            <div class="card-header"><h3 class="card-title">Laboratorio</h3><button data-dismiss="modal" aria-label="close" class="close"><span aria-hidden="true">&times;</span></button></div>
         </div>
         <div class="card-body">
             <form id="form-crear-laboratorio">
                 <div class="from-group">
                     <label for="nombre-laboratorio">Nombre</label>
                     <input id="nombre-laboratorio" type="text" class="form-control" placeholder="Ingrese Nombre de Laboratorio" required>
+                    <input type="hidden" id="id_editar_lab">
                 </div>
         </div>
                 <div class="card-footer">
-                    <button type="submit" class="btn bg-gradient-primary float-right">Crear Laboratorio</button>
+                    <button type="submit" class="btn bg-gradient-primary float-right">Guardar Laboratorio</button>
                 </div>
             </form>
     </div>
@@ -59,17 +60,18 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
         <div class="card card-primary">
-            <div class="card-header"><h3 class="card-title">Crear Tipo</h3><button data-dismiss="modal" aria-label="close" class="close"><span aria-hidden="true">&times;</span></button></div>
+            <div class="card-header"><h3 class="card-title">Tipo</h3><button data-dismiss="modal" aria-label="close" class="close"><span aria-hidden="true">&times;</span></button></div>
         </div>
         <div class="card-body">
             <form id="form-crear-tipo">
                 <div class="from-group">
                     <label for="nombre-tipo">Nombre</label>
                     <input id="nombre-tipo" type="text" class="form-control" placeholder="Ingrese Nombre de tipo" required>
+                    <input type="hidden" id="id_editar_type">
                 </div>
         </div>
                 <div class="card-footer">
-                    <button type="submit" class="btn bg-gradient-primary float-right">Crear tipo</button>
+                    <button type="submit" class="btn bg-gradient-primary float-right">Guardar</button>
                 </div>
             </form>
     </div>
@@ -80,17 +82,18 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
         <div class="card card-primary">
-            <div class="card-header"><h3 class="card-title">Crear Presentación</h3><button data-dismiss="modal" aria-label="close" class="close"><span aria-hidden="true">&times;</span></button></div>
+            <div class="card-header"><h3 class="card-title">Presentación</h3><button data-dismiss="modal" aria-label="close" class="close"><span aria-hidden="true">&times;</span></button></div>
         </div>
         <div class="card-body">
             <form id="form-crear-presentacion">
                 <div class="from-group">
                     <label for="nombre-presentacion">Nombre</label>
                     <input id="nombre-presentacion" type="text" class="form-control" placeholder="Ingrese Nombre de Presentación" required>
+                    <input type="hidden" id="id_editar_presentacion">
                 </div>
         </div>
                 <div class="card-footer">
-                    <button type="submit" class="btn bg-gradient-primary float-right">Crear Presentación</button>
+                    <button type="submit" class="btn bg-gradient-primary float-right">Guardar</button>
                 </div>
             </form>
     </div>

@@ -12,7 +12,6 @@ class laboratorio {
         $query = $this->acceso->prepare($sql);
         $query->execute(array(':nombre' => $nombre));
         $this->objetos = $query->fetchAll();
-
         if (!empty($this->objetos)) {
             echo 'no add';
         }else {
@@ -47,11 +46,27 @@ class laboratorio {
         $query = $this->acceso->prepare($sql);
         $query->execute(array(':id'=>$id));
         $this->objetos = $query->fetchAll();
-
         $sql = "UPDATE laboratorio SET avatar=:nombre where id_laboratorio=:id";
         $query = $this->acceso->prepare($sql);
         $query->execute(array(':id' => $id, ':nombre' => $nombre));
         return $this->objetos;
+    }
+    function borrar_lab($id) {
+        $sql = "DELETE FROM laboratorio where id_laboratorio=:id";
+        $query = $this->acceso->prepare($sql);
+        $query->execute(array(':id'=>$id));
+        if (!empty($query->execute(array(':id'=>$id)))) {
+            echo 'borrado';
+        }
+        else {
+            echo 'no-borrado';
+        }
+    }
+    function editar($nombre,$id_editado) {
+        $sql = "UPDATE laboratorio SET nombre=:nombre WHERE id_laboratorio=:id";
+        $query = $this->acceso->prepare($sql);
+        $query->execute(array(':id'=>$id_editado,':nombre'=>$nombre));
+        echo 'edit';
     }
 };
 ?>
