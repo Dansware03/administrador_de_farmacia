@@ -29,6 +29,18 @@ if (isset($_POST['funcion'])) {
             $id = $_POST['id'];
             $tipo_producto->borrar_type($id);
             break;
+        case 'rellenar_type':
+            $tipo_producto->rellenar_type();
+            $json = array();
+            foreach ($tipo_producto->objetos as $objeto) {
+                $json[]=array(
+                    'id'=>$objeto->id_tip_prod,
+                    'nombre'=>$objeto->nombre
+                );
+            }
+            $jsonstring=json_encode($json);
+            echo $jsonstring;
+            break;
     }
 }
 ?>

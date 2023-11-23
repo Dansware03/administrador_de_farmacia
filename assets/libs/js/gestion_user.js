@@ -117,6 +117,7 @@ $(document).ready(function() {
             showConfirmButton: false,
             timer: 1500
         })
+        $('#newuser').modal('hide');
           buscar_datos();
         } else {
           $('#form-crear').trigger('reset');
@@ -127,6 +128,7 @@ $(document).ready(function() {
             showConfirmButton: false,
             timer: 1500
         })
+        $('#newuser').modal('hide');
         }
       });
     });
@@ -165,6 +167,7 @@ $(document).ready(function() {
                   showConfirmButton: false,
                   timer: 1500
               })
+              $('#check').modal('hide');
         } else {
                 $('#form-check').trigger('reset');
                 Swal.fire({
@@ -174,6 +177,7 @@ $(document).ready(function() {
                   showConfirmButton: false,
                   timer: 1500
               })
+              $('#check').modal('hide');
         }
       buscar_datos();
       });

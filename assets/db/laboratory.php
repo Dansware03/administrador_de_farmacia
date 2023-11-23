@@ -7,7 +7,7 @@ class laboratorio {
         $db = new Conexion();
         $this->acceso = $db->pdo;
     }
-    function crear($nombre, $avatar) {
+    function crear($nombre) {
         $sql = "SELECT id_laboratorio FROM laboratorio WHERE nombre = :nombre";
         $query = $this->acceso->prepare($sql);
         $query->execute(array(':nombre' => $nombre));
@@ -15,11 +15,10 @@ class laboratorio {
         if (!empty($this->objetos)) {
             echo 'no add';
         }else {
-            $sql = "INSERT INTO laboratorio (nombre, avatar) VALUES (:nombre, :avatar)";
+            $sql = "INSERT INTO laboratorio (nombre) VALUES (:nombre)";
             $query = $this->acceso->prepare($sql);
             if ($query->execute(array(
-                ':nombre' => $nombre,
-                ':avatar' => $avatar
+                ':nombre' => $nombre
             )));
             $this->objetos=$query->fetchAll();
             echo 'add';
@@ -41,16 +40,6 @@ class laboratorio {
             return $this->objetos;
         }
     }
-    function cambiar_logo($id,$nombre) {
-        $sql = "SELECT avatar FROM laboratorio where id_laboratorio=:id";
-        $query = $this->acceso->prepare($sql);
-        $query->execute(array(':id'=>$id));
-        $this->objetos = $query->fetchAll();
-        $sql = "UPDATE laboratorio SET avatar=:nombre where id_laboratorio=:id";
-        $query = $this->acceso->prepare($sql);
-        $query->execute(array(':id' => $id, ':nombre' => $nombre));
-        return $this->objetos;
-    }
     function borrar_lab($id) {
         $sql = "DELETE FROM laboratorio where id_laboratorio=:id";
         $query = $this->acceso->prepare($sql);
@@ -67,6 +56,13 @@ class laboratorio {
         $query = $this->acceso->prepare($sql);
         $query->execute(array(':id'=>$id_editado,':nombre'=>$nombre));
         echo 'edit';
+    }
+    function rellenar_laboratorio() {
+        $sql = "SELECT * FROM laboratorio ORDER BY nombre asc";
+        $query = $this->acceso->prepare($sql);
+        $query->execute();
+        $this->objetos = $query->fetchAll();
+        return $this->objetos;
     }
 };
 ?>

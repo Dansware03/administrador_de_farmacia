@@ -56,7 +56,6 @@
             <div class="input-group mb-3 ml-5 mt-2">
                     <input type="file" class="form-control-file" name="foto">
                     <input type="hidden" name="funcion" value="cambiar_foto">
-
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cerrar</button>
@@ -67,7 +66,7 @@
     </div>
   </div>
 </div>
-  <!-- Content Wrapper. Contains page content --> 
+  <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">

@@ -23,38 +23,6 @@
     </div>
   </div>
 </div>
-<!-- Modal Cambiar Foto de Laboratorio-->
-<div class="modal fade" id="cambiar-foto-lab" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Cambiar Imagen</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="text-center">
-            <img id="lab-actual" src="../libs/img/laboratory/LabDefault.png" class="profile-user-img img-fluid img-circle">
-        </div>
-          <div class="text-center">
-            <b id="nombre_logo"></b>
-          </div>
-        <form id="form-cambiar-foto-laboratorio" enctype="multipart/form-data">
-            <div class="input-group mb-3 ml-5 mt-2">
-                    <input type="file" class="input-group" name="foto">
-                    <input type="hidden" name="id_logo_lab" id="id_logo_lab">
-                    <input type="hidden" name="funcion" value="cambiar_logo">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn bg-gradient-primary">Guardar</button>
-            </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
 <!-- Modal Tipo-->
 <div class="modal fade" id="crear-tipo" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -148,7 +116,6 @@
                                         <thead class="table-primary">
                                           <tr>
                                             <th>Laboratorio</th>
-                                            <th>Logo</th>
                                             <th>Acciones</th>
                                           </tr>
                                         </thead>
@@ -156,7 +123,6 @@
                                         </tbody>
                                       </table>
                                     </div>
-                                    <div class="card-footer"></div>
                                 </div>
                             </div>
                             <div class="tab-pane" id="tipo">
@@ -182,7 +148,6 @@
                                         </tbody>
                                       </table>
                                     </div>
-                                    <div class="card-footer"></div>
                                 </div>
                             </div>
                             <div class="tab-pane" id="presentacion">
@@ -208,12 +173,9 @@
                                         </tbody>
                                       </table>
                                     </div>
-                                    <div class="card-footer"></div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="card-footer">
                     </div>
                 </div>
             </div>

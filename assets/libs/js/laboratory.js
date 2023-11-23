@@ -40,13 +40,9 @@ $(document).ready(function() {
             const laboratorios = JSON.parse(Response);
             const laboriosContainer = $('#laboratorios');
             const template = laboratorios.map(laboratorio => `
-                <tr labId="${laboratorio.id}" labNombre="${laboratorio.nombre}" labAvatar="${laboratorio.avatar}">
+                <tr labId="${laboratorio.id}" labNombre="${laboratorio.nombre}">
                     <td>${laboratorio.nombre}</td>
                     <td>
-                        <img class="img-fluid rounded" width="70" height="70" src="${laboratorio.avatar}" alt="">
-                    </td>
-                    <td>
-                        <button class="avatar btn btn-info" title="Cambiar Logo" type="button" data-toggle="modal" data-target="#cambiar-foto-lab"><i class="far fa-image"></i></button>
                         <button class="editar btn btn-success" title="Editar Laboratorio" type="button" data-toggle="modal" data-target="#crear-laboratorio"><i class="fas fa-pencil-alt"></i></button>
                         <button class="borrar_lab btn btn-danger" title="Eliminar Laboratorio" type="button" data-toggle="modal" data-target="#remove-lab"><i class="fas fa-trash"></i></button>
                     </td>
@@ -59,57 +55,11 @@ $(document).ready(function() {
         let valor = $(this).val();
         buscar_lab(valor !== "" ? valor : undefined);
     });
-    $(document).on('click', '.avatar', function (e) {
-        const funcion = "cambiar_logo";
-        const elemento = $(this).closest('tr');
-        const id = elemento.attr('labId');
-        const nombre = elemento.attr('labNombre');
-        const avatar = elemento.attr('labAvatar');
-        $('#lab-actual').attr('src', avatar);
-        $('#nombre_logo').html(nombre);
-        $('#id_logo_lab').val(id);
-    });
-    $('#form-cambiar-foto-laboratorio').submit(e => {
-        e.preventDefault();
-        const formData = new FormData(document.getElementById('form-cambiar-foto-laboratorio'));
-        $.ajax({
-            url: '../controller/LaboratoryController.php',
-            type: 'POST',
-            data: formData,
-            cache: false,
-            processData: false,
-            contentType: false
-        }).done(function (Response) {
-            const json = JSON.parse(Response);
-            if (json.alert === 'edit') {
-                $('#lab-actual').attr('src', json.ruta);
-                buscar_lab();
-                $('#form-cambiar-foto-laboratorio').trigger('reset');
-                Swal.fire({
-                    position: 'center',
-                    icon: 'success',
-                    title: 'Avatar Cambiado con Éxito',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            } else {
-                $('#form-cambiar-foto-laboratorio').trigger('reset');
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    title: 'Error al Subir Imagen',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            }
-        });
-    });
     $(document).on('click', '.borrar_lab', function (e) {
         const funcion = "borrar_lab";
         const elemento = $(this).closest('tr');
         const id = elemento.attr('labId');
         const nombre = elemento.attr('labNombre');
-        const avatar = elemento.attr('labAvatar');
         const swalWithBootstrapButtons = Swal.mixin({
             customClass: {
                 confirmButton: 'btn btn-success',
@@ -120,9 +70,7 @@ $(document).ready(function() {
         swalWithBootstrapButtons.fire({
             title: '¿Estás seguro de que deseas eliminar ' + nombre + '?',
             text: '¡No podrás revertir esto!',
-            imageUrl: avatar,
-            imageWidth: 100,
-            imageHeight: 100,
+            icon: 'success',
             showCancelButton: true,
             confirmButtonText: '¡Sí, bórralo!',
             cancelButtonText: '¡No, cancela!',

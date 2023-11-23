@@ -29,6 +29,18 @@ if (isset($_POST['funcion'])) {
             $id = $_POST['id'];
             $presentacion->borrar_pre($id);
             break;
+        case 'rellenar_presentacion':
+            $presentacion->rellenar_presentacion();
+            $json = array();
+            foreach ($presentacion->objetos as $objeto) {
+                $json[]=array(
+                    'id'=>$objeto->id_presentacion,
+                    'nombre'=>$objeto->nombre
+                );
+            }
+            $jsonstring=json_encode($json);
+            echo $jsonstring;
+            break;
     }
 }
 ?>
