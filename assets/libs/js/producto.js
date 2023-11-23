@@ -109,10 +109,10 @@ $(document).ready(function() {
                 </div>
                 <div class="card-footer" bis_skin_checked="1">
                 <div class="text-right" bis_skin_checked="1">
-                <button class="imagen btn btn-sm bg-teal" title="Editar Imagen" type="button" data-toggle="modal" data-target="#fotoproducts"><i class="fas fa-image"></i></button>
-                <button class="editar btn btn-sm btn-success" title="Editar Producto" type="button" data-toggle="modal" data-target="#crearproducto"><i class="fas fa-pencil-alt mr-1"></i></button>
+                <button class="imagen btn btn-sm bg-teal" title="Editar Imagen" type="button" data-toggle="modal" data-target="#"><i class="fas fa-image"></i></button>
+                <button class="editar btn btn-sm btn-success" title="Editar Producto" type="button" data-toggle="modal" data-target="#"><i class="fas fa-pencil-alt mr-1"></i></button>
                 <button class="lote btn btn-sm btn-primary" title="Agregar Lote" type="button" data-toggle="modal" data-target="#"><i class="fas fa-plus-square"></i></button>
-                <button class="borrar_produts btn btn-sm btn-danger" title="Eliminar Producto" type="button" data-toggle="modal" data-target="#remove-products"><i class="fas fa-trash-alt mr-1"></i></button>
+                <button class="borrar_produts btn btn-sm btn-danger" title="Eliminar Producto" type="button" data-toggle="modal" data-target="#"><i class="fas fa-trash-alt mr-1"></i></button>
                 </div>
                 </div>
             </div>
@@ -130,15 +130,17 @@ $(document).ready(function() {
         }
     });
     $(document).on('click', '.imagen', function() {
-        const producto = $(this).closest('.col-12');
-        const id = producto.attr('proId');
-        const avatar = producto.attr('avaNombre');
-        const nombre = producto.attr('proNombre');
-        $('#funcion').val(funcion);
-        $('#id_logo_products').val(id);
-        $('#avatar').val(avatar);
-        $('#fotoproducts1').attr('src',avatar);
-        $('#nombre_logo').html(nombre);
+         // Muestra SweetAlert2 para la edición de imagen
+    mostrarSweetAlert('Editar Imagen', 'Esta función está en mantenimiento.');
+        // const producto = $(this).closest('.col-12');
+        // const id = producto.attr('proId');
+        // const avatar = producto.attr('avaNombre');
+        // const nombre = producto.attr('proNombre');
+        // $('#funcion').val(funcion);
+        // $('#id_logo_products').val(id);
+        // $('#avatar').val(avatar);
+        // $('#fotoproducts1').attr('src',avatar);
+        // $('#nombre_logo').html(nombre);
     });
     $('#form-foto').submit((e) => {
         let formData = new FormData($('#form-foto')[0]);
@@ -178,26 +180,49 @@ $(document).ready(function() {
         e.preventDefault();
     });
     $(document).on('click', '.editar', function() {
-        // Lógica para el evento de clic en el botón de editar
-        // ...
+        // Muestra SweetAlert2 para la edición
+        mostrarSweetAlert('Editar Producto', 'Esta función está en mantenimiento.');
+      });
 
-        // Ejemplo: abrir el modal de edición
-        $('#crearproducto').modal('show');
-    });
+      $(document).on('click', '.lote', function() {
+        // Muestra SweetAlert2 para agregar lote
+        mostrarSweetAlert('Agregar Lote', 'Esta función está en mantenimiento.');
+      });
 
-    $(document).on('click', '.lote', function() {
-        // Lógica para el evento de clic en el botón de agregar lote
-        // ...
+      $(document).on('click', '.borrar_produts', function() {
+        // Muestra SweetAlert2 para eliminar producto
+        mostrarSweetAlert('Eliminar Producto', 'Esta función está en mantenimiento.');
+      });
 
-        // Ejemplo: abrir el modal de agregar lote
-        // $('#modalAgregarLote').modal('show');
-    });
+      function mostrarSweetAlert(titulo, mensaje) {
+        // Muestra el SweetAlert2 con el mensaje de mantenimiento
+        Swal.fire({
+          icon: 'info',
+          title: titulo,
+          text: mensaje,
+        });
+      }
+    // $(document).on('click', '.editar', function() {
+    //     // Lógica para el evento de clic en el botón de editar
+    //     // ...
 
-    $(document).on('click', '.borrar_produts', function() {
-        // Lógica para el evento de clic en el botón de eliminar producto
-        // ...
+    //     // Ejemplo: abrir el modal de edición
+    //     $('#crearproducto').modal('show');
+    // });
 
-        // Ejemplo: abrir el modal de confirmación de eliminación
-        // $('#remove-products').modal('show');
-    });
+    // $(document).on('click', '.lote', function() {
+    //     // Lógica para el evento de clic en el botón de agregar lote
+    //     // ...
+
+    //     // Ejemplo: abrir el modal de agregar lote
+    //     // $('#modalAgregarLote').modal('show');
+    // });
+
+    // $(document).on('click', '.borrar_produts', function() {
+    //     // Lógica para el evento de clic en el botón de eliminar producto
+    //     // ...
+
+    //     // Ejemplo: abrir el modal de confirmación de eliminación
+    //     // $('#remove-products').modal('show');
+    // });
 });
