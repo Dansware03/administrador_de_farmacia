@@ -1,7 +1,5 @@
 <!-- Tell the browser to be responsive to screen width -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- SELECT2  -->
-<link rel="stylesheet" href="../libs/css/select2.css">
 <!-- Font Awesome -->
 <link rel="stylesheet" href="../libs/css/css/all.min.css">
 <!-- Ionicons -->
@@ -10,8 +8,6 @@
 <link rel="stylesheet" href="../libs/css/adminlte.min.css">
 <!-- Google Font: Source Sans Pro -->
 <link rel="stylesheet" type="text/css" href="../libs/css/source-sans-release/source-sans-3.css">
-<!-- SweetAlert2  -->
-<link rel="stylesheet" href="../libs/css/sweetalert2.css">
 </head>
 <body class="hold-transition sidebar-mini">
 <!-- Site wrapper -->
@@ -23,12 +19,12 @@
     <li class="nav-item">
       <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
     </li>
-    <!-- <li class="nav-item d-none d-sm-inline-block">
+    <li class="nav-item d-none d-sm-inline-block">
       <a href="#" class="nav-link">Home</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
       <a href="#" class="nav-link">Contact</a>
-    </li> -->
+    </li>
   </ul>
   <!-- Right navbar links -->
   <ul class="navbar-nav ml-auto">
@@ -79,46 +75,12 @@
             </p>
           </a>
         </li>
-        <li class="nav-header">Retiros/Ventas</li>
+        <li class="nav-header">EXAMPLES</li>
         <li class="nav-item">
-          <a href="#" class="update nav-link">
-            <i class="nav-icon fas fa-pills"></i>
+          <a href="#" class="nav-link">
+            <i class="nav-icon far fa-image"></i>
             <p>
-              Lista de Retiros/Ventas
-            </p>
-          </a>
-        </li>
-        <li class="nav-header">Deposito de Farmacia</li>
-        <li class="nav-item">
-          <a href="adm_productos.php" class="nav-link">
-            <i class="nav-icon fas fa-pills"></i>
-            <p>
-              Gestión de Productos
-            </p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="adm_atributos.php" class="nav-link">
-            <i class="nav-icon fas fa-vials"></i>
-            <p>
-              Gestión de Atributos
-            </p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="#" class="update nav-link">
-            <i class="nav-icon fas fa-vials"></i>
-            <p>
-              Gestión de lotes
-            </p>
-          </a>
-        </li>
-        <li class="nav-header">Almacen/Compras</li>
-        <li class="nav-item">
-          <a href="#" class="update nav-link">
-            <i class="nav-icon fas fa-pills"></i>
-            <p>
-              Gestión de Proveedores
+              Gallery
             </p>
           </a>
         </li>

@@ -1,4 +1,4 @@
-<?php session_start(); if ($_SESSION['us_tipo']==1||$_SESSION['us_tipo']==3) { include_once 'layouts/header.php'; ?>
+<?php session_start(); if ($_SESSION['us_tipo']==1) { include_once 'layouts/header.php'; ?>
 <title><?php echo $_SESSION['nombre_us']; ?> | Farmacia</title>
 <?php include_once 'layouts/nav.php'; ?>
   <!-- Content Wrapper. Contains page content -->
@@ -12,7 +12,7 @@
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="adm_catalogo.php">INICIO</a></li>
+              <li class="breadcrumb-item"><a href="#">INICIO</a></li>
               <li class="breadcrumb-item active">TITULO DEL CONTENIDO</li>
             </ol>
           </div>
