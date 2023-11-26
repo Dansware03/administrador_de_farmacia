@@ -32,7 +32,7 @@ $(document).ready(function() {
                     $('#crear-laboratorio').modal('hide');
                 });
             }
-            edit = false;
+            edit == false;
         });
     });
     function buscar_lab(consulta) {
@@ -96,7 +96,7 @@ $(document).ready(function() {
             } else if (result.dismiss === Swal.DismissReason.cancel) {
                 swalWithBootstrapButtons.fire(
                     'Cancelado',
-                    'Tu Laboratorio ' + nombre + ' imaginario está a salvo :)',
+                    'Tu Laboratorio ' + nombre + ' está a salvo :)',
                     'error'
                 );
             }

@@ -40,14 +40,21 @@ class presentacion {
         }
     }
     function borrar_pre($id) {
-        $sql = "DELETE FROM presentacion WHERE id_presentacion = :id";
-        $query = $this->acceso->prepare($sql);
-        $query->execute(array(':id'=>$id));
-        if (!empty($query->execute(array(':id'=>$id)))) {
-            echo 'borrado';
-        }
-        else {
-            echo 'no-borrado';
+        $verificar_sql = "SELECT COUNT(*) as count FROM producto WHERE prod_present = :id";
+        $verificar_query = $this->acceso->prepare($verificar_sql);
+        $verificar_query->execute(array(':id' => $id));
+        $count = $verificar_query->fetch(PDO::FETCH_ASSOC)['count'];
+        if ($count > 0) {
+            echo "No se puede eliminar la presentación. Está siendo utilizada por al menos un producto.";
+        } else {
+            $sql = "DELETE FROM presentacion WHERE id_presentacion = :id";
+            $query = $this->acceso->prepare($sql);
+            $query->execute(array(':id' => $id));
+            if ($query->rowCount() > 0) {
+                echo 'Presentación borrada exitosamente.';
+            } else {
+                echo 'Error al intentar borrar la presentación.';
+            }
         }
     }
     function editar($nombre, $id_editado) {

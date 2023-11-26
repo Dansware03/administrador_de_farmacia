@@ -40,14 +40,21 @@ class tipo_producto {
         }
     }
     function borrar_type($id) {
-        $sql = "DELETE FROM tipo_producto WHERE id_tip_prod = :id";
-        $query = $this->acceso->prepare($sql);
-        $query->execute(array(':id'=>$id));
-        if (!empty($query->execute(array(':id'=>$id)))) {
-            echo 'borrado';
-        }
-        else {
-            echo 'no-borrado';
+        $verificar_sql = "SELECT COUNT(*) as count FROM producto WHERE prod_tip_prod = :id";
+        $verificar_query = $this->acceso->prepare($verificar_sql);
+        $verificar_query->execute(array(':id' => $id));
+        $count = $verificar_query->fetch(PDO::FETCH_ASSOC)['count'];
+        if ($count > 0) {
+            echo "No se puede eliminar el tipo de producto. Está siendo utilizado por al menos un producto.";
+        } else {
+            $sql = "DELETE FROM tipo_producto WHERE id_tip_prod = :id";
+            $query = $this->acceso->prepare($sql);
+            $query->execute(array(':id' => $id));
+            if ($query->rowCount() > 0) {
+                echo 'Tipo de producto borrado exitosamente.';
+            } else {
+                echo 'Error al intentar borrar el tipo de producto.';
+            }
         }
     }
     function editar($nombre, $id_editado) {

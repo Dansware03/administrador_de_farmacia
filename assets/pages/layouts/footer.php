@@ -15,29 +15,6 @@
     reserved.
   </footer>
 </div> -->
-<script>
-  // Espera a que el documento esté listo
-  document.addEventListener('DOMContentLoaded', function () {
-    // Obtiene todos los enlaces con la clase 'nav-link'
-    var navLinks = document.querySelectorAll('.update');
-
-    // Agrega un listener al evento de clic en cada enlace
-    navLinks.forEach(function (link) {
-      link.addEventListener('click', function (event) {
-        // Previene el comportamiento predeterminado del enlace
-        event.preventDefault();
-
-        // Muestra el SweetAlert2 con el mensaje de mantenimiento
-        Swal.fire({
-          icon: 'info',
-          title: 'En mantenimiento',
-          text: 'Disculpe las molestias, esta función está en mantenimiento.',
-        });
-      });
-    });
-  });
-</script>
-
 <!-- ./wrapper -->
 <!-- jQuery -->
 <script src="../libs/js/jquery/jquery.min.js"></script>
@@ -58,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const logoutButton = document.querySelector('a.btn.btn-danger[href="../controller/Logout.php"]');
   if (logoutButton) {
     logoutButton.addEventListener('click', function(event) {
-      event.preventDefault(); // Prevenir el comportamiento predeterminado del enlace
+      event.preventDefault();
       const Toast = Swal.mixin({
         toast: true,
         position: "top-end",
@@ -74,12 +51,22 @@ document.addEventListener('DOMContentLoaded', function() {
         icon: "success",
         title: "Se ha cerrado la sesión"
       });
-      // Redireccionar a la página de cierre de sesión después de mostrar la notificación
       setTimeout(function() {
         window.location.href = logoutButton.href;
-      }, 1500); // Cambia el tiempo de redirección según tus necesidades
+      }, 1500);
     });
   }
+  var navLinks = document.querySelectorAll('.update');
+    navLinks.forEach(function (link) {
+      link.addEventListener('click', function (event) {
+        event.preventDefault();
+        Swal.fire({
+          icon: 'info',
+          title: 'En mantenimiento',
+          text: 'Disculpe las molestias, esta función está en mantenimiento.',
+        });
+      });
+    });
 });
 </script>
 </body>

@@ -88,11 +88,8 @@ $(document).ready(function() {
     $(document).on('keyup','#buscar',function(){
         let valor = $(this).val();
         if (valor!==""){
-
             buscar_datos(valor);
-
         } else {
-
           buscar_datos();
         }
     });

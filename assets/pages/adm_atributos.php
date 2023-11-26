@@ -1,5 +1,5 @@
 <?php session_start(); if ($_SESSION['us_tipo']==1||$_SESSION['us_tipo']==3) { include_once 'layouts/header.php'; ?>
-<title><?php echo $_SESSION['nombre_us']; ?> | Atributos</title>
+<title><?php echo $_SESSION['nombre_us']; ?> | Gestión de Atributos</title>
 <?php include_once 'layouts/nav.php'; ?>
 <!-- Modal Laboratorio-->
 <div class="modal fade" id="crear-laboratorio" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

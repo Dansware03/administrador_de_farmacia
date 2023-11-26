@@ -113,12 +113,12 @@
             </p>
           </a>
         </li>
-        <li class="nav-header">Almacen/Compras</li>
+        <li class="nav-header">Entregas/Compras</li>
         <li class="nav-item">
-          <a href="#" class="update nav-link">
-            <i class="nav-icon fas fa-pills"></i>
+          <a href="adm_proveedor.php" class="nav-link">
+            <i class="nav-icon fas fa-truck"></i>
             <p>
-              Gestión de Proveedores
+              Gestión de Proveedor
             </p>
           </a>
         </li>

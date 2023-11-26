@@ -41,14 +41,21 @@ class laboratorio {
         }
     }
     function borrar_lab($id) {
-        $sql = "DELETE FROM laboratorio where id_laboratorio=:id";
-        $query = $this->acceso->prepare($sql);
-        $query->execute(array(':id'=>$id));
-        if (!empty($query->execute(array(':id'=>$id)))) {
-            echo 'borrado';
-        }
-        else {
-            echo 'no-borrado';
+        $verificar_sql = "SELECT COUNT(*) as count FROM producto WHERE prod_lab = :id";
+        $verificar_query = $this->acceso->prepare($verificar_sql);
+        $verificar_query->execute(array(':id' => $id));
+        $count = $verificar_query->fetch(PDO::FETCH_ASSOC)['count'];
+        if ($count > 0) {
+            echo "No se puede eliminar el laboratorio. Está siendo utilizado por al menos un producto.";
+        } else {
+            $sql = "DELETE FROM laboratorio WHERE id_laboratorio = :id";
+            $query = $this->acceso->prepare($sql);
+            $query->execute(array(':id' => $id));
+            if ($query->rowCount() > 0) {
+                echo 'borrado';
+            } else {
+                echo 'no-borrado';
+            }
         }
     }
     function editar($nombre,$id_editado) {
