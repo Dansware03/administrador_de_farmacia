@@ -1,40 +1,52 @@
 $(document).ready(function() {
     buscar_type();
     var edit=false;
-    $('#form-crear-tipo').submit(e => {
+    $('#form-crear-tipo').submit(function (e) {
         e.preventDefault();
         let nombre_type = $('#nombre-tipo').val();
         let id_editado = $('#id_editar_type').val();
-        let funcion = edit ? 'editar' : 'crear';
-        $.post('../controller/TypeController.php', { nombre_type, id_editado, funcion }, (Response) => {
+        let funcion = id_editado ? 'editar' : 'crear'; // Utilizar id_editado para determinar si es edición o creació
+        $.post('../controller/TypeController.php', { nombre_type, id_editado, funcion })
+        .done(function (Response) {
             $('#form-crear-tipo').trigger('reset');
             buscar_type();
             if (Response === 'add' || Response === 'edit') {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'success',
-                    title: Response === 'add' ? 'Tipo Creado con Éxito' : 'Cambio Realizado con Éxito',
-                    showConfirmButton: false,
-                    timer: 1000
-                }).then(() => {
-                    Swal.close();
-                    $('#crear-tipo').modal('hide');
-                });
+                mostrarMensajeExitoso(Response === 'add' ? 'Tipo Creado con Éxito' : 'Cambio Realizado con Éxito', '#crear-tipo');
             } else {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    title: 'Error al Realizar',
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    Swal.close();
-                    $('#crear-tipo').modal('hide');
-                });
+                mostrarMensajeError('Error al Realizar', '#crear-tipo');
             }
+        })
+        .fail(function () {
+            mostrarMensajeError('Error al Realizar', '#crear-tipo');
+        })
+        .always(function () {
             edit = false;
         });
     });
+    function mostrarMensajeExitoso(mensaje, modal) {
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: mensaje,
+          showConfirmButton: false,
+          timer: 1000
+        }).then(function () {
+          Swal.close();
+          $(modal).modal('hide');
+        });
+      }
+      function mostrarMensajeError(mensaje, modal) {
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          title: mensaje,
+          showConfirmButton: false,
+          timer: 1500
+        }).then(function () {
+          Swal.close();
+          $(modal).modal('hide');
+        });
+      }
     function buscar_type(consulta) {
         $.post('../controller/TypeController.php', { consulta, funcion: 'buscar' }, (Response) => {
             const types = JSON.parse(Response);types
@@ -57,9 +69,9 @@ $(document).ready(function() {
     });
     $(document).on('click', '.borrar_type', function (e) {
         const funcion = "borrar_type";
-        const elemento = $(this).closest('tr');
-        const id = elemento.attr('typId');
-        const nombre = elemento.attr('typNombre');
+        const elemento = $(this).parent().parent();
+        const id = $(elemento).attr('typId');
+        const nombre = $(elemento).attr('typNombre');
         const swalWithBootstrapButtons = Swal.mixin({
             customClass: {
                 confirmButton: 'btn btn-success',

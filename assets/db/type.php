@@ -11,14 +11,12 @@ class tipo_producto {
         $sql = "SELECT id_tip_prod FROM tipo_producto WHERE nombre = :nombre";
         $query = $this->acceso->prepare($sql);
         $query->execute(array(':nombre' => $nombre));
-        $this->objetos = $query->fetchAll();
-        if (!empty($this->objetos)) {
+        if ($query->rowCount() > 0) {
             echo 'no add';
         } else {
             $sql = "INSERT INTO tipo_producto (nombre) VALUES (:nombre)";
             $query = $this->acceso->prepare($sql);
             if ($query->execute(array(':nombre' => $nombre))) {
-                $this->objetos = $query->fetchAll();
                 echo 'add';
             }
         }
@@ -51,9 +49,9 @@ class tipo_producto {
             $query = $this->acceso->prepare($sql);
             $query->execute(array(':id' => $id));
             if ($query->rowCount() > 0) {
-                echo 'Tipo de producto borrado exitosamente.';
+                echo 'borrado';
             } else {
-                echo 'Error al intentar borrar el tipo de producto.';
+                echo 'no-borrado';
             }
         }
     }

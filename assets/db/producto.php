@@ -130,26 +130,31 @@ class Producto {
         }
     }
     function borrar_produts($id){
-        $sql = "SELECT avatar FROM producto WHERE id_producto = :id";
-        $query = $this->acceso->prepare($sql);
-        $query->execute(array(':id' => $id));
-        $result = $query->fetch(PDO::FETCH_ASSOC);
-        if ($result) {
-            $avatarNombre = $result['avatar'];
-            if ($avatarNombre !== 'ProductDefault.png') {
-                $rutaAvatar = "../libs/img/product/" . $avatarNombre;
-                if (file_exists($rutaAvatar)) {
-                    unlink($rutaAvatar);
+        try {
+            $sql = "SELECT avatar FROM producto WHERE id_producto = :id";
+            $query = $this->acceso->prepare($sql);
+            $query->execute(array(':id' => $id));
+            $result = $query->fetch(PDO::FETCH_ASSOC);
+            if ($result && isset($result['avatar'])) {
+                $avatarNombre = $result['avatar'];
+                if ($avatarNombre !== 'ProductDefault.png') {
+                    $rutaAvatar = "../libs/img/product/" . $avatarNombre;
+                    if (file_exists($rutaAvatar)) {
+                        unlink($rutaAvatar);
+                    }
                 }
             }
-        }
-        $sql = "DELETE FROM producto WHERE id_producto = :id";
-        $query = $this->acceso->prepare($sql);
-        $query->execute(array(':id' => $id));
-        if ($query->rowCount() > 0) {
-            echo 'borrado';
-        } else {
-            echo 'no-borrado';
+            $sql = "DELETE FROM producto WHERE id_producto = :id";
+            $query = $this->acceso->prepare($sql);
+            $query->execute(array(':id' => $id));
+            if ($query->rowCount() > 0) {
+                echo 'borrado';
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'No se pudo eliminar el producto.']);
+            }
+        } catch (PDOException $e) {
+            echo json_encode(['status' => 'error', 'message' => 'Error en el servidor.']);
+            // Puedes agregar un mensaje de error o log aquí
         }
     }
 };

@@ -490,7 +490,7 @@ $(document).ready(function() {
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                $.post('../controller/ProductoController.php', { id, funcion }, (Response) => {
+                $.post('../controller/ProductoController.php', { id, funcion, avatar }, (Response) => {
                     if (Response === 'borrado') {
                         swalWithBootstrapButtons.fire(
                             'Eliminado',

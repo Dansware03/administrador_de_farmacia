@@ -13,7 +13,8 @@
                 <div class="from-group">
                     <label for="nombre">Nombre</label>
                     <input id="nombre" type="text" class="form-control" placeholder="Ingrese su Nombre" required>
-                </div>
+                    <input type="hidden" id="id_editar_prov">
+                  </div>
                 <div class="from-group">
                     <label for="telefono">Telefono</label>
                     <input id="telefono" type="text" class="form-control" placeholder="Ingrese su Telefono" required>
@@ -34,6 +35,39 @@
     </div>
   </div>
 </div>
+<!-- Modal Avatar-->
+<div class="modal fade" id="cambioavatar" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Cambiar Imagen</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center">
+            <img id="logoactual1" src="../libs/img/proveedors/ProveedorDefault.png" class="profile-user-img img-fluid img-circle">
+            </div>
+            <div class="text-center">
+            <b id="nombre_logo"></b>
+            </div>
+            <form id="form-logo" enctype="multipart/form-data">
+                <div class="input-group mb-3 ml-5 mt-2">
+                    <input type="file" id="foto" name="foto" class="form-control-file">
+                    <input type="hidden" name="funcion" id="funcion">
+                    <input type="hidden" name="id_logo_prod" id="id_logo_prod">
+                    <input type="hidden" name="avatar" id="avatar">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cerrar</button>
+                  <button type="submit" class="btn bg-gradient-primary">Guardar</button>
+                </div>
+            </form>
+      </div>
+    </div>
+  </div>
+</div>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -41,8 +75,8 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Gestión de Proveedor<button  id="button_crear" type="button" data-toggle="modal" data-target="#newproveedor" class="btn bg-gradient-primary ml-2">Crear Proveedor</button></h1>
-            <input type="hidden" id="tipo_usuario" value="<?php echo $_SESSION['us_tipo']?>">
+            <h1>Gestión de Proveedor<button  id="button_crear" type="button" data-toggle="modal" data-target="#newproveedor" class="crearprov btn bg-gradient-primary ml-2">Crear Proveedor</button></h1>
+            <input type="hidden" id="proveedor" value="<?php echo $_SESSION['us_tipo']?>">
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -60,12 +94,12 @@
                 <div class="card-header">
                     <h3 class="card-title">Buscar Proveedor</h3>
                     <div class="input-group">
-                        <input type="text" id="buscar" class="form-control float-left" placeholder="Ingrese Nombre de Usuario">
+                        <input type="text" id="buscar_proveedor" class="form-control float-left" placeholder="Ingrese Nombre de Proveedor">
                         <div class="input-group-append"><button class="btn btn-default"><i class="fas fa-search"></i></button></div>
                     </div>
                 </div>
                 <div class="card-body"></div>
-                <div id="usuarios" class="row d-flex align-items-stretch">
+                <div id="proveedores" class="row d-flex align-items-stretch">
 
                 </div>
 

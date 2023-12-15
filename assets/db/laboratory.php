@@ -8,22 +8,30 @@ class laboratorio {
         $this->acceso = $db->pdo;
     }
     function crear($nombre) {
-        $sql = "SELECT id_laboratorio FROM laboratorio WHERE nombre = :nombre";
-        $query = $this->acceso->prepare($sql);
-        $query->execute(array(':nombre' => $nombre));
-        $this->objetos = $query->fetchAll();
-        if (!empty($this->objetos)) {
-            echo 'no add';
-        }else {
+        // Verificar si existe otro laboratorio con el mismo nombre
+        $sql_verificar = "SELECT id_laboratorio FROM laboratorio WHERE nombre = :nombre";
+        $query_verificar = $this->acceso->prepare($sql_verificar);
+        $query_verificar->execute(array(':nombre' => $nombre));
+        $objetos_verificar = $query_verificar->fetchAll();
+    
+        if (!empty($objetos_verificar)) {
+            // Ya existe otro laboratorio con el mismo nombre
+            echo json_encode(['status' => 'error', 'message' => 'Ya existe otro laboratorio con el mismo nombre']);
+        } else {
+            // Crear el laboratorio
             $sql = "INSERT INTO laboratorio (nombre) VALUES (:nombre)";
             $query = $this->acceso->prepare($sql);
-            if ($query->execute(array(
-                ':nombre' => $nombre
-            )));
-            $this->objetos=$query->fetchAll();
-            echo 'add';
+    
+            if ($query->execute(array(':nombre' => $nombre))) {
+                // Laboratorio creado con éxito
+                echo json_encode(['status' => 'success', 'message' => 'Laboratorio creado con éxito']);
+            } else {
+                // Error al crear el laboratorio
+                echo json_encode(['status' => 'error', 'message' => 'Error al crear el laboratorio']);
+            }
         }
     }
+    
     function buscar(){
         if (!empty($_POST['consulta'])) {
             $consulta=$_POST['consulta'];
@@ -58,12 +66,31 @@ class laboratorio {
             }
         }
     }
-    function editar($nombre,$id_editado) {
-        $sql = "UPDATE laboratorio SET nombre=:nombre WHERE id_laboratorio=:id";
-        $query = $this->acceso->prepare($sql);
-        $query->execute(array(':id'=>$id_editado,':nombre'=>$nombre));
-        echo 'edit';
+    function editar($nombre, $id_editado) {
+        // Verificar si existe otro laboratorio con el mismo nombre
+        $sql_verificar = "SELECT id_laboratorio FROM laboratorio WHERE nombre = :nombre AND id_laboratorio != :id";
+        $query_verificar = $this->acceso->prepare($sql_verificar);
+        $query_verificar->execute(array(':nombre' => $nombre, ':id' => $id_editado));
+        $objetos_verificar = $query_verificar->fetchAll();
+    
+        if (!empty($objetos_verificar)) {
+            // Ya existe otro laboratorio con el mismo nombre
+            echo json_encode(['status' => 'error', 'message' => 'Ya existe otro laboratorio con el mismo nombre']);
+        } else {
+            // Actualizar el laboratorio
+            $sql_actualizar = "UPDATE laboratorio SET nombre = :nombre WHERE id_laboratorio = :id";
+            $query_actualizar = $this->acceso->prepare($sql_actualizar);
+    
+            if ($query_actualizar->execute(array(':id' => $id_editado, ':nombre' => $nombre))) {
+                // Laboratorio editado con éxito
+                echo json_encode(['status' => 'success', 'message' => 'Laboratorio editado con éxito']);
+            } else {
+                // Error al editar el laboratorio
+                echo json_encode(['status' => 'error', 'message' => 'Error al editar el laboratorio']);
+            }
+        }
     }
+    
     function rellenar_laboratorio() {
         $sql = "SELECT * FROM laboratorio ORDER BY nombre asc";
         $query = $this->acceso->prepare($sql);

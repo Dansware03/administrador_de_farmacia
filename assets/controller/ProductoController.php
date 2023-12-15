@@ -32,7 +32,7 @@ if (isset($_POST['funcion'])) {
                     $ruta = '../libs/img/product/' . $nombre;
                     move_uploaded_file($_FILES['foto']['tmp_name'], $ruta);
                     $producto->cambiar_avatar($id, $nombre);
-                    if ($avatar != 'ProductDefault.png' && file_exists($avatar)) {
+                    if ($avatar != 'ProductDefault.png' && $avatar != '../libs/img/product/ProductDefault.png' && file_exists($avatar)) {
                         unlink($avatar);
                     }
                     $json = array();
@@ -90,7 +90,7 @@ if (isset($_POST['funcion'])) {
             }
         break;
         case 'borrar_produts':
-            $id=$_POST['id'];
+            $id = $_POST['id'];
             $producto->borrar_produts($id);
         break;
     }

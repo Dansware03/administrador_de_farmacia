@@ -31,7 +31,7 @@
             <div class="card-header"><h3 class="card-title">Tipo</h3><button data-dismiss="modal" aria-label="close" class="close"><span aria-hidden="true">&times;</span></button></div>
         </div>
         <div class="card-body">
-            <form id="form-crear-tipo">
+              <form id="form-crear-tipo" class="needs-validation" novalidate>
                 <div class="from-group">
                     <label for="nombre-tipo">Nombre</label>
                     <input id="nombre-tipo" type="text" class="form-control" placeholder="Ingrese Nombre de tipo" required>
@@ -53,7 +53,7 @@
             <div class="card-header"><h3 class="card-title">Presentación</h3><button data-dismiss="modal" aria-label="close" class="close"><span aria-hidden="true">&times;</span></button></div>
         </div>
         <div class="card-body">
-            <form id="form-crear-presentacion">
+              <form id="form-crear-presentacion" class="needs-validation" novalidate>
                 <div class="from-group">
                     <label for="nombre-presentacion">Nombre</label>
                     <input id="nombre-presentacion" type="text" class="form-control" placeholder="Ingrese Nombre de Presentación" required>
@@ -68,7 +68,7 @@
   </div>
 </div>
   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
+<div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <div class="container-fluid">
@@ -183,7 +183,7 @@
     </div>
     </section>
     <!-- /.content -->
-  </div>
+</div>
   <!-- /.content-wrapper -->
 <?php include_once 'layouts/footer.php'; } else { header('Location: ../../index.php'); } ?>
 <script src="../libs/js/laboratory.js"></script>

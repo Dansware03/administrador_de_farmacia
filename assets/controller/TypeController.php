@@ -8,7 +8,7 @@ if (isset($_POST['funcion'])) {
             $nombre = $_POST['nombre_type'];
             $tipo_producto->crear($nombre);
             break;
-        case 'editar':
+        case 'editar_type':
             $nombre = $_POST['nombre_type'];
             $id_editado = $_POST['id_editado'];
             $tipo_producto->editar($nombre, $id_editado);

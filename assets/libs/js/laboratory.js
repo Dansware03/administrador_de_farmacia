@@ -6,33 +6,39 @@ $(document).ready(function() {
         let nombre_laboratory = $('#nombre-laboratorio').val();
         let id_editado = $('#id_editar_lab').val();
         let funcion = edit ? 'editar' : 'crear';
-        $.post('../controller/LaboratoryController.php', { nombre_laboratory, id_editado, funcion }, (Response) => {
+        $.post('../controller/LaboratoryController.php', { nombre_laboratory, id_editado, funcion }, (response) => {
             $('#form-crear-laboratorio').trigger('reset');
             buscar_lab();
-            if (Response === 'add' || Response === 'edit') {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'success',
-                    title: Response === 'add' ? 'Laboratorio Creado con Éxito' : 'Cambio Realizado con Éxito',
-                    showConfirmButton: false,
-                    timer: 1000
-                }).then(() => {
-                    Swal.close();
-                    $('#crear-laboratorio').modal('hide');
-                });
-            } else {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    title: 'Error al Realizar',
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    Swal.close();
-                    $('#crear-laboratorio').modal('hide');
-                });
+            try {
+                const result = JSON.parse(response);
+                if (result.status === 'success') {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: result.message,
+                        showConfirmButton: false,
+                        timer: 1000
+                    }).then(() => {
+                        Swal.close();
+                        $('#crear-laboratorio').modal('hide');
+                    });
+                } else if (result.status === 'error') {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        title: result.message,
+                        showConfirmButton: false,
+                        timer: 1000
+                    }).then(() => {
+                        $('#crear-laboratorio').modal('hide');
+                        if (result.message === 'Ya existe otro laboratorio con el mismo nombre' && edit) {
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error al analizar la respuesta JSON', error);
             }
-            edit == false;
+            edit = false;
         });
     });
     function buscar_lab(consulta) {

@@ -73,7 +73,6 @@
                 </div>
                 <div class="card-footer">
                     <button type="submit" class="btn bg-gradient-primary float-right">Crear Usuario</button>
-                    <!-- <button type="" class="btn btn-outline-secondary float-right">Cancelar</button> -->
                 </div>
             </form>
     </div>

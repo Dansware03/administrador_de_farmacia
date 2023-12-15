@@ -11,14 +11,12 @@ class presentacion {
         $sql = "SELECT id_presentacion FROM presentacion WHERE nombre = :nombre";
         $query = $this->acceso->prepare($sql);
         $query->execute(array(':nombre' => $nombre));
-        $this->objetos = $query->fetchAll();
-        if (!empty($this->objetos)) {
+        if ($query->rowCount() > 0) {
             echo 'no add';
         } else {
             $sql = "INSERT INTO presentacion (nombre) VALUES (:nombre)";
             $query = $this->acceso->prepare($sql);
             if ($query->execute(array(':nombre' => $nombre))) {
-                $this->objetos = $query->fetchAll();
                 echo 'add';
             }
         }
@@ -42,18 +40,22 @@ class presentacion {
     function borrar_pre($id) {
         $verificar_sql = "SELECT COUNT(*) as count FROM producto WHERE prod_present = :id";
         $verificar_query = $this->acceso->prepare($verificar_sql);
-        $verificar_query->execute(array(':id' => $id));
+        // Asegúrate de que estás usando el tipo de dato correcto para $id
+        $verificar_query->bindValue(':id', $id, PDO::PARAM_INT);
+        $verificar_query->execute();
         $count = $verificar_query->fetch(PDO::FETCH_ASSOC)['count'];
         if ($count > 0) {
             echo "No se puede eliminar la presentación. Está siendo utilizada por al menos un producto.";
         } else {
             $sql = "DELETE FROM presentacion WHERE id_presentacion = :id";
             $query = $this->acceso->prepare($sql);
-            $query->execute(array(':id' => $id));
+            // Asegúrate de que estás usando el tipo de dato correcto para $id
+            $query->bindValue(':id', $id, PDO::PARAM_INT);
+            $query->execute();
             if ($query->rowCount() > 0) {
-                echo 'Presentación borrada exitosamente.';
+                echo 'borrado';
             } else {
-                echo 'Error al intentar borrar la presentación.';
+                echo 'no-borrado';
             }
         }
     }
