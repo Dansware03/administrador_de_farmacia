@@ -10,9 +10,22 @@ $(document).ready(function() {
         }
     });
     $('.select2').select2();
+    rellenar_proveedor();
     rellenar_laboratorio();
     rellenar_type();
     rellenar_presentacion();
+    function rellenar_proveedor() {
+        const funcion = "rellenar_proveedor";
+        $.post('../controller/ProveedorController.php', { funcion })
+            .done(function (response) {
+                const proveedores = JSON.parse(response);
+                const opciones = proveedores.map(proveedor => `<option value="${proveedor.id}">${proveedor.nombre}</option>`);
+                $('#proveedor').html(opciones.join(''));
+            })
+            .fail(function (error) {
+                console.error("Error en rellenar_proveedor:", error);
+            });
+    }
     function rellenar_laboratorio() {
         const funcion = "rellenar_laboratorio";
         $.post('../controller/LaboratoryController.php', { funcion })
@@ -59,29 +72,35 @@ $(document).ready(function() {
     }
     inicializarSelect2();
     function crearLaboratorioDesdeSelect2(nombreLaboratorio) {
-    $.post('../controller/LaboratoryController.php', { nombre_laboratory: nombreLaboratorio, funcion: 'crear' }, (response) => {
-        if (response === 'add') {
-            Swal.fire({
-                position: 'center',
-                icon: 'success',
-                title: 'Laboratorio Creado con Éxito',
-                showConfirmButton: false,
-                timer: 1000
-            });
-            rellenar_laboratorio();
-            $('#laboratorio').append(new Option(nombreLaboratorio, nombreLaboratorio, true, true));
-            $('#laboratorio').trigger('change');
-        } else {
-            Swal.fire({
-                position: 'center',
-                icon: 'error',
-                title: 'Error al Crear el Laboratorio',
-                showConfirmButton: false,
-                timer: 1500
-            });
-            rellenar_laboratorio();
-        }
-    });
+        $.post('../controller/LaboratoryController.php', { nombre_laboratory: nombreLaboratorio, funcion: 'crear' }, (response) => {
+            response = JSON.parse(response); // Convierte la cadena JSON a un objeto JavaScript
+            if (response.status === 'success') {
+                // Laboratorio creado con éxito
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Laboratorio Creado con Éxito',
+                    showConfirmButton: false,
+                    timer: 1000
+                });
+                rellenar_laboratorio();
+                $('#laboratorio').append(new Option(nombreLaboratorio, nombreLaboratorio, true, true));
+                $('#laboratorio').trigger('change');
+            } else {
+                // Error al crear el laboratorio
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Error al Crear el Laboratorio',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                rellenar_laboratorio();
+            }
+        })
+        .fail((error) => {
+            console.error("Error en la solicitud AJAX:", error);
+        });
     }
     function rellenar_type() {
         const funcion = "rellenar_type";
@@ -345,7 +364,7 @@ $(document).ready(function() {
                         <div class="text-right">
                             <button class="imagen btn btn-sm bg-teal" title="Editar Imagen" type="button" data-toggle="modal" data-target="#cambiarlogo"><i class="fas fa-image"></i></button>
                             <button class="editar btn btn-sm btn-success" title="Editar Producto" type="button" data-toggle="modal" data-target="#crearproducto"><i class="fas fa-pencil-alt mr-1"></i></button>
-                            <button class="lote btn btn-sm btn-primary" title="Agregar Lote" type="button" data-toggle="modal" data-target="#"><i class="fas fa-plus-square"></i></button>
+                            <button class="lote btn btn-sm btn-primary" title="Agregar Lote" type="button" data-toggle="modal" data-target="#crearlote"><i class="fas fa-plus-square"></i></button>
                             <button class="borrar_produts btn btn-sm btn-danger" title="Eliminar Producto" type="button" data-toggle="modal" data-target="#remove-products"><i class="fas fa-trash-alt mr-1"></i></button>
                         </div>
                     </div>
@@ -463,10 +482,60 @@ $(document).ready(function() {
         $('#presentacion').val(prod_present).trigger('change');
         edit=true;
     });
-    // $(document).on('click', '.lote', function() {
-    //     // Lógica para el evento de clic en el botón de agregar lote
-    //     // ...
-    // });
+    $(document).on('click', '.lote',(e)=>{
+        const elemento= $(this)[0].activeElement.parentElement.parentElement.parentElement.parentElement;
+        const id=$(elemento).attr('proId');
+        const nombre=$(elemento).attr('proNombre');
+        $('#id_lote_prod').val(id);
+        $('#nombre_producto_lote').html(nombre);
+    });
+    $('#form-crear-lote').submit(e => {
+        e.preventDefault();
+        const id_producto = $('#id_lote_prod').val();
+        const proveedor = $('#proveedor').val();
+        const stock = $('#stock').val();
+        const vencimiento = $('#vencimiento').val();
+        funcion = "crear";
+        $.post(
+            '../controller/LoteController.php',
+            { funcion, proveedor, stock, vencimiento, id_producto}
+        ).done(response => {
+            if (response === 'add') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Lote Creado con Éxito',
+                    showConfirmButton: false,
+                    timer: 1000
+                }).then(() => {
+                    Swal.close();
+                    $('#crearlote').modal('hide');
+                    $('#form-crear-lote').trigger('reset');
+                    buscar_product();
+                    edit == false;
+                });
+            }else {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: response,
+                    showConfirmButton: true,
+                    timer: 1500
+                });
+                edit == false;
+            }
+        })
+        .fail(error => {
+            console.error("Error en la solicitud AJAX:", error);
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Error en la solicitud AJAX',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        });
+    });
     $(document).on('click', '.borrar_produts', function (e) {
         const funcion = "borrar_produts";
         const elemento = $(this).closest('.col-12.col-sm-6.col-md-4.d-flex.align-items-stretch');

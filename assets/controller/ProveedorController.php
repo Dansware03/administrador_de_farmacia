@@ -74,6 +74,18 @@ if (isset($_POST['funcion'])) {
             $id=$_POST['id'];
             $proveedor->borrar_prove($id);
         break;
+        case 'rellenar_proveedor':
+            $proveedor->rellenar_proveedor();
+            $json = array();
+            foreach ($proveedor->objetos as $objeto) {
+                $json[]=array(
+                    'id'=>$objeto->id_proveedor,
+                    'nombre'=>$objeto->nombre
+                );
+            }
+            $jsonstring=json_encode($json);
+            echo $jsonstring;
+            break;
     }
 }
 ?>

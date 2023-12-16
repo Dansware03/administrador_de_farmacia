@@ -23,17 +23,33 @@
     <li class="nav-item">
       <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
     </li>
-    <!-- <li class="nav-item d-none d-sm-inline-block">
-      <a href="#" class="nav-link">Home</a>
-    </li>
-    <li class="nav-item d-none d-sm-inline-block">
-      <a href="#" class="nav-link">Contact</a>
-    </li> -->
+    <li id="cat-carrito" style="display: none;" class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fa-solid fa-bag-shopping"></i>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <table class="table table-responsive text-nowrap p-0">
+            <thead class="table-success">
+              <tr>
+                <th>Codigo: </th>
+                <th>Nombre: </th>
+                <th>Concentración: </th>
+                <th>Adicional: </th>
+                <th>Precio: </th>
+                <th>Eliminar</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>.
+          <a class="btn btn-danger btn-block" href="#">Procesar Compra</a>
+          <a class="btn btn-success btn-block" href="#">Vaciar Carrito</a>
+        </div>
+      </li>
   </ul>
   <!-- Right navbar links -->
   <ul class="navbar-nav ml-auto">
     <a class="btn btn-danger" href="../controller/Logout.php" role="button">Cerrar Sesión</a>
-  
 </nav>
 <!-- /.navbar -->
 <!-- Main Sidebar Container -->
@@ -106,8 +122,8 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" class="update nav-link">
-            <i class="nav-icon fas fa-vials"></i>
+          <a href="adm_lote.php" class="nav-link">
+            <i class="nav-icon fas fa-cubes"></i>
             <p>
               Gestión de lotes
             </p>

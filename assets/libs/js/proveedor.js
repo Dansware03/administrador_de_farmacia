@@ -57,16 +57,16 @@ $(document).ready(function () {
           <div proId="${prov.id}" proNombre="${prov.nombre}" conCell="${prov.telefono}" addEmail="${prov.correo}" preDireccion="${prov.direccion}" proAvatar="${prov.avatar}" class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
               <div class="card bg-light">
                   <div class="card-header text-muted border-bottom-0">
-                      <i class="fas fa-lg fa-cubes mr-1"></i>${prov.fecha}
+                      <h1 class="badge badge-success">Proveerdor</h1>
                   </div>
                   <div class="card-body pt-0">
                       <div class="row">
                           <div class="col-7">
-                              <h2 class="lead"><b>${prov.nombre}</b></h2>
-                              <h4 class="lead"><b><i class="fas fa-lg fa-dollar-sign mr-1"></i>${prov.telefono}</b></h4>
+                              <h3 class="lead"><b>${prov.nombre}</b></h3>
                               <ul class="ml-4 mb-0 fa-ul text-muted">
-                                  <li class="small"><span class="fa-li"><i class="fa-solid fa-mortar-pestle mr-1"></i></span>Concentración: ${prov.correo}</li>
-                                  <li class="small"><span class="fa-li"><i class="fa-solid fa-prescription-bottle mr-1"></i></span>Adicional: ${prov.direccion}</li>
+                              <li class="small"><span class="fa-li"><i class="fas fa-lg fa-phone mr-1"></i></span>Telefono: ${prov.telefono}</li>
+                                  <li class="small"><span class="fa-li"><i class="fas fa-lg fa-at mr-1"></i></span>Correo: ${prov.correo}</li>
+                                  <li class="small"><span class="fa-li"><i class="fas fa-lg fa-building mr-1"></i></span>Direccion: ${prov.direccion}</li>
                               </ul>
                           </div>
                           <div class="col-5 text-center">
@@ -78,7 +78,6 @@ $(document).ready(function () {
                       <div class="text-right">
                           <button class="imagen btn btn-sm bg-teal" title="Editar Imagen" type="button" data-toggle="modal" data-target="#cambioavatar"><i class="fas fa-image"></i></button>
                           <button class="editar btn btn-sm btn-success" title="Editar Proveedor" type="button" data-toggle="modal" data-target="#newproveedor"><i class="fas fa-pencil-alt mr-1"></i></button>
-                          <button class="lote btn btn-sm btn-primary" title="Agregar Lote" type="button" data-toggle="modal" data-target="#"><i class="fas fa-plus-square"></i></button>
                           <button class="borrar_prov btn btn-sm btn-danger" title="Eliminar Proveedor" type="button" data-toggle="modal" data-target="#remove-proveedors"><i class="fas fa-trash-alt mr-1"></i></button>
                       </div>
                   </div>
@@ -180,14 +179,6 @@ $(document).ready(function () {
     $('#correo').val(correo);
     $('#direccion').val(direccion);
     edit=true;
-  });
-  $(document).on('click','.lote',(e)=>{
-    const elemento= $(this)[0].activeElement.parentElement.parentElement.parentElement.parentElement;
-    const id=$(elemento).attr('proId');
-    console.log(elemento);
-    // funcion='lote';
-
-    // $('#funcion').val(funcion);
   });
   $(document).on('click','.borrar_prov',(e)=>{
     funcion='borrar_prove';

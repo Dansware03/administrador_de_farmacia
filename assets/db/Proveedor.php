@@ -125,5 +125,12 @@ class Proveedor{
         $query = $this->acceso->prepare($sql);
         $query->execute(array(':id' => $id, ':nombre' => $nombre));
     }
+    function rellenar_proveedor() {
+        $sql = "SELECT * FROM proveedor ORDER BY nombre asc";
+        $query = $this->acceso->prepare($sql);
+        $query->execute();
+        $this->objetos = $query->fetchAll();
+        return $this->objetos;
+    }
 }
 ?>

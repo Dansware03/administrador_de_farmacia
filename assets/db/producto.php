@@ -157,5 +157,12 @@ class Producto {
             // Puedes agregar un mensaje de error o log aquí
         }
     }
+    function obtener_stock($id){
+        $sql="SELECT SUM(stock) as total FROM lote where id_lote_prod=:id";
+        $query = $this->acceso->prepare($sql);
+        $query->execute(array(':id' => $id));
+        $this->objetos = $query->fetchAll();
+        return $this->objetos;
+    }
 };
 ?>

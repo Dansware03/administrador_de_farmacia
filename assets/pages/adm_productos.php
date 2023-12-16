@@ -67,6 +67,40 @@
     </div>
   </div>
 </div>
+<!-- Modal Lote-->
+<div class="modal fade" id="crearlote" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="card card-primary">
+            <div class="card-header"><h3 class="card-title">Lote</h3><button data-dismiss="modal" aria-label="close" class="close"><span aria-hidden="true">&times;</span></button></div>
+        </div>
+        <div class="card-body">
+    <form id="form-crear-lote">
+        <div class="form-group">
+            <label for="nombre_producto_lote">Producto: </label>
+            <label id="nombre_producto_lote">Nombre de Producto: </label>
+        </div>
+        <div class="form-group">
+            <label for="proveedor">Proveedor</label>
+            <select name="proveedor" id="proveedor" class="form-control select2" style="width: 100%" required></select>
+        </div>
+        <div class="form-group">
+            <label for="stock">Stock</label>
+            <input id="stock" type="number" class="form-control" placeholder="Ingrese Stock" required>
+        </div>
+        <div class="form-group">
+            <label for="Vencimiento">Vencimiento</label>
+            <input id="vencimiento" type="date" class="form-control" placeholder="Seleccione Vencimiento"></input>
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn bg-gradient-primary float-right">Crear Lote</button>
+        </div>
+        <input type="hidden" id="id_lote_prod">
+    </form>
+</div>
+    </div>
+  </div>
+</div>
 <!-- Modal Foto-->
 <div class="modal fade" id="cambiarlogo" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
