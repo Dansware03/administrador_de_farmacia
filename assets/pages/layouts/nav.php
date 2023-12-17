@@ -1,5 +1,9 @@
 <!-- Tell the browser to be responsive to screen width -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Incluye Toastr CSS -->
+<link rel="stylesheet" href="../libs/css/toastr.css">
+<!-- Carrito  -->
+<link rel="stylesheet" href="../libs/css/main.css">
 <!-- SELECT2  -->
 <link rel="stylesheet" href="../libs/css/select2.css">
 <!-- Font Awesome -->
@@ -24,11 +28,11 @@
       <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
     </li>
     <li id="cat-carrito" style="display: none;" class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fa-solid fa-bag-shopping"></i>
-        </a>
+    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="img_carrito fas fa-shopping-bag"></i></a>
+        <span class="badge badge-primary" id="contador"></span>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <table class="table table-responsive text-nowrap p-0">
+          <table class="carro table table-responsive text-nowrap table-bordered p-0">
             <thead class="table-success">
               <tr>
                 <th>Codigo: </th>
@@ -39,11 +43,11 @@
                 <th>Eliminar</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="lista_carrito">
             </tbody>
           </table>.
-          <a class="btn btn-danger btn-block" href="#">Procesar Compra</a>
-          <a class="btn btn-success btn-block" href="#">Vaciar Carrito</a>
+          <a class="btn btn-danger btn-block" href="#"><i class="fas fa-check"></i> Procesar Compra</a>
+          <a id="vaciar_carrito" class="btn btn-success btn-block" href="#"><i class="fas fa-trash"></i> Vaciar Carrito</a>
         </div>
       </li>
   </ul>
@@ -95,7 +99,7 @@
             </p>
           </a>
         </li>
-        <li class="nav-header">Retiros/Ventas</li>
+        <!-- <li class="nav-header">Retiros/Ventas</li>
         <li class="nav-item">
           <a href="#" class="update nav-link">
             <i class="nav-icon fas fa-pills"></i>
@@ -103,7 +107,7 @@
               Lista de Retiros/Ventas
             </p>
           </a>
-        </li>
+        </li> -->
         <li class="nav-header">Deposito de Farmacia</li>
         <li class="nav-item">
           <a href="adm_productos.php" class="nav-link">

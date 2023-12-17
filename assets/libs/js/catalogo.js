@@ -24,6 +24,7 @@ $(document).ready(function() {
                     <div class="card-body pt-0">
                         <div class="row">
                             <div class="col-7">
+                                <h4 class="small"><b>Codigo: ${product.id}</b></h4>
                                 <h2 class="lead"><b>${product.nombre}</b></h2>
                                 <h4 class="lead"><b><i class="fas fa-lg fa-dollar-sign mr-1"></i>${product.precio}</b></h4>
                                 <ul class="ml-4 mb-0 fa-ul text-muted">

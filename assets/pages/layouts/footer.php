@@ -20,6 +20,8 @@
 <script src="../libs/js/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
 <script src="../libs/js/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Incluye Toastr JS después de jQuery -->
+<script src="../libs/js/toastr.js"></script>
 <!-- SweetAlert2 -->
 <script src="../libs/js/sweetalert2.js"></script>
 <!-- SELECT2 -->
