@@ -30,7 +30,7 @@
     <li id="cat-carrito" style="display: none;" class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="img_carrito fas fa-shopping-bag"></i></a>
-        <span class="badge badge-primary" id="contador"></span>
+        <span class="contador badge badge-primary" id="contador"></span>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <table class="carro table table-responsive text-nowrap table-bordered p-0">
             <thead class="table-success">
