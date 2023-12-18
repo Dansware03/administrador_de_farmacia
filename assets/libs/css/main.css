@@ -79,7 +79,6 @@
 }
 .contador{
     position: absolute;
-    top: 0px;
-    right: 3px;
-
+    top: 10px;
+    right: 10px;
 }

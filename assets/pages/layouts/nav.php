@@ -9,13 +9,15 @@
 <!-- Font Awesome -->
 <link rel="stylesheet" href="../libs/css/css/all.min.css">
 <!-- Ionicons -->
-<link rel="stylesheet" href="../libs/css/css/ionicons.min.css">
+<link rel="stylesheet" href="../libs/css/fonts/ionicons.min.css">
 <!-- overlayScrollbars -->
 <link rel="stylesheet" href="../libs/css/adminlte.min.css">
 <!-- Google Font: Source Sans Pro -->
 <link rel="stylesheet" type="text/css" href="../libs/css/source-sans-release/source-sans-3.css">
 <!-- SweetAlert2  -->
 <link rel="stylesheet" href="../libs/css/sweetalert2.css">
+<!-- PEDIDOS  -->
+<link rel="stylesheet" href="../libs/css/pedido.css">
 </head>
 <body class="hold-transition sidebar-mini">
 <!-- Site wrapper -->
@@ -46,7 +48,7 @@
             <tbody id="lista_carrito">
             </tbody>
           </table>.
-          <a class="btn btn-danger btn-block" href="#"><i class="fas fa-check"></i> Procesar Compra</a>
+          <a class="btn btn-danger btn-block" href="#" id="Procesar_pedido"><i class="fas fa-check"></i> Procesar Compra</a>
           <a id="vaciar_carrito" class="btn btn-success btn-block" href="#"><i class="fas fa-trash"></i> Vaciar Carrito</a>
         </div>
       </li>
@@ -99,7 +101,7 @@
             </p>
           </a>
         </li>
-        <!-- <li class="nav-header">Retiros/Ventas</li>
+        <li class="nav-header">Retiros/Ventas</li>
         <li class="nav-item">
           <a href="#" class="update nav-link">
             <i class="nav-icon fas fa-pills"></i>
@@ -107,7 +109,7 @@
               Lista de Retiros/Ventas
             </p>
           </a>
-        </li> -->
+        </li>
         <li class="nav-header">Deposito de Farmacia</li>
         <li class="nav-item">
           <a href="adm_productos.php" class="nav-link">

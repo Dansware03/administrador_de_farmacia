@@ -1,6 +1,7 @@
 $(document).ready(function () {
     RecuperarLS_carrito();
     Contar_productos();
+    RecuperarLS_carrito_Pedido();
     // Función para mostrar notificación
     function mostrarNotificacion(mensaje, tipo) {
         toastr[tipo](mensaje);
@@ -12,7 +13,6 @@ $(document).ready(function () {
             const precio = parseFloat($(this).find('td:eq(4)').text().replace('$', ''));
             total += precio;
         });
-
         // Muestra el total en algún lugar de tu interfaz
         $('#total_carrito').text(`Total: $${total.toFixed(2)}`);
     }
@@ -28,6 +28,7 @@ $(document).ready(function () {
         const prod_present = elemento.attr('nPreNombre');
         const concentracionCompleta = elemento.attr('conNombre');
         const avatar = elemento.attr('avaNombre');
+        const stock = elemento.attr('productStock');
         const producto = {
             id: id,
             nombre: nombre,
@@ -38,6 +39,7 @@ $(document).ready(function () {
             prod_present: prod_present,
             concentracionCompleta: concentracionCompleta,
             avatar: avatar,
+            stock: stock,
             cantidad: 1
         };
         // Verifica si el producto ya está en el carrito
@@ -96,7 +98,6 @@ $(document).ready(function () {
         }
         return productos
     }
-    
     function AgregarLS(producto) {
         let productos;
         productos = RecuperarLS();
@@ -126,12 +127,14 @@ $(document).ready(function () {
         productos.forEach(function(producto,indice){
             if (producto.id===id) {
                 productos.splice(indice,1)
+                mostrarNotificacion('Se Elimino el Producto.', 'success');
             }
         });
         localStorage.setItem('productos', JSON.stringify(productos));
     }
     function EliminarLS() {
         localStorage.clear();
+        mostrarNotificacion('Se Vacio el Carrito.', 'success');
     }
     function Contar_productos() {
         let productos;
@@ -141,5 +144,39 @@ $(document).ready(function () {
             contador++;
         });
         $('#contador').html(contador);
+    }
+    $(document).on('click','#Procesar_pedido',(e)=>{
+        Procesar_pedido();
+    });
+    function Procesar_pedido() {
+        let productos= RecuperarLS();
+        if (productos.length === 0) {
+            mostrarNotificacion('Carrito esta Vacio.', 'info');
+        } else {
+            location.href = '../pages/adm_retiro.php'
+        }
+    }
+    function RecuperarLS_carrito_Pedido() {
+        let productos;
+        productos = RecuperarLS();
+        productos.forEach(producto => {
+            template = `
+            <tr data_id="${producto.id}">
+                <td>${producto.nombre}</td>
+                <td>${producto.stock}</td>
+                <td>${producto.precio}</td>
+                <td>${producto.adicional}</td>
+                <td>${producto.concentracionCompleta}</td>
+                <td>${producto.prod_lab}</td>
+                <td>${producto.prod_present}</td>
+                <td> <input type="number" min="1" class="form-control" value="${producto.cantidad}"> </input> </td>
+                <td class="subtotales">
+                    <h5>${producto.precio*producto.cantidad}</h5>
+                </td>
+                <td><button class="borrar_de_carrito btn btn-danger"><i class="fas fa-times-circle"></i></button></td>
+            </tr>
+        `;
+        $('#lista-compra').append(template);
+        });
     }
 });

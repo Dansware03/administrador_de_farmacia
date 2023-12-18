@@ -16,7 +16,7 @@ $(document).ready(function() {
     function mostrarProductos(products) {
         const productContainer = $('#productos');
         const template = products.map(product => `
-            <div proId="${product.id}" proNombre="${product.nombre}" conNombre="${product.concentracion}" addNombre="${product.adicional}" preNombre="${product.precio}" nLabNombre="${product.laboratorio_id}" nTypeNombre="${product.tipo_id}" nPreNombre="${product.presentacion_id}" avaNombre="${product.avatar}" class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
+            <div proId="${product.id}" proNombre="${product.nombre}" productStock="${product.stock}" conNombre="${product.concentracion}" addNombre="${product.adicional}" preNombre="${product.precio}" nLabNombre="${product.laboratorio_id}" nTypeNombre="${product.tipo_id}" nPreNombre="${product.presentacion_id}" avaNombre="${product.avatar}" class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
                 <div class="card bg-light">
                     <div class="card-header text-muted border-bottom-0">
                         <i class="fas fa-lg fa-cubes mr-1"></i>${product.stock}
