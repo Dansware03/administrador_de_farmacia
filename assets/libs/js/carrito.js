@@ -240,21 +240,66 @@ $(document).ready(function () {
     } else if (nombre == '') {
         mostrarNotificacion('Debe Colocar un Nombre al Cliente.', 'info');
     } else {
-        mostrarNotificacion('Se Realizó la Compra.', 'success');
-        // Espera 3 segundos antes de redirigir
-        setTimeout(function() {
-            location.href = '../pages/adm_catalogo.php';
-        }, 1500);
-    }
-    }
-    function verificarStock() {
-        let productos, id, cantidad;
-        funcion = 'verificarStock'
-        productos = RecuperarLS();
-        productos.forEach(producto => {
-            id = producto.id;
-            cantidad = producto.cantidad;
-            
+        verificarStock().then(error=>{
+            if (error==0) {
+                Registrar_Compra(nombre,ci);
+                mostrarNotificacion('Se Realizó la Compra.', 'success');
+                // setTimeout(function() {
+                //     location.href = '../pages/adm_catalogo.php';
+                // }, 1500);
+            } else {
+                mostrarNotificacion('Hay un Producto que no tiene Stock.', 'info');
+            }
         });
+    }
+    }
+    async function verificarStock() {
+        let productos;
+        const funcion = 'verificarStock';
+        productos = RecuperarLS();
+        const response = await fetch('../controller/ProductoController.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'funcion=' + funcion + '&productos=' + encodeURIComponent(JSON.stringify(productos))
+        });
+        const error = await response.text();
+        return error;
+    }
+    function Registrar_Compra(nombre, ci) {
+        const funcion = 'registrar_compra';
+        let total = $('#total')[0].textContent;
+        let productos = RecuperarLS();
+    
+        // Verificar si hay productos en el carrito antes de intentar registrar la compra
+        if (productos.length > 0) {
+            // Realizar la solicitud AJAX para registrar la compra
+            $.ajax({
+                type: 'POST',
+                url: '../controller/CompraController.php',
+                data: {
+                    funcion: funcion,
+                    total: total,
+                    nombre: nombre,
+                    ci: ci,
+                    productos: JSON.stringify(productos)
+                },
+                success: function(response) {
+                    console.log(response);
+                    mostrarNotificacion('Compra registrada exitosamente.', 'success');
+                    // setTimeout(function() {
+                    //     // Redirigir a la página deseada
+                    //     location.href = '../pages/adm_catalogo.php';
+                    // }, 1500);
+                },
+                error: function(error) {
+                    console.error(error);
+                    mostrarNotificacion('Error al registrar la compra. Por favor, inténtelo nuevamente.', 'error');
+                }
+            });
+        } else {
+            mostrarNotificacion('El carrito está vacío. No se puede procesar la compra.', 'info');
+        }
     }
 });

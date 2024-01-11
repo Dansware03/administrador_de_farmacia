@@ -163,7 +163,7 @@
                                 <a href="adm_catalogo.php" class="btn btn-primary btn-block">Volver al Inicio</a>
                             </div>
                             <div class="col-xs-12 col-md-4">
-                                <a href="" class="btn btn-success btn-block" id="procesar_compra">Realizar Pedido</a>
+                                <a href="#" class="btn btn-success btn-block" id="procesar_compra">Realizar Pedido</a>
                             </div>
                         </div>
                     </div>
