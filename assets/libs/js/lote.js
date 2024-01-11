@@ -18,7 +18,7 @@ $(document).ready(function() {
             <div loteID="${lote.id}" stockID="${lote.stock}" class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
                 <div class="card bg-${lote.estado}">
                     <div class="card-header border-bottom-0">
-                    <h6>Codigo: ${lote.id}</h6>
+                    <h6>Cod de Lote: ${lote.cod_lote}</h6>
                         <i class="fas fa-lg fa-cubes mr-1"></i>${lote.stock}
                     </div>
                     <div class="card-body pt-0">
@@ -26,7 +26,7 @@ $(document).ready(function() {
                             <div class="col-7">
                                 <h2 class="lead"><b>${lote.nombre}</b></h2>
                                 <ul class="ml-4 mb-0 fa-ul">
-                                    <li class="small"><span class="fa-li"><i class="fa-solid fa-mortar-pestle mr-1"></i></span>Concentración: ${lote.concentracion}</li>.
+                                    <li class="small"><span class="fa-li"><i class="fa-solid fa-mortar-pestle mr-1"></i></span>Concentración: ${lote.concentracion}</li>
                                     <li class="small"><span class="fa-li"><i class="fa-solid fa-prescription-bottle mr-1"></i></span>Adicional: ${lote.adicional}</li>
                                     <li class="small"><span class="fa-li"><i class="fas fa-lg fa-flask mr-1"></i></span>Laboratorio: ${lote.nombre_laboratorio}</li>
                                     <li class="small"><span class="fa-li"><i class="fas fa-lg fa-copyright mr-1"></i></span>Tipo: ${lote.tipo}</li>

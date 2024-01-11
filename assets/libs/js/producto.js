@@ -493,12 +493,13 @@ $(document).ready(function() {
         e.preventDefault();
         const id_producto = $('#id_lote_prod').val();
         const proveedor = $('#proveedor').val();
+        const cod_lote = $('#cod_lote').val();
         const stock = $('#stock').val();
         const vencimiento = $('#vencimiento').val();
         funcion = "crear";
         $.post(
             '../controller/LoteController.php',
-            { funcion, proveedor, stock, vencimiento, id_producto}
+            { funcion, proveedor, cod_lote, stock, vencimiento, id_producto}
         ).done(response => {
             if (response === 'add') {
                 Swal.fire({

@@ -2,21 +2,17 @@ $(document).ready(function () {
     RecuperarLS_carrito();
     Contar_productos();
     RecuperarLS_carrito_Pedido();
-    // Función para mostrar notificación
     function mostrarNotificacion(mensaje, tipo) {
         toastr[tipo](mensaje);
     }
-    // Función para actualizar el total del carrito
     function actualizarTotalCarrito() {
         let total = 0;
         $('#lista_carrito tr').each(function () {
             const precio = parseFloat($(this).find('td:eq(4)').text().replace('$', ''));
             total += precio;
         });
-        // Muestra el total en algún lugar de tu interfaz
         $('#total_carrito').text(`Total: $${total.toFixed(2)}`);
     }
-    // Evento de clic para agregar productos al carrito
     $(document).on('click', '.agg_compra', function () {
         const elemento = $(this).closest('.col-12.col-sm-6.col-md-4.d-flex.align-items-stretch');
         const id = elemento.attr('proId');
@@ -71,7 +67,6 @@ $(document).ready(function () {
             actualizarTotalCarrito();
         }
     });
-    // Evento de clic para eliminar productos del carrito
     $(document).on('click', '.borrar_de_carrito', function () {
         const elemento = $(this).closest('tr');
         const id = $(elemento).attr('data_id')
@@ -79,8 +74,8 @@ $(document).ready(function () {
             $(this).remove();
             Eliminar_producto_LS(id);
             Contar_productos();
-            // Actualiza el total del carrito después de eliminar un producto
             actualizarTotalCarrito();
+            calcularTotal();
         });
     });
     $(document).on('click', '#vaciar_carrito', (e) => {
@@ -165,11 +160,8 @@ $(document).ready(function () {
                 <td>${producto.nombre}</td>
                 <td>${producto.stock}</td>
                 <td>${producto.precio}</td>
-                <td>${producto.adicional}</td>
                 <td>${producto.concentracionCompleta}</td>
-                <td>${producto.prod_lab}</td>
-                <td>${producto.prod_present}</td>
-                <td> <input type="number" min="1" class="form-control" value="${producto.cantidad}"> </input> </td>
+                <td> <input type="number" min="1" class="form-control cantidad_producto" value="${producto.cantidad}"> </input> </td>
                 <td class="subtotales">
                     <h5>${producto.precio*producto.cantidad}</h5>
                 </td>
@@ -177,6 +169,92 @@ $(document).ready(function () {
             </tr>
         `;
         $('#lista-compra').append(template);
+        });
+    }
+    $('#cp').keyup((e) => {
+        let id, cantidad, producto, productos, montos;
+        producto = e.target.parentElement.parentElement;
+        id = $(producto).attr('data_id');
+        cantidad = producto.querySelector('input').value;
+        montos = document.querySelectorAll('.subtotales');
+        productos = RecuperarLS();
+        productos.forEach(function (prod, indice) {
+            if (prod.id === id) {
+                prod.cantidad = cantidad;
+                montos[indice].innerHTML = `<h5>${cantidad * productos[indice].precio}</h5>`;
+            }
+        });
+        localStorage.setItem('productos', JSON.stringify(productos));
+        calcularTotal();
+        calcularVuelto();
+    });
+    if (window.location.pathname.includes("adm_retiro.php")) {
+        calcularTotal();
+    function calcularTotal() {
+        let productos, subtotal, conIva, totalSinDescuento, descuentoInput;
+        let total = 0, iva = 0.08; // 8% de impuesto
+        productos = RecuperarLS();
+        productos.forEach((producto) => {
+            let subtotalProducto = Number(producto.precio * producto.cantidad);
+            total += subtotalProducto;
+        });
+        descuentoInput = parseFloat(document.getElementById('descuento').value) || 0;
+        total -= descuentoInput;
+        totalSinDescuento = total.toFixed(2);
+        conIva = parseFloat(total * iva).toFixed(2);
+        subtotal = parseFloat(total - conIva).toFixed(2);
+        total = parseFloat(total + parseFloat(conIva)).toFixed(2);
+        document.getElementById('subtotal').textContent = subtotal;
+        document.getElementById('total_sin_descuento').textContent = totalSinDescuento;
+        document.getElementById('conIva').textContent = conIva;
+        document.getElementById('total').textContent = total;
+    }
+    document.getElementById('pago').addEventListener('keyup', function() {
+    calcularVuelto();
+    });
+    window.addEventListener('load', function() {
+    calcularVuelto();
+    });
+    function calcularVuelto() {
+    let ingresoInput = document.getElementById('pago');
+    let total = parseFloat(document.getElementById('total').textContent) || 0;
+    let ingreso = parseFloat(ingresoInput.value);
+    if (isNaN(ingreso) || ingresoInput.value.trim() === '' || ingreso === 0) {
+        document.getElementById('vuelto').textContent = '0';
+        return;
+    }
+    let vuelto = ingreso - total;
+    document.getElementById('vuelto').textContent = vuelto.toFixed(2);
+        }
+    }
+    $(document).on('click','#procesar_compra',(e)=>{
+    procesar_compra();
+    });
+    function procesar_compra() {
+    let nombre, ci;
+    nombre = $('#cliente').val();
+    ci = $('#ci').val();
+    if (RecuperarLS().length == 0) {
+        mostrarNotificacion('El Carrito está Vacío.', 'info');
+        location.href = '../pages/adm_catalogo.php';
+    } else if (nombre == '') {
+        mostrarNotificacion('Debe Colocar un Nombre al Cliente.', 'info');
+    } else {
+        mostrarNotificacion('Se Realizó la Compra.', 'success');
+        // Espera 3 segundos antes de redirigir
+        setTimeout(function() {
+            location.href = '../pages/adm_catalogo.php';
+        }, 1500);
+    }
+    }
+    function verificarStock() {
+        let productos, id, cantidad;
+        funcion = 'verificarStock'
+        productos = RecuperarLS();
+        productos.forEach(producto => {
+            id = producto.id;
+            cantidad = producto.cantidad;
+            
         });
     }
 });

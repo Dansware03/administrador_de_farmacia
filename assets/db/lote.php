@@ -8,10 +8,11 @@ class Lote{
         $db = new Conexion();
         $this->acceso = $db->pdo;
     }
-    function crear($id_producto, $proveedor, $stock, $vencimiento) {
-        $sql = "INSERT INTO lote (stock, vencimiento, id_lote_prod, lote_id_prov) VALUES (:stock, :vencimiento, :id_producto, :id_proveedor)";
+    function crear($id_producto, $proveedor, $cod_lote, $stock, $vencimiento) {
+        $sql = "INSERT INTO lote (cod_lote, stock, vencimiento, id_lote_prod, lote_id_prov) VALUES (:cod_lote, :stock, :vencimiento, :id_producto, :id_proveedor)";
         $query = $this->acceso->prepare($sql);
         $query->execute(array(
+            'cod_lote' => $cod_lote,
             'stock' => $stock,
             'vencimiento' => $vencimiento,
             'id_producto' => $id_producto,
@@ -22,7 +23,7 @@ class Lote{
     function buscar() {
         if (!empty($_POST['consulta'])) {
             $consulta = $_POST['consulta'];
-            $sql = "SELECT id_lote,stock,vencimiento,concentracion,adicional,producto.nombre AS prod_nom, laboratorio.nombre AS lab_nom, tipo_producto.nombre AS tip_nom, presentacion.nombre AS pre_nom, proveedor.nombre AS pro_nom, producto.avatar AS logo FROM lote
+            $sql = "SELECT id_lote,cod_lote,stock,vencimiento,concentracion,adicional,producto.nombre AS prod_nom, laboratorio.nombre AS lab_nom, tipo_producto.nombre AS tip_nom, presentacion.nombre AS pre_nom, proveedor.nombre AS pro_nom, producto.avatar AS logo FROM lote
             JOIN proveedor ON lote_id_prov=id_proveedor
             JOIN producto ON id_lote_prod=id_producto
             JOIN laboratorio ON prod_lab=id_laboratorio
@@ -33,7 +34,7 @@ class Lote{
             $this->objetos = $query->fetchAll();
             return $this->objetos;
         } else {
-            $sql = "SELECT id_lote,stock,vencimiento,concentracion,adicional,producto.nombre AS prod_nom, laboratorio.nombre AS lab_nom, tipo_producto.nombre AS tip_nom, presentacion.nombre AS pre_nom, proveedor.nombre AS pro_nom, producto.avatar AS logo FROM lote
+            $sql = "SELECT id_lote,cod_lote,stock,vencimiento,concentracion,adicional,producto.nombre AS prod_nom, laboratorio.nombre AS lab_nom, tipo_producto.nombre AS tip_nom, presentacion.nombre AS pre_nom, proveedor.nombre AS pro_nom, producto.avatar AS logo FROM lote
             JOIN proveedor ON lote_id_prov=id_proveedor
             JOIN producto ON id_lote_prod=id_producto
             JOIN laboratorio ON prod_lab=id_laboratorio

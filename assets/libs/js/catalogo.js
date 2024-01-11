@@ -44,7 +44,7 @@ $(document).ready(function() {
                         <div class="text-right">
                         <button class="agg_compra btn btn-sm btn-primary" title="Agregar al Carrito" type="button">
                         <i class="fa-solid fa-cart-shopping mr-2"></i>Agregar al Carrito
-                    </button>                    
+                    </button>
                         </div>
                     </div>
                 </div>

@@ -11,7 +11,7 @@
         <div class="card-body">
     <form id="form-editar-lote">
         <div class="form-group">
-            <label for="codigo_lote">Codigo de Lote: </label>
+            <label for="codigo_lote">Codigo: </label>
             <label id="codigo_lote">Codigo: </label>
         </div>
         <div class="form-group">

@@ -85,6 +85,10 @@
             <select name="proveedor" id="proveedor" class="form-control select2" style="width: 100%" required></select>
         </div>
         <div class="form-group">
+            <label for="cod_lote">Codigo de Lote</label>
+            <input id="cod_lote" type="text" class="form-control" placeholder="Ingrese Lote" required>
+        </div>
+        <div class="form-group">
             <label for="stock">Stock</label>
             <input id="stock" type="number" class="form-control" placeholder="Ingrese Stock" required>
         </div>

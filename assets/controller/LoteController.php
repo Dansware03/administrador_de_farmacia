@@ -7,9 +7,10 @@ if (isset($_POST['funcion'])) {
         case 'crear':
             $id_producto = isset($_POST['id_producto']) ? $_POST['id_producto'] : '';
             $proveedor = isset($_POST['proveedor']) ? $_POST['proveedor'] : '';
+            $cod_lote = isset($_POST['cod_lote']) ? $_POST['cod_lote'] : '';
             $stock = isset($_POST['stock']) ? $_POST['stock'] : '';
             $vencimiento = isset($_POST['vencimiento']) ? $_POST['vencimiento'] : '';
-            $lote->crear($id_producto, $proveedor, $stock, $vencimiento);
+            $lote->crear($id_producto, $proveedor, $cod_lote, $stock, $vencimiento);
         break;
         case 'buscar_lote':
             $lote->buscar();
@@ -40,6 +41,7 @@ if (isset($_POST['funcion'])) {
                     'adicional' => $objeto->adicional,
                     'vencimiento' => $objeto->vencimiento,
                     'proveedor' => $objeto->pro_nom,
+                    'cod_lote' => $objeto->cod_lote,
                     'stock' => $objeto->stock,
                     'nombre_laboratorio' => $objeto->lab_nom,
                     'tipo' => $objeto->tip_nom,

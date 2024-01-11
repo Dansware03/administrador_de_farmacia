@@ -43,12 +43,12 @@
                                 <div class="form-group row">
                                     <span>Cedula: </span>
                                     <div class="input-group-append col-md-6">
-                                        <input type="number" class="form-control" id="dni" placeholder="Ingresa Cedula">
+                                        <input type="number" class="form-control" id="ci" placeholder="Ingresa Cedula">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <span>Encargado: </span>
-                                    <h3>usuario</h3>
+                                    <h3><?php echo $_SESSION['nombre_us']; ?></h3>
                                 </div>
                             </div>
                         </header>
@@ -61,16 +61,13 @@
                                         <th scope="col">Stock</th>
                                         <th scope="col">Precio</th>
                                         <th scope="col">Concentracion</th>
-                                        <th scope="col">Adicional</th>
-                                        <th scope="col">Laboratorio</th>
-                                        <th scope="col">Presentacion</th>
                                         <th scope="col">Cantidad</th>
                                         <th scope="col">Sub Total</th>
                                         <th scope="col">Eliminar</th>
                                     </tr>
                                 </thead>
                                 <tbody id="lista-compra" class='table-active'>
-                                    
+
                                 </tbody>
                             </table>
                             <div class="row">
@@ -87,21 +84,21 @@
                                                 <span class="info-box-icon"><i class="fas fa-tag"></i></span>
                                                 <div class="info-box-content">
                                                     <span class="info-box-text text-left ">SUB TOTAL</span>
-                                                    <span class="info-box-number" id="subtotal">10</span>
+                                                    <span class="info-box-number" id="subtotal">0</span>
                                                 </div>
                                             </div>
                                             <div class="info-box mb-3 bg-warning">
                                                 <span class="info-box-icon"><i class="fas fa-tag"></i></span>
                                                 <div class="info-box-content">
-                                                    <span class="info-box-text text-left ">IGV</span>
-                                                    <span class="info-box-number"id="con_igv">2</span>
+                                                    <span class="info-box-text text-left ">IVA</span>
+                                                    <span class="info-box-number"id="conIva">0</span>
                                                 </div>
                                             </div>
                                             <div class="info-box mb-3 bg-info">
                                                 <span class="info-box-icon"><i class="fas fa-tag"></i></span>
                                                 <div class="info-box-content">
                                                     <span class="info-box-text text-left ">SIN DESCUENTO</span>
-                                                    <span class="info-box-number" id="total_sin_descuento">12</span>
+                                                    <span class="info-box-number" id="total_sin_descuento">0</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -120,14 +117,14 @@
                                                 <span class="info-box-icon"><i class="fas fa-comment-dollar"></i></span>
                                                 <div class="info-box-content">
                                                     <span class="info-box-text text-left ">DESCUENTO</span>
-                                                    <input id="descuento"type="number" min="1" placeholder="Ingrese descuento" class="form-control">
+                                                    <input id="descuento"type="number" min="0" placeholder="Ingrese descuento" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="info-box mb-3 bg-info">
-                                                <span class="info-box-icon"><i class="ion ion-ios-cart-outline"></i></span>
+                                                <span class="info-box-icon"><i class="fa-solid fa-money-check-dollar"></i></span>
                                                 <div class="info-box-content">
                                                     <span class="info-box-text text-left ">TOTAL</span>
-                                                    <span class="info-box-number" id="total">12</span>
+                                                    <span class="info-box-number" id="total">0</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -166,7 +163,7 @@
                                 <a href="adm_catalogo.php" class="btn btn-primary btn-block">Volver al Inicio</a>
                             </div>
                             <div class="col-xs-12 col-md-4">
-                                <a href="#" class="btn btn-success btn-block" id="procesar-compra">Realizar Pedido</a>
+                                <a href="" class="btn btn-success btn-block" id="procesar_compra">Realizar Pedido</a>
                             </div>
                         </div>
                     </div>

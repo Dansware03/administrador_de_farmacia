@@ -69,11 +69,11 @@
   .compra tbody tr:nth-child(even) {
     background-color: #f5f5f5;
   }
-  
-  
-  
-  
-  
+  .compra .recortar-texto {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
   @media screen and (max-width: 900px) {
     .datos_cp input{
       margin-left: 10px;
@@ -181,8 +181,6 @@
       font-size: 15px;
       color: #000;
     }
-    
-  
     .compra tbody tr {
       font-size: 14px;
     }

@@ -6,6 +6,8 @@
 <link rel="stylesheet" href="../libs/css/main.css">
 <!-- SELECT2  -->
 <link rel="stylesheet" href="../libs/css/select2.css">
+<!-- PEDIDOS  -->
+<link rel="stylesheet" href="../libs/css/pedido.css">
 <!-- Font Awesome -->
 <link rel="stylesheet" href="../libs/css/css/all.min.css">
 <!-- Ionicons -->
@@ -16,8 +18,6 @@
 <link rel="stylesheet" type="text/css" href="../libs/css/source-sans-release/source-sans-3.css">
 <!-- SweetAlert2  -->
 <link rel="stylesheet" href="../libs/css/sweetalert2.css">
-<!-- PEDIDOS  -->
-<link rel="stylesheet" href="../libs/css/pedido.css">
 </head>
 <body class="hold-transition sidebar-mini">
 <!-- Site wrapper -->
