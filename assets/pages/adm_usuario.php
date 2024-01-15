@@ -33,7 +33,10 @@
                 </div>
                 <div class="card-footer">
                     <button type="submit" class="btn bg-gradient-primary float-right">Crear Usuario</button>
+<<<<<<< HEAD
+=======
                     <button type="" class="btn btn-outline-secondary float-right">Cancelar</button>
+>>>>>>> ba5924237731214ce5b9942d402ac19e9729839b
                 </div>
             </form>
     </div>

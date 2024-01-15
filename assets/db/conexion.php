@@ -1,11 +1,6 @@
 <?php
 class Conexion {
-    private $servidor = "localhost";
-    private $db = "admin_farmacia";
-    private $puerto = 3306;
-    private $charset = "utf8";
-    private $usuario = "root";
-    private $contrasena = ""; // Reemplaza con una contraseña segura
+    private $db_path = "../../../../apps/phpLiteAdmin/bdfarmacia.db"; // Ruta al archivo SQLite
     public $pdo = null;
     private $atributos = [
         PDO::ATTR_CASE => PDO::CASE_NATURAL,
@@ -17,7 +12,7 @@ class Conexion {
         $this->pdo = new PDO("mysql:dbname={$this->db};host={$this->servidor};port={$this->puerto};charset={$this->charset}", $this->usuario, $this->contrasena, $this->atributos);
     }
     public function __destruct() {
-        $this->pdo = null; // Cierra la conexión al destruir el objeto
+        $this->pdo = null;
     }
 }
 ?>

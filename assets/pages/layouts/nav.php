@@ -1,9 +1,20 @@
 <!-- Tell the browser to be responsive to screen width -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<<<<<<< HEAD
+<!-- Incluye Toastr CSS -->
+<link rel="stylesheet" href="../libs/css/toastr.css">
+<!-- Carrito  -->
+<link rel="stylesheet" href="../libs/css/main.css">
+<!-- SELECT2  -->
+<link rel="stylesheet" href="../libs/css/select2.css">
+<!-- PEDIDOS  -->
+<link rel="stylesheet" href="../libs/css/pedido.css">
+=======
+>>>>>>> ba5924237731214ce5b9942d402ac19e9729839b
 <!-- Font Awesome -->
 <link rel="stylesheet" href="../libs/css/css/all.min.css">
 <!-- Ionicons -->
-<link rel="stylesheet" href="../libs/css/css/ionicons.min.css">
+<link rel="stylesheet" href="../libs/css/fonts/ionicons.min.css">
 <!-- overlayScrollbars -->
 <link rel="stylesheet" href="../libs/css/adminlte.min.css">
 <!-- Google Font: Source Sans Pro -->
@@ -19,17 +30,42 @@
     <li class="nav-item">
       <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
     </li>
+<<<<<<< HEAD
+    <li id="cat-carrito" style="display: none;" class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="img_carrito fas fa-shopping-bag"></i></a>
+        <span class="contador badge badge-primary" id="contador"></span>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <table class="carro table table-responsive text-nowrap table-bordered p-0">
+            <thead class="table-success">
+              <tr>
+                <th>Codigo: </th>
+                <th>Nombre: </th>
+                <th>Concentración: </th>
+                <th>Adicional: </th>
+                <th>Precio: </th>
+                <th>Eliminar</th>
+              </tr>
+            </thead>
+            <tbody id="lista_carrito">
+            </tbody>
+          </table>.
+          <a class="btn btn-danger btn-block" href="#" id="Procesar_pedido"><i class="fas fa-check"></i> Procesar Compra</a>
+          <a id="vaciar_carrito" class="btn btn-success btn-block" href="#"><i class="fas fa-trash"></i> Vaciar Carrito</a>
+        </div>
+      </li>
+=======
     <li class="nav-item d-none d-sm-inline-block">
       <a href="#" class="nav-link">Home</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
       <a href="#" class="nav-link">Contact</a>
     </li>
+>>>>>>> ba5924237731214ce5b9942d402ac19e9729839b
   </ul>
   <!-- Right navbar links -->
   <ul class="navbar-nav ml-auto">
     <a class="btn btn-danger" href="../controller/Logout.php" role="button">Cerrar Sesión</a>
-  
 </nav>
 <!-- /.navbar -->
 <!-- Main Sidebar Container -->
@@ -80,7 +116,45 @@
           <a href="#" class="nav-link">
             <i class="nav-icon far fa-image"></i>
             <p>
+<<<<<<< HEAD
+              Lista de Retiros/Ventas
+            </p>
+          </a>
+        </li>
+        <li class="nav-header">Deposito de Farmacia</li>
+        <li class="nav-item">
+          <a href="adm_productos.php" class="nav-link">
+            <i class="nav-icon fas fa-pills"></i>
+            <p>
+              Gestión de Productos
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="adm_atributos.php" class="nav-link">
+            <i class="nav-icon fas fa-vials"></i>
+            <p>
+              Gestión de Atributos
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="adm_lote.php" class="nav-link">
+            <i class="nav-icon fas fa-cubes"></i>
+            <p>
+              Gestión de lotes
+            </p>
+          </a>
+        </li>
+        <li class="nav-header">Entregas/Compras</li>
+        <li class="nav-item">
+          <a href="adm_proveedor.php" class="nav-link">
+            <i class="nav-icon fas fa-truck"></i>
+            <p>
+              Gestión de Proveedor
+=======
               Gallery
+>>>>>>> ba5924237731214ce5b9942d402ac19e9729839b
             </p>
           </a>
         </li>

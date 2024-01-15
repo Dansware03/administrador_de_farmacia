@@ -1,0 +1,84 @@
+.carro * { position: relative; }
+@media screen and (max-width: 900px) {
+    .carro {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .carro thead {
+        display: none;
+    }
+    .carro td,
+    .carro th {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        text-align: left;
+        padding: 8px;
+        margin-bottom: 3px;
+        position: relative;
+    }
+    .carro tbody tr td {
+        padding-left: 25%;
+        margin-bottom: 3px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 0.9em;
+        vertical-align: middle;
+    }
+    .carro tbody tr td:before {
+        content: attr(data-label);
+        color: #999;
+        font-weight: unset;
+        position: absolute;
+        left: 10px;
+        top: 10px;
+    }
+    .carro tbody tr td:nth-child(1):before {
+        content: "Codigo: ";
+        font-weight: bold;
+        color: black;
+    }
+    .carro tbody tr td:nth-child(2):before {
+        content: "Nombre: ";
+        font-weight: bold;
+        color: black;
+    }
+    .carro tbody tr td:nth-child(3):before {
+        content: "Concent: ";
+        font-weight: bold;
+        color: black;
+    }
+    .carro tbody tr td:nth-child(4):before {
+        content: "Adicional: ";
+        font-weight: bold;
+        color: black;
+    }
+    .carro tbody tr td:nth-child(5):before {
+        content: "Precio: ";
+        font-weight: bold;
+        color: black;
+    }
+    .carro tbody tr td:nth-child(6):before {
+        content: "Eliminar: ";
+        font-weight: bold;
+        color: black;
+    }
+    .carro tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+    .carro tbody tr td:nth-child(6) button {
+        font-size: 1.2em;
+    }
+}
+.img_carrito{
+    position: relative;
+    display: inline-block;
+    text-align: center;
+}
+.contador{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
