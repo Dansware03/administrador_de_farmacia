@@ -1,6 +1,5 @@
 <footer class="main-footer">
     <div class="float-right d-none d-sm-block">
-<<<<<<< HEAD
       <b>Version</b> 0.0.47
     </div>
     <strong>Copyright &copy; 2023 <a href="#">Omaira Rico</a>.</strong> All rights
@@ -10,25 +9,17 @@
 <!-- Creditos Orginales -->
 <!-- <footer class="main-footer">
     <div class="float-right d-none d-sm-block">
-=======
->>>>>>> ba5924237731214ce5b9942d402ac19e9729839b
       <b>Version</b> 3.0.4
     </div>
     <strong>Copyright &copy; 2014-2019 <a href="http://adminlte.io">AdminLTE.io</a>.</strong> All rights
     reserved.
   </footer>
-<<<<<<< HEAD
 </div> -->
-=======
-</div>
->>>>>>> ba5924237731214ce5b9942d402ac19e9729839b
 <!-- ./wrapper -->
-
 <!-- jQuery -->
 <script src="../libs/js/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
 <script src="../libs/js/bootstrap/js/bootstrap.bundle.min.js"></script>
-<<<<<<< HEAD
 <!-- Incluye Toastr JS después de jQuery -->
 <script src="../libs/js/toastr.js"></script>
 <!-- SweetAlert2 -->
@@ -37,13 +28,10 @@
 <script src="../libs/js/select2.js"></script>
 <!-- SELECT2 ESPAÑOL -->
 <script src="../libs/js/select2es.js"></script>
-=======
->>>>>>> ba5924237731214ce5b9942d402ac19e9729839b
 <!-- AdminLTE App -->
 <script src="../libs/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="../libs/js/demo.js"></script>
-<<<<<<< HEAD
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const logoutButton = document.querySelector('a.btn.btn-danger[href="../controller/Logout.php"]');
@@ -83,7 +71,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-=======
->>>>>>> ba5924237731214ce5b9942d402ac19e9729839b
 </body>
 </html>

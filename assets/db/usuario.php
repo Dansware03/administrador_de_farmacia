@@ -11,7 +11,7 @@ class Usuario {
         $sql = "SELECT * FROM usuario INNER JOIN tipo_us ON us_tipo = id_tipo_us WHERE ci_us = :ci AND contrasena_us = :pass";
         $query = $this->acceso->prepare($sql);
         $query->execute(array(':ci' => $ci, ':pass' => $pass));
-        $this->objetos = $query->fetchAll(); // Corrección aquí
+        $this->objetos = $query->fetchAll();
         return $this->objetos;
     }
     function obtener_datos($id) {
@@ -31,6 +31,7 @@ class Usuario {
         $query = $this->acceso->prepare($sql);
         $query->execute(array(':id'=>$id_usuario,':oldpass'=>$oldpass));
         $this->objetos = $query->fetchAll();
+
         if (!empty($this->objetos)){
             $sql = "UPDATE usuario SET contrasena_us=:newpass where id_usuario=:id";
             $query=$this->acceso->prepare($sql);
@@ -45,13 +46,11 @@ class Usuario {
         $query = $this->acceso->prepare($sql);
         $query->execute(array(':id'=>$id_usuario));
         $this->objetos = $query->fetchAll();
-
         $sql = "UPDATE usuario SET avatar=:nombre where id_usuario=:id";
         $query=$this->acceso->prepare($sql);
         $query->execute(array(':id'=>$id_usuario,':nombre'=>$nombre));
         return $this->objetos;
     }
-
     function buscar(){
         if (!empty($_POST['consulta'])) {
             $consulta=$_POST['consulta'];
@@ -68,13 +67,11 @@ class Usuario {
             return $this->objetos;
         }
     }
-
     function crear($nombre, $apellido, $edad, $ci, $genero, $pass, $tipo, $avatar) {
         $sql = "SELECT id_usuario FROM usuario WHERE ci_us = :ci";
         $query = $this->acceso->prepare($sql);
         $query->execute(array(':ci' => $ci));
         $this->objetos = $query->fetchAll();
-
         if (!empty($this->objetos)) {
             echo 'no add';
         } else {
@@ -94,7 +91,6 @@ class Usuario {
             }
         }
     }
-
     function ascender($pass, $id_up, $id_usuario) {
         $sql = "SELECT id_usuario FROM usuario where id_usuario=:id_usuario and contrasena_us=:pass";
         $query = $this->acceso->prepare($sql);
@@ -110,7 +106,6 @@ class Usuario {
             echo 'no-up';
         }
     }
-
     function descender($pass, $id_donw, $id_usuario) {
         $sql = "SELECT id_usuario FROM usuario where id_usuario=:id_usuario and contrasena_us=:pass";
         $query = $this->acceso->prepare($sql);
@@ -126,7 +121,6 @@ class Usuario {
             echo 'no-donw';
         }
     }
-
     function delete($pass,$id_delete,$id_usuario) {
         $sql = "SELECT id_usuario FROM usuario where id_usuario=:id_usuario and contrasena_us=:pass";
         $query = $this->acceso->prepare($sql);
@@ -142,5 +136,4 @@ class Usuario {
         }
     }
 }
-
 ?>
