@@ -8,10 +8,10 @@ if (isset($_SESSION['us_tipo'])) {
             exit;
         case 2:
             header('Location: ../pages/tec_catalogo.php');
-            exit;
+            exit; // Importante: detiene la ejecución del script
         case 3:
                 header('Location: ../pages/adm_catalogo.php');
-                exit;
+                exit; // Importante: detiene la ejecución del script
     }
 }
 if (isset($_POST['user']) && isset($_POST['pass'])) {
@@ -24,16 +24,18 @@ if (isset($_POST['user']) && isset($_POST['pass'])) {
             $_SESSION['usuario'] = $objeto->id_usuario;
             $_SESSION['us_tipo'] = $objeto->us_tipo;
             $_SESSION['nombre_us'] = $objeto->nombre_us;
+
+            // Redirige según el tipo de usuario
             switch ($_SESSION['us_tipo']) {
                 case 1:
                     header('Location: ../pages/adm_catalogo.php');
                 exit;
                 case 2:
                     header('Location: ../pages/tec_catalogo.php');
-                exit;
+                exit; // Importante: detiene la ejecución del script
                 case 3:
                     header('Location: ../pages/adm_catalogo.php');
-                    exit;
+                    exit; // Importante: detiene la ejecución del script
             }
         }
     } else {
