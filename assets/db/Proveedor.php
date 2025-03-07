@@ -8,25 +8,37 @@ class Proveedor{
         $db = new Conexion();
         $this->acceso = $db->pdo;
     }
-    function crear($nombre, $telefono, $correo,$direccion, $avatar) {
-        $sql = "SELECT id_proveedor FROM proveedor WHERE nombre = :nombre";
-        $query = $this->acceso->prepare($sql);
-        $query->execute(array(':nombre' => $nombre));
-        $this->objetos = $query->fetchAll();
-        if (!empty($this->objetos)) {
-            echo 'no add';
-        } else {
-            $sql = "INSERT INTO proveedor (nombre, telefono, correo, direccion,avatar) VALUES (:nombre, :telefono, :correo, :direccion, :avatar)";
+    function crear($nombre, $telefono, $correo, $direccion, $avatar) {
+        try {
+            $sql = "SELECT id_proveedor FROM proveedor WHERE nombre = :nombre";
             $query = $this->acceso->prepare($sql);
-            if ($query->execute(array(
-                ':nombre' => $nombre,
-                ':telefono' => $telefono,
-                ':correo' => $correo,
-                ':direccion' => $direccion,
-                ':avatar' => $avatar
-            ))) {
-                echo 'add';
+            $query->execute(array(':nombre' => $nombre));
+            $this->objetos = $query->fetchAll();
+            
+            if (!empty($this->objetos)) {
+                echo 'no add';
+            } else {
+                $sql = "INSERT INTO proveedor (nombre, telefono, correo, direccion, avatar) VALUES (:nombre, :telefono, :correo, :direccion, :avatar)";
+                $query = $this->acceso->prepare($sql);
+                $params = array(
+                    ':nombre' => $nombre,
+                    ':telefono' => $telefono,
+                    ':correo' => $correo,
+                    ':direccion' => $direccion,
+                    ':avatar' => $avatar
+                );
+                
+                if ($query->execute($params)) {
+                    echo 'add';
+                } else {
+                    $error = $query->errorInfo();
+                    error_log("Error SQL: " . json_encode($error));
+                    echo 'Error: ' . $error[2];
+                }
             }
+        } catch (PDOException $e) {
+            error_log("PDO Exception: " . $e->getMessage());
+            echo 'Error: ' . $e->getMessage();
         }
     }
     function buscar($consulta = '') {
@@ -44,7 +56,7 @@ class Proveedor{
                 LIMIT 25";
                 $query = $this->acceso->prepare($sql);
                 $consulta = "%$consulta%";
-                $query->bindValue(':consulta', $consulta, PDO::PARAM_STR);
+                $query->bindParam(':consulta', $consulta, PDO::PARAM_STR);
             } else {
                 $sql = "SELECT
                     id_proveedor,
@@ -61,8 +73,10 @@ class Proveedor{
             $this->objetos = $query->fetchAll(PDO::FETCH_ASSOC);
             return $this->objetos;
         } catch (PDOException $e) {
-            echo "Error: " . $e->getMessage();
-            return false;
+            // Log the error but return an empty array instead of throwing an error
+            error_log("Database error: " . $e->getMessage());
+            $this->objetos = [];
+            return $this->objetos;
         }
     }
     function editar($id_proveedor, $nombre, $telefono, $correo, $direccion) {

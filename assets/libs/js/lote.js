@@ -79,6 +79,7 @@ $(document).ready(function() {
             { funcion, stock, id}
         ).done(response => {
             if (response === 'edit') {
+                console.log(response);
                 Swal.fire({
                     position: 'center',
                     icon: 'success',
@@ -92,6 +93,7 @@ $(document).ready(function() {
                     buscar_lotes();
                 });
             } else {
+                console.log(response);
                 Swal.fire({
                     position: 'center',
                     icon: 'error',

@@ -22,8 +22,7 @@ if (isset($_POST['funcion'])) {
                     'nombre' => $objeto->nombre
                 );
             }
-            $jsonstring = json_encode($json);
-            echo $jsonstring;
+            echo json_encode($json);
             break;
         case 'borrar_lab':
             $id = $_POST['id'];
@@ -33,13 +32,12 @@ if (isset($_POST['funcion'])) {
             $laboratorio->rellenar_laboratorio();
             $json = array();
             foreach ($laboratorio->objetos as $objeto) {
-                $json[]=array(
-                    'id'=>$objeto->id_laboratorio,
-                    'nombre'=>$objeto->nombre
+                $json[] = array(
+                    'id' => $objeto->id_laboratorio,
+                    'nombre' => $objeto->nombre
                 );
             }
-            $jsonstring=json_encode($json);
-            echo $jsonstring;
+            echo json_encode($json);
             break;
     }
 }

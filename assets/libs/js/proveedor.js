@@ -14,43 +14,96 @@ $(document).ready(function () {
         let direccion = $('#direccion').val();
         let id_editado = $('#id_editar_prov').val();
         funcion = edit ? 'editar' : 'crear';
-        $.post('../controller/ProveedorController.php', {id_editado, nombre, telefono, correo, direccion, funcion }, (response) => {
-            if (response=='add') {
-                $('#form-crear-proveedor').trigger('reset');
-                Swal.fire({
-                  position: 'center',
-                  icon: 'success',
-                  title: 'Proveedor Creado Con Exito',
-                  showConfirmButton: false,
-                  timer: 1000
-              })
-              $('#newproveedor').modal('hide');
-              buscar_prov();
-        } else {
-                $('#form-crear-proveedor').trigger('reset');
-                Swal.fire({
-                  position: 'center',
-                  icon: 'error',
-                  title: 'Ah Ocurrido Un Error!!',
-                  showConfirmButton: false,
-                  timer: 1000
-              })
-              $('#newproveedor').modal('hide');
-              buscar_prov();
+        
+        // Validación básica en el cliente
+        if (!nombre || !telefono) {
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Nombre y teléfono son obligatorios',
+                showConfirmButton: false,
+                timer: 1500
+            });
+            return;
         }
-      });
-      e.preventDefault();
+        
+        $.post('../controller/ProveedorController.php', {id_editado, nombre, telefono, correo, direccion, funcion}, (response) => {
+            console.log("Respuesta del servidor:", response); // Esto te ayudará a depurar
+            
+            if (response == 'add') {
+                $('#form-crear-proveedor').trigger('reset');
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Proveedor Creado Con Éxito',
+                    showConfirmButton: false,
+                    timer: 1000
+                });
+                $('#newproveedor').modal('hide');
+                buscar_prov();
+            } else if (response == 'no add') {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: 'El nombre del proveedor ya existe',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            } else {
+                console.error("Error:", response);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Ha ocurrido un error',
+                    text: response.includes('Error:') ? response : 'Error desconocido',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Error de conexión',
+                text: 'No se pudo conectar con el servidor',
+                showConfirmButton: true
+            });
+        });
     });
     function buscar_prov(consulta) {
-      $.post('../controller/ProveedorController.php', { consulta, funcion: 'buscar_prov' }, (response) => {
-          try {
-              const proveedors = JSON.parse(response);
-              mostrarveedores(proveedors);
-          } catch (error) {
-              console.error("Error al analizar la respuesta JSON:", error);
-          }
-      });
-  }
+        $.post('../controller/ProveedorController.php', { consulta, funcion: 'buscar_prov' }, (response) => {
+            try {
+                const proveedors = JSON.parse(response);
+                mostrarveedores(proveedors);
+            } catch (error) {
+                console.error("Error al analizar la respuesta JSON:", error);
+                console.error("Respuesta recibida:", response);
+                // Show a user-friendly error message and display an empty list
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Error al cargar proveedores',
+                    text: 'Por favor intente nuevamente',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                mostrarveedores([]);
+            }
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
+            // Handle AJAX request failure
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Error de conexión',
+                text: 'No se pudo conectar con el servidor',
+                showConfirmButton: false,
+                timer: 1500
+            });
+            mostrarveedores([]);
+        });
+    }
   function mostrarveedores(proveedors) {
       const provContainer = $('#proveedores');
       const template = proveedors.map(prov => `
