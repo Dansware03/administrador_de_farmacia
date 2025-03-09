@@ -158,12 +158,12 @@ $(document).ready(function() {
         id_venta_seleccionada = data.id_venta;
         
         // Redirigir a la página de impresión
-        window.open(`../reportes/pdf/recibo_venta.php?id=${id_venta_seleccionada}`, '_blank');
+        window.open(`../pages/recibo_venta.php?id=${id_venta_seleccionada}`, '_blank');
     });
 
     // Evento para botón de imprimir desde el modal
     $('#btn_imprimir').click(function() {
-        window.open(`../reportes/pdf/recibo_venta.php?id=${id_venta_seleccionada}`, '_blank');
+        window.open(`../pages/recibo_venta.php?id=${id_venta_seleccionada}`, '_blank');
     });
 
     // Filtrar por fechas
