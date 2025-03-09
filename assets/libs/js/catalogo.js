@@ -1,21 +1,27 @@
-$(document).ready(function() {
-    $('#cat-carrito').show();
-    var funcion
-    buscar_product();
-    mostrar_lotes_riesgo();
-    function buscar_product(consulta) {
-        $.post('../controller/ProductoController.php', { consulta, funcion: 'buscar_product' }, (Response) => {
-            try {
-                const products = JSON.parse(Response);
-                mostrarProductos(products);
-            } catch (error) {
-                console.error("Error al analizar la respuesta JSON:", error);
-            }
-        });
-    }
-    function mostrarProductos(products) {
-        const productContainer = $('#productos');
-        const template = products.map(product => `
+$(document).ready(function () {
+  $("#cat-carrito").show();
+  var funcion;
+  buscar_product();
+  mostrar_lotes_riesgo();
+  function buscar_product(consulta) {
+    $.post(
+      "../controller/ProductoController.php",
+      { consulta, funcion: "buscar_product" },
+      (Response) => {
+        try {
+          const products = JSON.parse(Response);
+          mostrarProductos(products);
+        } catch (error) {
+          console.error("Error al analizar la respuesta JSON:", error);
+        }
+      }
+    );
+  }
+  function mostrarProductos(products) {
+    const productContainer = $("#productos");
+    const template = products
+      .map(
+        (product) => `
             <div proId="${product.id}" proNombre="${product.nombre}" productStock="${product.stock}" conNombre="${product.concentracion}" addNombre="${product.adicional}" preNombre="${product.precio}" nLabNombre="${product.laboratorio_id}" nTypeNombre="${product.tipo_id}" nPreNombre="${product.presentacion_id}" avaNombre="${product.avatar}" class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
                 <div class="card bg-light">
                     <div class="card-header text-muted border-bottom-0">
@@ -49,34 +55,39 @@ $(document).ready(function() {
                     </div>
                 </div>
             </div>
-        `).join('');
-        productContainer.empty().append(template);
+        `
+      )
+      .join("");
+    productContainer.empty().append(template);
+  }
+  $(document).on("keyup", "#buscar_producto", function () {
+    let valor = $(this).val();
+    if (valor !== "") {
+      buscar_product(valor);
+    } else {
+      buscar_product();
     }
-    $(document).on('keyup', '#buscar_producto', function () {
-        let valor = $(this).val();
-        if (valor !== "") {
-            buscar_product(valor);
-        } else {
-            buscar_product();
-        }
+  });
+  function mostrar_lotes_riesgo() {
+    funcion = "buscar_lote";
+    $.post("../controller/LoteController.php", { funcion }, (response) => {
+      try {
+        const lotes = JSON.parse(response);
+        mostrarlotes(lotes);
+      } catch (error) {
+        console.error("Error al analizar la respuesta JSON:", error);
+      }
     });
-    function mostrar_lotes_riesgo() {
-        funcion="buscar_lote"
-        $.post('../controller/LoteController.php', {funcion}, (response) => {
-            try {
-                const lotes = JSON.parse(response);
-                mostrarlotes(lotes);
-            } catch (error) {
-                console.error("Error al analizar la respuesta JSON:", error);
-            }
-        });
-    }
-    function mostrarlotes(lotes) {
-        const loteContainer = $('#lotes');
-        const template = lotes.map(lote => {
-            if (lote.estado === 'warning' || lote.estado === 'danger') {
-                return `
-                <tr class="bg-${lote.estado} ${lote.estado === 'warning' ? 'warning' : ''}">
+  }
+  function mostrarlotes(lotes) {
+    const loteContainer = $("#lotes");
+    const template = lotes
+      .map((lote) => {
+        if (lote.estado === "warning" || lote.estado === "danger") {
+          return `
+                <tr class="bg-${lote.estado} ${
+            lote.estado === "warning" ? "warning" : ""
+          }">
                     <td class="col-md-1">${lote.id}</td>
                     <td class="col-md-3">${lote.nombre}</td>
                     <td class="col-md-1">${lote.stock}</td>
@@ -87,19 +98,22 @@ $(document).ready(function() {
                     <td class="col-md-1">${lote.dia}</td>
                 </tr>
                 `;
-            } else {
-                // Retorna una cadena vacía para los lotes en estado normal
-                return '';
-            }
-        }).join('');
-        loteContainer.empty().append(template);
-        function parpadearLotesPorVencer() {
-            $('#lotes tr.warning').fadeOut(1000).fadeIn(1000, function () {
-                parpadearLotesPorVencer();
-            });
+        } else {
+          // Retorna una cadena vacía para los lotes en estado normal
+          return "";
         }
-        if ($('#lotes tr.warning').length > 0) {
-            parpadearLotesPorVencer();
-        }
+      })
+      .join("");
+    loteContainer.empty().append(template);
+    function parpadearLotesPorVencer() {
+      $("#lotes tr.warning")
+        .fadeOut(1000)
+        .fadeIn(1000, function () {
+          parpadearLotesPorVencer();
+        });
     }
+    if ($("#lotes tr.warning").length > 0) {
+      parpadearLotesPorVencer();
+    }
+  }
 });

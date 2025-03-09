@@ -6,7 +6,7 @@ Utiliza esta sección para informar a los usuarios sobre las versiones de desarr
 
 | Versión   | Estado            |
 | --------- | ------------------ |
-| 0.0.49    | :white_check_mark: |
+| 0.0.50    | :white_check_mark: |
 
 ## Reportar Problemas o Vulnerabilidades
 

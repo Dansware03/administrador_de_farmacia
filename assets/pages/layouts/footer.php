@@ -1,6 +1,6 @@
 <footer class="main-footer">
     <div class="float-right d-none d-sm-block">
-      <b>Version</b> 0.0.47
+      <b>Version</b> 0.0.50
     </div>
     <strong>Copyright &copy; 2023 <a href="#">Omaira Rico</a>.</strong> All rights
     reserved.
@@ -32,6 +32,7 @@
 <script src="../libs/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="../libs/js/demo.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const logoutButton = document.querySelector('a.btn.btn-danger[href="../controller/Logout.php"]');

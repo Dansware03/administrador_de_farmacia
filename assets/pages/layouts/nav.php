@@ -18,6 +18,7 @@
 <link rel="stylesheet" type="text/css" href="../libs/css/source-sans-release/source-sans-3.css">
 <!-- SweetAlert2  -->
 <link rel="stylesheet" href="../libs/css/sweetalert2.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
 </head>
 <body class="hold-transition sidebar-mini">
 <!-- Site wrapper -->
@@ -103,7 +104,7 @@
         </li>
         <li class="nav-header">Retiros/Ventas</li>
         <li class="nav-item">
-          <a href="#" class="update nav-link">
+          <a href="adm_retiro_ventas.php" class="nav-link">
             <i class="nav-icon fas fa-pills"></i>
             <p>
               Lista de Retiros/Ventas
