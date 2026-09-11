@@ -9,7 +9,6 @@
   <!-- Estilos del Sistema SIMAP -->
   <link rel="stylesheet" href="../libs/css/app.css">
   <link rel="stylesheet" href="../libs/css/main.css">
-  <link rel="stylesheet" href="../libs/css/pedido.css">
 </head>
 <body>
 <div class="wrapper">

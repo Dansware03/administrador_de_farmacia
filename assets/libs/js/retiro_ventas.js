@@ -1,70 +1,81 @@
+// SIMAP - Historial de Salidas y Entregas
 $(document).ready(function() {
-    // Inicializar DataTable
+    // Inicializar DataTable con traducción local 100% offline
     let tabla_ventas = $('#tabla_ventas').DataTable({
-        "responsive": true,
-        "autoWidth": false,
-        "deferRender": true,
-        "ajax": {
-            "url": "../controller/VentaController.php",
-            "method": "POST",
-            "data": {
+        responsive: true,
+        autoWidth: false,
+        deferRender: true,
+        ajax: {
+            url: "../controller/VentaController.php",
+            method: "POST",
+            data: {
                 funcion: "listar_ventas"
             },
-            "dataSrc": ""
+            dataSrc: ""
         },
-        "columns": [
-            { "data": "id_venta" },
-            { "data": "fecha" },
-            { "data": "cliente" },
-            { "data": "ci" },
+        columns: [
+            { data: "id_venta" },
+            { data: "fecha" },
+            { data: "cliente" },
+            { data: "ci" },
             { 
-                "data": "total",
-                "render": function(data, type, row) {
+                data: "total",
+                render: function(data, type, row) {
                     return `$${parseFloat(data).toFixed(2)}`;
                 } 
             },
-            { "data": "vendedor" },
+            { data: "vendedor" },
             {
-                "defaultContent": `
-                <div class="btn-group">
-                    <button class="ver_detalles btn btn-info" data-toggle="modal" data-target="#vista_venta">
-                        <i class="fas fa-eye"></i>
+                defaultContent: `
+                <div class="btn-group btn-group-sm" role="group">
+                    <button class="ver_detalles btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#vista_venta" title="Ver comprobante">
+                        <i class="bi bi-eye"></i>
                     </button>
-                    <button class="editar btn btn-warning">
-                        <i class="fas fa-pencil-alt"></i>
+                    <button class="editar btn btn-outline-warning" title="Editar salida">
+                        <i class="bi bi-pencil"></i>
                     </button>
-                    <button class="revertir btn btn-danger" data-toggle="modal" data-target="#confirmar_revertir">
-                        <i class="fas fa-trash"></i>
+                    <button class="revertir btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmar_revertir" title="Anular entrega">
+                        <i class="bi bi-trash"></i>
                     </button>
-                    <button class="imprimir btn btn-primary">
-                        <i class="fas fa-print"></i>
+                    <button class="imprimir btn btn-outline-primary" title="Imprimir recibo">
+                        <i class="bi bi-printer"></i>
                     </button>
                 </div>
                 `
             }
         ],
-        "language": {
-            "url": "//cdn.datatables.net/plug-ins/2.2.2/i18n/es-ES.json"
+        language: {
+            processing: "Procesando registros...",
+            search: "Buscar:",
+            lengthMenu: "Mostrar _MENU_ registros",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            infoEmpty: "Mostrando 0 a 0 de 0 registros",
+            infoFiltered: "(filtrado de _MAX_ registros en total)",
+            zeroRecords: "No se encontraron entregas registradas",
+            emptyTable: "No hay registros disponibles",
+            paginate: {
+                first: "Primero",
+                previous: "Anterior",
+                next: "Siguiente",
+                last: "Último"
+            }
         },
-        "order": [[ 0, "desc" ]]
+        order: [[ 0, "desc" ]]
     });
 
-    // Variables para almacenar el ID de la venta seleccionada
     let id_venta_seleccionada;
 
-    // Evento para botón de ver detalles
+    // Ver detalles
     $('#tabla_ventas tbody').on('click', '.ver_detalles', function() {
         let data = tabla_ventas.row($(this).parents('tr')).data();
         id_venta_seleccionada = data.id_venta;
         
-        // Cargar datos del encabezado
         $('#cliente_detalle').text(data.cliente);
         $('#ci_detalle').text(data.ci);
         $('#fecha_detalle').text(data.fecha);
         $('#vendedor_detalle').text(data.vendedor);
         $('#total_detalle').text(`$${parseFloat(data.total).toFixed(2)}`);
         
-        // Cargar detalles de la venta
         $.ajax({
             url: '../controller/VentaController.php',
             type: 'POST',
@@ -79,12 +90,12 @@ $(document).ready(function() {
                 detalles.forEach(detalle => {
                     template += `
                     <tr>
-                        <td>${detalle.producto}</td>
-                        <td>${detalle.cantidad}</td>
+                        <td class="fw-semibold text-dark">${detalle.producto}</td>
+                        <td><span class="badge bg-primary-subtle text-primary fw-bold">${detalle.cantidad}</span></td>
                         <td>$${parseFloat(detalle.precio).toFixed(2)}</td>
-                        <td>$${parseFloat(detalle.subtotal).toFixed(2)}</td>
-                        <td>${detalle.lote}</td>
-                        <td>${detalle.vencimiento}</td>
+                        <td class="fw-semibold">$${parseFloat(detalle.subtotal).toFixed(2)}</td>
+                        <td><span class="badge bg-light text-secondary border">${detalle.lote || 'N/A'}</span></td>
+                        <td><small class="text-muted">${detalle.vencimiento || 'N/A'}</small></td>
                     </tr>
                     `;
                 });
@@ -92,18 +103,18 @@ $(document).ready(function() {
                 $('#detalles_venta').html(template);
             },
             error: function(error) {
-                console.error('Error al cargar detalles:', error);
+                console.error('Error al cargar detalles de salida:', error);
             }
         });
     });
 
-    // Evento para botón de revertir venta
+    // Abrir modal de anulación
     $('#tabla_ventas tbody').on('click', '.revertir', function() {
         let data = tabla_ventas.row($(this).parents('tr')).data();
         id_venta_seleccionada = data.id_venta;
     });
 
-    // Confirmar revertir venta
+    // Confirmar anulación
     $('#btn_confirmar_revertir').click(function() {
         $.ajax({
             url: '../controller/VentaController.php',
@@ -114,16 +125,19 @@ $(document).ready(function() {
             },
             success: function(response) {
                 const resultado = JSON.parse(response);
+                const modalEl = document.getElementById('confirmar_revertir');
+                const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                if (modalInstance) modalInstance.hide();
+
                 if (resultado.status === 'success') {
                     Swal.fire({
                         position: 'center',
                         icon: 'success',
-                        title: 'Venta anulada',
+                        title: 'Entrega anulada',
                         text: resultado.message,
                         showConfirmButton: false,
                         timer: 1500
                     }).then(function() {
-                        $('#confirmar_revertir').modal('hide');
                         tabla_ventas.ajax.reload();
                     });
                 } else {
@@ -132,38 +146,35 @@ $(document).ready(function() {
                         icon: 'error',
                         title: 'Error',
                         text: resultado.message,
-                        showConfirmButton: false,
-                        timer: 1500
+                        showConfirmButton: true
                     });
                 }
             },
             error: function(error) {
-                console.error('Error al revertir venta:', error);
+                console.error('Error al revertir salida:', error);
             }
         });
     });
 
-    // Evento para botón de editar venta
+    // Editar venta/salida
     $('#tabla_ventas tbody').on('click', '.editar', function() {
         let data = tabla_ventas.row($(this).parents('tr')).data();
         id_venta_seleccionada = data.id_venta;
-        
-        // Redireccionar a página de edición con el ID de venta
         window.location.href = `editar_venta.php?id=${id_venta_seleccionada}`;
     });
 
-    // Evento para botón de imprimir
+    // Imprimir desde tabla
     $('#tabla_ventas tbody').on('click', '.imprimir', function() {
         let data = tabla_ventas.row($(this).parents('tr')).data();
         id_venta_seleccionada = data.id_venta;
-        
-        // Redirigir a la página de impresión
         window.open(`../pages/recibo_venta.php?id=${id_venta_seleccionada}`, '_blank');
     });
 
-    // Evento para botón de imprimir desde el modal
+    // Imprimir desde modal
     $('#btn_imprimir').click(function() {
-        window.open(`../pages/recibo_venta.php?id=${id_venta_seleccionada}`, '_blank');
+        if (id_venta_seleccionada) {
+            window.open(`../pages/recibo_venta.php?id=${id_venta_seleccionada}`, '_blank');
+        }
     });
 
     // Filtrar por fechas
@@ -171,11 +182,11 @@ $(document).ready(function() {
         let fecha_inicio = $('#fecha_inicio').val();
         let fecha_fin = $('#fecha_fin').val();
         
-        if(fecha_inicio === '' || fecha_fin === '') {
+        if (fecha_inicio === '' || fecha_fin === '') {
             Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Debe seleccionar ambas fechas para filtrar'
+                icon: 'warning',
+                title: 'Rango de fechas requerido',
+                text: 'Debe seleccionar tanto la fecha inicial como la final para filtrar.'
             });
             return;
         }
@@ -189,5 +200,4 @@ $(document).ready(function() {
         $('#fecha_fin').val('');
         tabla_ventas.ajax.url('../controller/VentaController.php?funcion=listar_ventas').load();
     });
-
 });
