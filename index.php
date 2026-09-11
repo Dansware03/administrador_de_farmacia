@@ -29,12 +29,13 @@ include_once 'headers.php'; ?>
                 <div>
                     <div class="banner-badge mb-4">
                         <i class="bi bi-shield-check text-warning"></i>
-                        <span>Sistema Hospitalario Oficial</span>
+                        <span>Grupo Proyecto</span>
                     </div>
                 </div>
 
                 <div class="text-center px-4">
-                    <img src="assets/libs/img/doctores.svg" alt="Ilustración SIMAP" class="img-fluid mb-4" style="max-height: 280px;">
+                    <img src="assets/libs/img/doctores.svg" alt="Ilustración SIMAP" class="img-fluid mb-4"
+                        style="max-height: 280px;">
                     <h2 class="fw-bold tracking-tight mb-2">SIMAP</h2>
                     <p class="lead text-light-50 mb-1 fs-6">
                         Sistema de Inventario de Materiales e Insumos de Protección
@@ -54,7 +55,8 @@ include_once 'headers.php'; ?>
                 <div class="login-card">
                     <!-- Cabecera Formulario -->
                     <div class="text-center mb-4">
-                        <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle p-3 mb-3 shadow-sm" style="width: 80px; height: 80px;">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle p-3 mb-3 shadow-sm"
+                            style="width: 80px; height: 80px;">
                             <img src="assets/libs/img/logo.png" alt="Logo" class="img-fluid" style="max-height: 55px;">
                         </div>
                         <h3 class="fw-bold text-dark mb-1">Bienvenido</h3>
@@ -62,7 +64,8 @@ include_once 'headers.php'; ?>
                     </div>
 
                     <!-- Alerta de Credenciales Incorrectas -->
-                    <div id="login-alert-error" class="alert alert-danger alert-dismissible fade show d-none shadow-sm" role="alert">
+                    <div id="login-alert-error" class="alert alert-danger alert-dismissible fade show d-none shadow-sm"
+                        role="alert">
                         <div class="d-flex align-items-center">
                             <i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>
                             <div>
@@ -73,7 +76,8 @@ include_once 'headers.php'; ?>
                     </div>
 
                     <!-- Formulario -->
-                    <form id="login-form" action="assets/controller/LoginController.php" method="post" autocomplete="off">
+                    <form id="login-form" action="assets/controller/LoginController.php" method="post"
+                        autocomplete="off">
                         <!-- Campo Cédula -->
                         <div class="mb-3">
                             <label for="login-user" class="form-label fw-semibold small text-secondary">
@@ -81,7 +85,8 @@ include_once 'headers.php'; ?>
                             </label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
-                                <input type="text" id="login-user" name="user" class="form-control" placeholder="Ej: 12345678" required autofocus>
+                                <input type="text" id="login-user" name="user" class="form-control"
+                                    placeholder="Ej: 12345678" required autofocus>
                             </div>
                         </div>
 
@@ -92,8 +97,10 @@ include_once 'headers.php'; ?>
                             </label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                <input type="password" id="login-pass" name="pass" class="form-control" placeholder="••••••••" required>
-                                <button class="btn btn-outline-secondary btn-toggle-pass" type="button" id="toggle-password" title="Mostrar/ocultar contraseña">
+                                <input type="password" id="login-pass" name="pass" class="form-control"
+                                    placeholder="••••••••" required>
+                                <button class="btn btn-outline-secondary btn-toggle-pass" type="button"
+                                    id="toggle-password" title="Mostrar/ocultar contraseña">
                                     <i class="bi bi-eye" id="toggle-icon"></i>
                                 </button>
                             </div>
