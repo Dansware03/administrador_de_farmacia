@@ -3,6 +3,7 @@ $(document).ready(function () {
   var funcion;
   buscar_product();
   mostrar_lotes_riesgo();
+
   function buscar_product(consulta) {
     $.post(
       "../controller/ProductoController.php",
@@ -17,49 +18,75 @@ $(document).ready(function () {
       }
     );
   }
+
   function mostrarProductos(products) {
     const productContainer = $("#productos");
+    if (!products || products.length === 0) {
+      productContainer.html(`
+        <div class="col-12 text-center py-5">
+          <i class="bi bi-inbox text-muted display-4"></i>
+          <p class="text-muted mt-2">No se encontraron insumos disponibles con ese criterio.</p>
+        </div>
+      `);
+      return;
+    }
+
     const template = products
       .map(
-        (product) => `
-            <div proId="${product.id}" proNombre="${product.nombre}" productStock="${product.stock}" conNombre="${product.concentracion}" addNombre="${product.adicional}" preNombre="${product.precio}" nLabNombre="${product.laboratorio_id}" nTypeNombre="${product.tipo_id}" nPreNombre="${product.presentacion_id}" avaNombre="${product.avatar}" class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
-                <div class="card bg-light">
-                    <div class="card-header text-muted border-bottom-0">
-                        <i class="fas fa-lg fa-cubes mr-1"></i>${product.stock}
-                    </div>
-                    <div class="card-body pt-0">
-                        <div class="row">
-                            <div class="col-7">
-                                <h4 class="small"><b>Codigo: ${product.id}</b></h4>
-                                <h2 class="lead"><b>${product.nombre}</b></h2>
-                                <h4 class="lead"><b><i class="fas fa-lg fa-dollar-sign mr-1"></i>${product.precio}</b></h4>
-                                <ul class="ml-4 mb-0 fa-ul text-muted">
-                                    <li class="small"><span class="fa-li"><i class="fa-solid fa-mortar-pestle mr-1"></i></span>Concentración: ${product.concentracion}</li>
-                                    <li class="small"><span class="fa-li"><i class="fa-solid fa-prescription-bottle mr-1"></i></span>Adicional: ${product.adicional}</li>
-                                    <li class="small"><span class="fa-li"><i class="fas fa-lg fa-flask mr-1"></i></span>Laboratorio: ${product.nombre_laboratorio}</li>
-                                    <li class="small"><span class="fa-li"><i class="fas fa-lg fa-copyright mr-1"></i></span>Tipo: ${product.tipo}</li>
-                                    <li class="small"><span class="fa-li"><i class="fas fa-lg fa-pills mr-1"></i></span>Presentación: ${product.nombre_presentacion}</li>
-                                </ul>
-                            </div>
-                            <div class="col-5 text-center">
-                                <img src="${product.avatar}" alt="" class="img-circle img-fluid">
+        (product) => {
+          const stockNum = parseInt(product.stock) || 0;
+          let stockBadge = 'bg-success';
+          if (stockNum <= 5) {
+            stockBadge = 'bg-danger';
+          } else if (stockNum <= 15) {
+            stockBadge = 'bg-warning text-dark';
+          }
+
+          const avatarSrc = product.avatar && product.avatar.trim() !== '' ? product.avatar : '../libs/img/product/prod_default.png';
+
+          return `
+            <div proId="${product.id}" proNombre="${product.nombre}" productStock="${product.stock}" conNombre="${product.concentracion}" addNombre="${product.adicional}" preNombre="${product.precio}" nLabNombre="${product.laboratorio_id}" nTypeNombre="${product.tipo_id}" nPreNombre="${product.presentacion_id}" avaNombre="${avatarSrc}" class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
+                <div class="card product-card w-100 shadow-sm border-0 d-flex flex-column justify-content-between">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge ${stockBadge} rounded-pill px-3 py-2 small">
+                                <i class="bi bi-boxes me-1"></i>Stock: ${product.stock}
+                            </span>
+                            <span class="text-muted small fw-semibold">#${product.id}</span>
+                        </div>
+
+                        <div class="text-center mb-3">
+                            <img src="${avatarSrc}" alt="${product.nombre}" class="product-avatar mb-2 shadow-sm" onerror="this.src='../libs/img/product/prod_default.png'">
+                            <h5 class="fw-bold text-primary mb-1 text-truncate" title="${product.nombre}">${product.nombre}</h5>
+                            <div class="fw-bold fs-5 text-dark">
+                                $${parseFloat(product.precio || 0).toFixed(2)}
                             </div>
                         </div>
+
+                        <ul class="list-unstyled small text-muted border-top pt-3 mb-0">
+                            <li class="mb-1 text-truncate"><i class="bi bi-tag text-secondary me-2"></i><b>Concentración:</b> ${product.concentracion || 'N/A'}</li>
+                            <li class="mb-1 text-truncate"><i class="bi bi-info-circle text-secondary me-2"></i><b>Adicional:</b> ${product.adicional || 'N/A'}</li>
+                            <li class="mb-1 text-truncate"><i class="bi bi-building text-secondary me-2"></i><b>Laboratorio:</b> ${product.nombre_laboratorio || 'N/A'}</li>
+                            <li class="mb-1 text-truncate"><i class="bi bi-collection text-secondary me-2"></i><b>Tipo:</b> ${product.tipo || 'N/A'}</li>
+                            <li class="text-truncate"><i class="bi bi-box-seam text-secondary me-2"></i><b>Presentación:</b> ${product.nombre_presentacion || 'N/A'}</li>
+                        </ul>
                     </div>
-                    <div class="card-footer">
-                        <div class="text-right">
-                        <button class="agg_compra btn btn-sm btn-primary" title="Agregar al Carrito" type="button">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i>Agregar al Carrito
-                    </button>
-                        </div>
+
+                    <div class="card-footer bg-light border-0 p-3">
+                        <button class="agg_compra btn btn-primary w-100 shadow-sm d-flex align-items-center justify-content-center gap-2 fw-semibold" title="Agregar al Carrito" type="button">
+                            <i class="bi bi-cart-plus"></i>
+                            <span>Agregar a Solicitud</span>
+                        </button>
                     </div>
                 </div>
             </div>
-        `
+          `;
+        }
       )
       .join("");
     productContainer.empty().append(template);
   }
+
   $(document).on("keyup", "#buscar_producto", function () {
     let valor = $(this).val();
     if (valor !== "") {
@@ -68,6 +95,7 @@ $(document).ready(function () {
       buscar_product();
     }
   });
+
   function mostrar_lotes_riesgo() {
     funcion = "buscar_lote";
     $.post("../controller/LoteController.php", { funcion }, (response) => {
@@ -79,41 +107,42 @@ $(document).ready(function () {
       }
     });
   }
+
   function mostrarlotes(lotes) {
     const loteContainer = $("#lotes");
+    if (!lotes || lotes.length === 0) {
+      loteContainer.html(`<tr><td colspan="8" class="text-center py-3 text-muted">No hay lotes en riesgo actualmente.</td></tr>`);
+      return;
+    }
+
     const template = lotes
       .map((lote) => {
         if (lote.estado === "warning" || lote.estado === "danger") {
+          const rowClass = lote.estado === "danger" ? "lote-danger" : "lote-warning";
+          const badgeClass = lote.estado === "danger" ? "bg-danger" : "bg-warning text-dark";
+          const estadoText = lote.estado === "danger" ? "Vencido" : "Por Vencer";
+
           return `
-                <tr class="bg-${lote.estado} ${
-            lote.estado === "warning" ? "warning" : ""
-          }">
-                    <td class="col-md-1">${lote.id}</td>
-                    <td class="col-md-3">${lote.nombre}</td>
-                    <td class="col-md-1">${lote.stock}</td>
-                    <td class="col-md-2">${lote.nombre_laboratorio}</td>
-                    <td class="col-md-2">${lote.nombre_presentacion}</td>
-                    <td class="col-md-2">${lote.proveedor}</td>
-                    <td class="col-md-1">${lote.mes}</td>
-                    <td class="col-md-1">${lote.dia}</td>
-                </tr>
-                `;
+            <tr class="${rowClass}">
+                <td class="ps-3 fw-bold">${lote.id}</td>
+                <td>
+                  <span class="fw-semibold text-dark">${lote.nombre}</span>
+                  <span class="badge ${badgeClass} ms-1 small">${estadoText}</span>
+                </td>
+                <td class="fw-bold">${lote.stock}</td>
+                <td>${lote.nombre_laboratorio}</td>
+                <td>${lote.nombre_presentacion}</td>
+                <td>${lote.proveedor}</td>
+                <td>${lote.mes}</td>
+                <td>${lote.dia}</td>
+            </tr>
+          `;
         } else {
-          // Retorna una cadena vacía para los lotes en estado normal
           return "";
         }
       })
       .join("");
-    loteContainer.empty().append(template);
-    function parpadearLotesPorVencer() {
-      $("#lotes tr.warning")
-        .fadeOut(1000)
-        .fadeIn(1000, function () {
-          parpadearLotesPorVencer();
-        });
-    }
-    if ($("#lotes tr.warning").length > 0) {
-      parpadearLotesPorVencer();
-    }
+
+    loteContainer.empty().append(template || `<tr><td colspan="8" class="text-center py-3 text-muted">No hay lotes en riesgo.</td></tr>`);
   }
 });

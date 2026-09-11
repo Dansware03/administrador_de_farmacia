@@ -2,19 +2,24 @@ $(document).ready(function () {
   RecuperarLS_carrito();
   Contar_productos();
   RecuperarLS_carrito_Pedido();
+
   function mostrarNotificacion(mensaje, tipo) {
-    toastr[tipo](mensaje);
+    if (typeof toastr !== "undefined") {
+      toastr[tipo](mensaje);
+    }
   }
+
   function actualizarTotalCarrito() {
     let total = 0;
     $("#lista_carrito tr").each(function () {
       const precio = parseFloat(
         $(this).find("td:eq(4)").text().replace("$", "")
-      );
+      ) || 0;
       total += precio;
     });
     $("#total_carrito").text(`Total: $${total.toFixed(2)}`);
   }
+
   $(document).on("click", ".agg_compra", function () {
     const elemento = $(this).closest(
       ".col-12.col-sm-6.col-md-4.d-flex.align-items-stretch"
@@ -29,6 +34,7 @@ $(document).ready(function () {
     const concentracionCompleta = elemento.attr("conNombre");
     const avatar = elemento.attr("avaNombre");
     const stock = elemento.attr("productStock");
+
     const producto = {
       id: id,
       nombre: nombre,
@@ -42,54 +48,56 @@ $(document).ready(function () {
       stock: stock,
       cantidad: 1,
     };
+
     // Verifica si el producto ya está en el carrito
     const productoExistente = $("#lista_carrito").find(
       `[data_id="${producto.id}"]`
     );
     if (productoExistente.length) {
-      // Muestra notificación de que el producto ya está en el carrito
-      mostrarNotificacion("Este producto ya está en el carrito", "info");
+      mostrarNotificacion("Este insumo ya se encuentra en la solicitud", "info");
     } else {
-      // Agrega una nueva fila si el producto no está en el carrito
       const template = `
-                <tr data_id="${producto.id}">
-                    <td>${producto.id}</td>
-                    <td>${producto.nombre}</td>
-                    <td>${producto.adicional}</td>
-                    <td>${producto.concentracionCompleta}</td>
-                    <td>${producto.precio}</td>
-                    <td><button class="borrar_de_carrito btn btn-danger"><i class="fas fa-times-circle"></i></button></td>
-                </tr>
-            `;
-      $("#lista_carrito").append(template).hide().fadeIn(500);
+        <tr data_id="${producto.id}">
+            <td class="small fw-bold">${producto.id}</td>
+            <td class="small text-truncate" style="max-width: 120px;" title="${producto.nombre}">${producto.nombre}</td>
+            <td class="small">${producto.cantidad}</td>
+            <td class="text-end">
+              <button class="borrar_de_carrito btn btn-sm btn-outline-danger p-0 px-1" title="Quitar">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </td>
+        </tr>
+      `;
+      $("#lista_carrito").append(template);
       AgregarLS(producto);
-      let contador;
       Contar_productos();
-
-      // Muestra notificación de éxito
-      mostrarNotificacion("Producto agregado al carrito", "success");
-
-      // Actualiza el total del carrito
+      mostrarNotificacion("Insumo agregado a la solicitud", "success");
       actualizarTotalCarrito();
     }
   });
+
   $(document).on("click", ".borrar_de_carrito", function () {
     const elemento = $(this).closest("tr");
     const id = $(elemento).attr("data_id");
-    elemento.fadeOut(500, function () {
+    $(elemento).fadeOut(200, function () {
       $(this).remove();
       Eliminar_producto_LS(id);
       Contar_productos();
       actualizarTotalCarrito();
-      calcularTotal();
+      if (typeof calcularTotal === "function") {
+        calcularTotal();
+      }
     });
   });
+
   $(document).on("click", "#vaciar_carrito", (e) => {
-    const elemento = $(this).closest("tr");
+    e.preventDefault();
     $("#lista_carrito").empty();
     EliminarLS();
     Contar_productos();
+    mostrarNotificacion("Se ha vaciado la solicitud", "warning");
   });
+
   function RecuperarLS() {
     let productos;
     if (localStorage.getItem("productos") === null) {
@@ -99,231 +107,195 @@ $(document).ready(function () {
     }
     return productos;
   }
+
   function AgregarLS(producto) {
-    let productos;
-    productos = RecuperarLS();
+    let productos = RecuperarLS();
     productos.push(producto);
     localStorage.setItem("productos", JSON.stringify(productos));
   }
+
   function RecuperarLS_carrito() {
-    let productos;
-    productos = RecuperarLS();
+    let productos = RecuperarLS();
+    $("#lista_carrito").empty();
     productos.forEach((producto) => {
-      template = `
-            <tr data_id="${producto.id}">
-                <td>${producto.id}</td>
-                <td>${producto.nombre}</td>
-                <td>${producto.adicional}</td>
-                <td>${producto.concentracionCompleta}</td>
-                <td>${producto.precio}</td>
-                <td><button class="borrar_de_carrito btn btn-danger"><i class="fas fa-times-circle"></i></button></td>
-            </tr>
-        `;
+      const template = `
+        <tr data_id="${producto.id}">
+            <td class="small fw-bold">${producto.id}</td>
+            <td class="small text-truncate" style="max-width: 120px;" title="${producto.nombre}">${producto.nombre}</td>
+            <td class="small">${producto.cantidad}</td>
+            <td class="text-end">
+              <button class="borrar_de_carrito btn btn-sm btn-outline-danger p-0 px-1" title="Quitar">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </td>
+        </tr>
+      `;
       $("#lista_carrito").append(template);
     });
   }
+
   function Eliminar_producto_LS(id) {
-    let productos;
-    productos = RecuperarLS();
-    productos.forEach(function (producto, indice) {
+    let productos = RecuperarLS();
+    productos.forEach((producto, indice) => {
       if (producto.id === id) {
         productos.splice(indice, 1);
-        mostrarNotificacion("Se Elimino el Producto.", "success");
       }
     });
     localStorage.setItem("productos", JSON.stringify(productos));
   }
+
   function EliminarLS() {
-    localStorage.clear();
-    mostrarNotificacion("Se Vacio el Carrito.", "success");
+    localStorage.removeItem("productos");
   }
+
   function Contar_productos() {
-    let productos;
-    let contador = 0;
-    productos = RecuperarLS();
-    productos.forEach((producto) => {
-      contador++;
-    });
-    $("#contador").html(contador);
-  }
-  $(document).on("click", "#Procesar_pedido", (e) => {
-    Procesar_pedido();
-  });
-  function Procesar_pedido() {
     let productos = RecuperarLS();
-    if (productos.length === 0) {
-      mostrarNotificacion("Carrito esta Vacio.", "info");
-    } else {
-      location.href = "../pages/adm_retiro.php";
-    }
+    let contador = productos.length;
+    $("#contador").text(contador);
   }
+
   function RecuperarLS_carrito_Pedido() {
-    let productos;
-    productos = RecuperarLS();
+    let productos = RecuperarLS();
+    $("#lista-compra").empty();
     productos.forEach((producto) => {
-      template = `
-            <tr data_id="${producto.id}">
-                <td>${producto.nombre}</td>
-                <td>${producto.stock}</td>
-                <td>${producto.precio}</td>
-                <td>${producto.concentracionCompleta}</td>
-                <td> <input type="number" min="1" class="form-control cantidad_producto" value="${
-                  producto.cantidad
-                }"> </input> </td>
-                <td class="subtotales">
-                    <h5>${producto.precio * producto.cantidad}</h5>
-                </td>
-                <td><button class="borrar_de_carrito btn btn-danger"><i class="fas fa-times-circle"></i></button></td>
-            </tr>
-        `;
+      const subtotal = (parseFloat(producto.precio || 0) * parseInt(producto.cantidad || 1)).toFixed(2);
+      const template = `
+        <tr data_id="${producto.id}">
+            <td class="fw-bold">${producto.nombre}</td>
+            <td><span class="badge bg-secondary">${producto.stock}</span></td>
+            <td>$${parseFloat(producto.precio || 0).toFixed(2)}</td>
+            <td>${producto.concentracionCompleta || 'N/A'}</td>
+            <td style="width: 120px;">
+              <input type="number" min="1" max="${producto.stock}" class="form-control form-control-sm cantidad_producto" value="${producto.cantidad}">
+            </td>
+            <td class="subtotales fw-bold text-primary">$${subtotal}</td>
+            <td class="text-center">
+              <button class="borrar_de_carrito btn btn-sm btn-danger" title="Eliminar ítem">
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+        </tr>
+      `;
       $("#lista-compra").append(template);
     });
   }
-  $("#cp").keyup((e) => {
-    let id, cantidad, producto, productos, montos;
-    producto = e.target.parentElement.parentElement;
-    id = $(producto).attr("data_id");
-    cantidad = producto.querySelector("input").value;
-    montos = document.querySelectorAll(".subtotales");
-    productos = RecuperarLS();
-    productos.forEach(function (prod, indice) {
-      if (prod.id === id) {
-        prod.cantidad = cantidad;
-        montos[indice].innerHTML = `<h5>${
-          cantidad * productos[indice].precio
-        }</h5>`;
-      }
-    });
-    localStorage.setItem("productos", JSON.stringify(productos));
-    calcularTotal();
-    calcularVuelto();
-  });
-  if (window.location.pathname.includes("adm_retiro.php")) {
-    calcularTotal();
-    function calcularTotal() {
-      let productos, subtotal, conIva, totalSinDescuento, descuentoInput;
-      let total = 0,
-        iva = 0.08; // 8% de impuesto
-      productos = RecuperarLS();
-      productos.forEach((producto) => {
-        let subtotalProducto = Number(producto.precio * producto.cantidad);
-        total += subtotalProducto;
-      });
-      descuentoInput =
-        parseFloat(document.getElementById("descuento").value) || 0;
-      total -= descuentoInput;
-      totalSinDescuento = total.toFixed(2);
-      conIva = parseFloat(total * iva).toFixed(2);
-      subtotal = parseFloat(total - conIva).toFixed(2);
-      total = parseFloat(total + parseFloat(conIva)).toFixed(2);
-      document.getElementById("subtotal").textContent = subtotal;
-      document.getElementById("total_sin_descuento").textContent =
-        totalSinDescuento;
-      document.getElementById("conIva").textContent = conIva;
-      document.getElementById("total").textContent = total;
-    }
-    document.getElementById("pago").addEventListener("keyup", function () {
-      calcularVuelto();
-    });
-    window.addEventListener("load", function () {
-      calcularVuelto();
-    });
-    function calcularVuelto() {
-      let ingresoInput = document.getElementById("pago");
-      let total = parseFloat(document.getElementById("total").textContent) || 0;
-      let ingreso = parseFloat(ingresoInput.value);
-      if (isNaN(ingreso) || ingresoInput.value.trim() === "" || ingreso === 0) {
-        document.getElementById("vuelto").textContent = "0";
-        return;
-      }
-      let vuelto = ingreso - total;
-      document.getElementById("vuelto").textContent = vuelto.toFixed(2);
-    }
-  }
-  $(document).on("click", "#procesar_compra", (e) => {
-    procesar_compra();
-  });
-  function procesar_compra() {
-    let nombre, ci;
-    nombre = $("#cliente").val();
-    ci = $("#ci").val();
-    if (RecuperarLS().length == 0) {
-      mostrarNotificacion("El Carrito está Vacío.", "info");
-      location.href = "../pages/adm_catalogo.php";
-    } else if (nombre == "") {
-      mostrarNotificacion("Debe Colocar un Nombre al Cliente.", "info");
-    } else {
-      verificarStock().then((error) => {
-        if (error == 0) {
-          Registrar_Compra(nombre, ci);
-          mostrarNotificacion("Se Realizó la Compra.", "success");
-          // setTimeout(function() {
-          //     location.href = '../pages/adm_catalogo.php';
-          // }, 1500);
-        } else {
-          mostrarNotificacion("Hay un Producto que no tiene Stock.", "info");
-        }
-      });
-    }
-  }
-  async function verificarStock() {
-    let productos;
-    const funcion = "verificarStock";
-    productos = RecuperarLS();
-    const response = await fetch("../controller/ProductoController.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body:
-        "funcion=" +
-        funcion +
-        "&productos=" +
-        encodeURIComponent(JSON.stringify(productos)),
-    });
-    const error = await response.text();
-    return error;
-  }
-  function Registrar_Compra(nombre, ci) {
-    const funcion = "registrar_compra";
-    let total = $("#total")[0].textContent;
+
+  $("#cp").on("keyup change", ".cantidad_producto", function (e) {
+    const fila = $(this).closest("tr");
+    const id = fila.attr("data_id");
+    const cantidad = parseInt($(this).val()) || 1;
     let productos = RecuperarLS();
 
-    // Verificar si hay productos en el carrito antes de intentar registrar la compra
-    if (productos.length > 0) {
-      // Realizar la solicitud AJAX para registrar la compra
-      $.ajax({
-        type: "POST",
-        url: "../controller/CompraController.php",
-        data: {
-          funcion: funcion,
-          total: total,
-          nombre: nombre,
-          ci: ci,
-          productos: JSON.stringify(productos),
-        },
-        success: function (response) {
-          console.log(response);
-          mostrarNotificacion("Compra registrada exitosamente.", "success");
-          setTimeout(function() {
-            EliminarLS();
-              // Redirigir a la página deseada
-              location.href = '../pages/adm_catalogo.php';
-          }, 1500);
-        },
-        error: function (error) {
-          console.error(error);
-          mostrarNotificacion(
-            "Error al registrar la compra. Por favor, inténtelo nuevamente.",
-            "error"
-          );
-        },
-      });
-    } else {
-      mostrarNotificacion(
-        "El carrito está vacío. No se puede procesar la compra.",
-        "info"
-      );
+    productos.forEach(function (prod) {
+      if (prod.id === id) {
+        prod.cantidad = cantidad;
+        fila.find(".subtotales").text(`$${(cantidad * parseFloat(prod.precio || 0)).toFixed(2)}`);
+      }
+    });
+
+    localStorage.setItem("productos", JSON.stringify(productos));
+    if (typeof calcularTotal === "function") {
+      calcularTotal();
     }
+  });
+
+  if (window.location.pathname.includes("adm_retiro.php")) {
+    calcularTotal();
+
+    function calcularTotal() {
+      let total = 0;
+      let productos = RecuperarLS();
+      productos.forEach((producto) => {
+        let subtotalProducto = Number(producto.precio * producto.cantidad) || 0;
+        total += subtotalProducto;
+      });
+
+      let descuentoInput = parseFloat($("#descuento").val()) || 0;
+      let totalConDescuento = Math.max(0, total - descuentoInput);
+      let iva = totalConDescuento * 0.08;
+      let subtotalBase = totalConDescuento - iva;
+
+      $("#subtotal").text(`$${subtotalBase.toFixed(2)}`);
+      $("#total_sin_descuento").text(`$${total.toFixed(2)}`);
+      $("#conIva").text(`$${iva.toFixed(2)}`);
+      $("#total").text(`$${totalConDescuento.toFixed(2)}`);
+
+      calcularVuelto();
+    }
+
+    $("#descuento").on("keyup change", function () {
+      calcularTotal();
+    });
+
+    $("#pago").on("keyup change", function () {
+      calcularVuelto();
+    });
+
+    function calcularVuelto() {
+      let totalTexto = $("#total").text().replace("$", "");
+      let total = parseFloat(totalTexto) || 0;
+      let ingreso = parseFloat($("#pago").val()) || 0;
+      let vuelto = Math.max(0, ingreso - total);
+      $("#vuelto").text(`$${vuelto.toFixed(2)}`);
+    }
+
+    window.calcularTotal = calcularTotal;
+  }
+
+  $(document).on("click", "#procesar_compra", function (e) {
+    e.preventDefault();
+    procesar_compra();
+  });
+
+  function procesar_compra() {
+    let nombre = $("#cliente").val();
+    let ci = $("#ci").val();
+    let total = $("#total").text().replace("$", "");
+
+    if (RecuperarLS().length === 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "Solicitud Vacía",
+        text: "Debe agregar al menos un insumo al pedido.",
+        confirmButtonColor: "#1a3a5c"
+      });
+      return;
+    }
+
+    if (!nombre || nombre.trim() === "" || !ci || ci.trim() === "") {
+      Swal.fire({
+        icon: "warning",
+        title: "Datos Incompletos",
+        text: "Por favor complete el nombre del solicitante/área y su cédula.",
+        confirmButtonColor: "#1a3a5c"
+      });
+      return;
+    }
+
+    let productos = JSON.stringify(RecuperarLS());
+    $.post(
+      "../controller/CompraController.php",
+      { total, nombre, ci, productos },
+      (response) => {
+        if (response.trim() === "add") {
+          Swal.fire({
+            icon: "success",
+            title: "¡Entrega Registrada!",
+            text: "La solicitud de insumos ha sido procesada exitosamente.",
+            confirmButtonColor: "#1a3a5c"
+          }).then(() => {
+            EliminarLS();
+            window.location.href = "adm_catalogo.php";
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error al procesar",
+            text: "No se pudo registrar la entrega de insumos.",
+            confirmButtonColor: "#1a3a5c"
+          });
+        }
+      }
+    );
   }
 });
