@@ -1,125 +1,125 @@
 $(document).ready(function() {
     buscar_type();
-    var edit=false;
+    var edit = false;
+
     $('#form-crear-tipo').submit(function (e) {
         e.preventDefault();
         let nombre_type = $('#nombre-tipo').val();
         let id_editado = $('#id_editar_type').val();
-        let funcion = id_editado ? 'editar' : 'crear'; // Utilizar id_editado para determinar si es edición o creació
+        let funcion = id_editado ? 'editar' : 'crear';
+
         $.post('../controller/TypeController.php', { nombre_type, id_editado, funcion })
         .done(function (Response) {
             $('#form-crear-tipo').trigger('reset');
             buscar_type();
             if (Response === 'add' || Response === 'edit') {
-                mostrarMensajeExitoso(Response === 'add' ? 'Tipo Creado con Éxito' : 'Cambio Realizado con Éxito', '#crear-tipo');
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: Response === 'add' ? 'Categoría Creada con Éxito' : 'Categoría Actualizada',
+                    showConfirmButton: false,
+                    timer: 1000
+                }).then(() => {
+                    const modalObj = bootstrap.Modal.getInstance(document.getElementById('crear-tipo'));
+                    if (modalObj) modalObj.hide();
+                });
             } else {
-                mostrarMensajeError('Error al Realizar', '#crear-tipo');
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'No se pudo guardar la categoría',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
             }
-        })
-        .fail(function () {
-            mostrarMensajeError('Error al Realizar', '#crear-tipo');
         })
         .always(function () {
             edit = false;
         });
     });
-    function mostrarMensajeExitoso(mensaje, modal) {
-        Swal.fire({
-          position: 'center',
-          icon: 'success',
-          title: mensaje,
-          showConfirmButton: false,
-          timer: 1000
-        }).then(function () {
-          Swal.close();
-          $(modal).modal('hide');
-        });
-      }
-      function mostrarMensajeError(mensaje, modal) {
-        Swal.fire({
-          position: 'center',
-          icon: 'error',
-          title: mensaje,
-          showConfirmButton: false,
-          timer: 1500
-        }).then(function () {
-          Swal.close();
-          $(modal).modal('hide');
-        });
-      }
+
     function buscar_type(consulta) {
-        $.post('../controller/TypeController.php', { consulta, funcion: 'buscar' }, (Response) => {
-            const types = JSON.parse(Response);types
-            const typesContainer = $('#tipos');
-            const template = types.map(tipo_producto => `
-                <tr typId="${tipo_producto.id}" typNombre="${tipo_producto.nombre}">
-                    <td>${tipo_producto.nombre}</td>
-                    <td>
-                        <button class="editar btn btn-success" title="Editar Tipo" type="button" data-toggle="modal" data-target="#crear-tipo"><i class="fas fa-pencil-alt"></i></button>
-                        <button class="borrar_type btn btn-danger" title="Eliminar Tipo" type="button" data-toggle="modal" data-target="#remove-type"><i class="fas fa-trash"></i></button>
+        let funcion = "buscar";
+        $.post('../controller/TypeController.php', { consulta, funcion }, (Response) => {
+            const types = JSON.parse(Response);
+            const typeContainer = $('#tipos');
+            if (!types || types.length === 0) {
+                typeContainer.html(`<tr><td colspan="2" class="text-center py-4 text-muted">No se encontraron categorías.</td></tr>`);
+                return;
+            }
+
+            const template = types.map(type => `
+                <tr typeId="${type.id}" typeNombre="${type.nombre}">
+                    <td class="ps-3 fw-semibold text-dark">
+                        <i class="bi bi-tag text-primary me-2"></i>${type.nombre}
+                    </td>
+                    <td class="text-end pe-3">
+                        <button class="editar_type btn btn-sm btn-outline-success me-1" title="Editar" type="button" data-bs-toggle="modal" data-bs-target="#crear-tipo">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="borrar_type btn btn-sm btn-outline-danger" title="Eliminar" type="button">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `).join('');
-            typesContainer.html(template);
+            typeContainer.html(template);
         });
     }
+
     $(document).on('keyup', '#buscar-tipo', function () {
         let valor = $(this).val();
         buscar_type(valor !== "" ? valor : undefined);
     });
-    $(document).on('click', '.borrar_type', function (e) {
-        const funcion = "borrar_type";
-        const elemento = $(this).parent().parent();
-        const id = $(elemento).attr('typId');
-        const nombre = $(elemento).attr('typNombre');
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: 'btn btn-success',
-                cancelButton: 'btn btn-danger mr-1'
-            },
-            buttonsStyling: false
-        });
-        swalWithBootstrapButtons.fire({
-            title: '¿Estás seguro de que deseas eliminar ' + nombre + '?',
-            text: '¡No podrás revertir esto!',
+
+    $(document).on('click', '.borrar_type', function () {
+        const funcion = "borrar";
+        const elemento = $(this).closest('tr');
+        const id = elemento.attr('typeId');
+        const nombre = elemento.attr('typeNombre');
+
+        Swal.fire({
+            title: `¿Eliminar Categoría "${nombre}"?`,
+            text: "Esta acción no se puede deshacer.",
+            icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: '¡Sí, bórralo!',
-            cancelButtonText: '¡No, cancela!',
-            reverseButtons: true
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: '<i class="bi bi-trash me-1"></i> Sí, eliminar',
+            cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                $.post('../controller/TypeController.php', { id, funcion }, (Response) => {
-                    if (Response === 'borrado') {
-                        swalWithBootstrapButtons.fire(
-                            'Eliminado',
-                            'Tu Tipo ' + nombre + ' ha sido eliminado.',
-                            'success'
-                        );
+                $.post('../controller/TypeController.php', { id, funcion }, (response) => {
+                    if (response === 'borrado') {
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'Categoría Eliminada',
+                            showConfirmButton: false,
+                            timer: 1000
+                        });
                         buscar_type();
                     } else {
-                        swalWithBootstrapButtons.fire(
-                            'Cancelado',
-                            'Tu Tipo ' + nombre + ' no fue eliminado porque está siendo usado en un producto.',
-                            'error'
-                        );
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            title: 'No se puede eliminar (insumos asociados)',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
                     }
                 });
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                swalWithBootstrapButtons.fire(
-                    'Cancelado',
-                    'Tu Tipo ' + nombre + ' imaginario está a salvo :)',
-                    'error'
-                );
-                $('#crear-tipo').modal('hide');
             }
         });
     });
-    $(document).on('click','.editar',(e)=>{
-        const elemento = $(this)[0].activeElement.parentElement.parentElement;
-        const id = $(elemento).attr('typId');
-        const nombre = $(elemento).attr('typNombre');
-        $('#id_editar_type').val(id);
+
+    $(document).on('click', '.editar_type', function () {
+        const elemento = $(this).closest('tr');
+        const id = elemento.attr('typeId');
+        const nombre = elemento.attr('typeNombre');
         $('#nombre-tipo').val(nombre);
-        edit=true;
-    })
+        $('#id_editar_type').val(id);
+        $('#crearTipoLabel').html('<i class="bi bi-pencil-square me-2"></i>Editar Categoría');
+        edit = true;
+    });
 });
