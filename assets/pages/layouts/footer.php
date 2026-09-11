@@ -24,6 +24,18 @@
 <!-- Lógica del Shell SIMAP -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+  // Desvanecimiento de Page Loader Global
+  const loader = document.getElementById('simap-page-loader');
+  if (loader) {
+    window.addEventListener('load', function() {
+      loader.classList.add('hidden');
+    });
+    // Fallback de seguridad si load ya ocurrió o tarda
+    setTimeout(function() {
+      loader.classList.add('hidden');
+    }, 400);
+  }
+
   // Toggle colapso del sidebar en pantalla desktop
   const desktopToggle = document.getElementById('sidebar-toggle-desktop');
   if (desktopToggle) {

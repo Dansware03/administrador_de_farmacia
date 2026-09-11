@@ -9,8 +9,10 @@
       <div class="container-fluid">
         <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-2">
           <div>
-            <h1 class="h3 fw-bold mb-1 text-primary">Panel Técnico - Catálogo de Insumos</h1>
-            <p class="text-muted small mb-0">Consulta técnica de insumos y materiales</p>
+            <h1 class="h3 fw-bold mb-1 text-primary">
+              <i class="bi bi-shield-check me-2"></i>Catálogo de Insumos y Materiales
+            </h1>
+            <p class="text-muted small mb-0">Área técnica y asistencial - Consulta de disponibilidad y solicitud de materiales</p>
           </div>
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0 small">
@@ -25,6 +27,15 @@
     <!-- Main Buscador y Catálogo -->
     <section>
       <div class="container-fluid">
+        <!-- Banner Informativo Técnico -->
+        <div class="alert alert-primary bg-primary bg-opacity-10 border-0 shadow-sm d-flex align-items-center gap-3 p-3 mb-4 rounded-3" role="alert">
+          <i class="bi bi-info-circle-fill text-primary fs-3 flex-shrink-0"></i>
+          <div class="small">
+            <strong class="d-block text-primary fs-6">Perfil Asistencial / Técnico:</strong>
+            Puede consultar el stock de materiales de protección y limpieza, y agregarlos a su solicitud de entrega mediante el botón en cada insumo.
+          </div>
+        </div>
+
         <!-- Buscador -->
         <div class="card border-0 shadow-sm mb-4">
           <div class="card-body p-3">
@@ -32,7 +43,7 @@
               <span class="input-group-text bg-light border-end-0 text-muted">
                 <i class="bi bi-search"></i>
               </span>
-              <input type="text" id="buscar_producto" class="form-control border-start-0 bg-light" placeholder="Buscar insumos...">
+              <input type="text" id="buscar_producto" class="form-control border-start-0 bg-light" placeholder="Escriba el nombre del insumo o material a consultar..." aria-label="Buscar insumos o materiales">
             </div>
           </div>
         </div>

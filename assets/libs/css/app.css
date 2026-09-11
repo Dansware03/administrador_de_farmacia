@@ -218,3 +218,26 @@ body {
     border: 1px solid var(--simap-border);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
+
+/* Preloader / Splash de Carga Global */
+.simap-loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #ffffff;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.simap-loader-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
