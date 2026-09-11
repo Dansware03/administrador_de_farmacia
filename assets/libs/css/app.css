@@ -1,0 +1,220 @@
+/**
+ * SIMAP - Shell y Layout Base (Bootstrap 5)
+ * Sistema de Inventario de Materiales e Insumos de Proteccion
+ * Clinica Popular Especializada La Fria
+ */
+
+:root {
+    --simap-primary: #1a3a5c;
+    --simap-primary-dark: #0f243a;
+    --simap-secondary: #00897b;
+    --simap-secondary-dark: #00695c;
+    --simap-accent: #0288d1;
+    --simap-sidebar-width: 260px;
+    --simap-navbar-height: 62px;
+    --simap-bg: #f8fafc;
+    --simap-surface: #ffffff;
+    --simap-text: #1e293b;
+    --simap-text-muted: #64748b;
+    --simap-border: #e2e8f0;
+}
+
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--simap-bg);
+    color: var(--simap-text);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Navbar Superior */
+.simap-navbar {
+    height: var(--simap-navbar-height);
+    background-color: var(--simap-surface);
+    border-bottom: 1px solid var(--simap-border);
+    z-index: 1030;
+    transition: all 0.3s ease;
+}
+
+/* Sidebar General */
+.simap-sidebar {
+    width: var(--simap-sidebar-width);
+    background: linear-gradient(180deg, var(--simap-primary) 0%, var(--simap-primary-dark) 100%);
+    color: #ffffff;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1040;
+}
+
+/* Sidebar Desktop (Fixed) */
+@media (min-width: 992px) {
+    .simap-sidebar-desktop {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        overflow-y: auto;
+    }
+
+    .content-wrapper {
+        margin-left: var(--simap-sidebar-width);
+        min-height: calc(100vh - var(--simap-navbar-height));
+        transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding-bottom: 3rem;
+    }
+
+    .simap-main-footer {
+        margin-left: var(--simap-sidebar-width);
+        transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Colapso de Sidebar en Desktop */
+    body.sidebar-collapsed .simap-sidebar-desktop {
+        margin-left: calc(-1 * var(--simap-sidebar-width));
+    }
+
+    body.sidebar-collapsed .content-wrapper,
+    body.sidebar-collapsed .simap-main-footer {
+        margin-left: 0;
+    }
+}
+
+/* En Movil el wrapper usa el ancho total */
+@media (max-width: 991.98px) {
+    .content-wrapper {
+        margin-left: 0;
+        min-height: calc(100vh - var(--simap-navbar-height));
+        padding-bottom: 3rem;
+    }
+
+    .simap-main-footer {
+        margin-left: 0;
+    }
+}
+
+/* Elementos del Sidebar */
+.simap-brand {
+    height: var(--simap-navbar-height);
+    display: flex;
+    align-items: center;
+    padding: 0 1.25rem;
+    background-color: rgba(0, 0, 0, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.simap-brand:hover {
+    color: #ffffff;
+}
+
+.simap-user-panel {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.simap-sidebar .nav-header {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 1rem 1.25rem 0.4rem;
+}
+
+.simap-sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: rgba(255, 255, 255, 0.85);
+    padding: 0.65rem 1.25rem;
+    font-size: 0.92rem;
+    font-weight: 500;
+    border-radius: 0;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.simap-sidebar .nav-link:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.simap-sidebar .nav-link.active {
+    color: #ffffff;
+    background-color: var(--simap-secondary);
+    box-shadow: 0 2px 6px rgba(0, 137, 123, 0.4);
+}
+
+.simap-sidebar .nav-link i {
+    font-size: 1.15rem;
+    width: 24px;
+    text-align: center;
+}
+
+/* Footer */
+.simap-main-footer {
+    background-color: var(--simap-surface);
+    border-top: 1px solid var(--simap-border);
+    padding: 0.85rem 1.5rem;
+    font-size: 0.85rem;
+    color: var(--simap-text-muted);
+}
+
+/* Adaptacion de componentes interiores existentes */
+.content-header {
+    padding: 1.25rem 0.5rem;
+}
+
+.content-header h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--simap-primary);
+    margin: 0;
+}
+
+.card {
+    border: 1px solid var(--simap-border);
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+    background-color: var(--simap-surface);
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid var(--simap-border);
+    padding: 1rem 1.25rem;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--simap-primary);
+}
+
+/* Compatibilidad con clases antiguas de botones y temas de tarjetas */
+.card-primary .card-header {
+    border-top: 3px solid var(--simap-primary);
+}
+
+.card-warning .card-header {
+    border-top: 3px solid #f59e0b;
+}
+
+.card-success .card-header {
+    border-top: 3px solid var(--simap-secondary);
+}
+
+.badge-primary {
+    background-color: var(--simap-secondary) !important;
+}
+
+/* Estilos de Carrito en Nav */
+#cat-carrito .dropdown-menu {
+    min-width: 320px;
+    max-width: 90vw;
+    border-radius: 0.75rem;
+    border: 1px solid var(--simap-border);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
