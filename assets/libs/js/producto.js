@@ -19,6 +19,19 @@ $(document).ready(function() {
     rellenar_laboratorio();
     rellenar_type();
     rellenar_presentacion();
+    rellenar_unidad_medida();
+
+    function rellenar_unidad_medida() {
+        $.post('../controller/AreaController.php', { funcion: 'cargar_unidades' })
+            .done(function(response) {
+                const unidades = JSON.parse(response);
+                const opciones = unidades.map(u => `<option value="${u.id_unidad}">${u.nombre} (${u.codigo})</option>`);
+                $('#unidad_medida').html(opciones.join(''));
+            })
+            .fail(function(error) {
+                console.error("Error al cargar unidades de medida:", error);
+            });
+    }
 
     function rellenar_proveedor() {
         const funcion = "rellenar_proveedor";
@@ -83,6 +96,8 @@ $(document).ready(function() {
         $('#noVenta').prop('checked', false);
         $('#precio').prop('disabled', false).val('');
         $('#crearProductoLabel').html('<i class="bi bi-box-seam me-2"></i>Nuevo Insumo');
+        $('#id_edit_prod').val('');
+        $('#especificacion_talla').val('');
         edit = false;
     });
 
@@ -90,7 +105,9 @@ $(document).ready(function() {
         e.preventDefault();
         let id_edit_prod = $('#id_edit_prod').val();
         let nombre = $('#nombre-producto').val();
-        let concentracion = $('#concentracion').val() + " " + $('#unidad').val();
+        let especificacion_talla = $('#especificacion_talla').val();
+        let concentracion = especificacion_talla;
+        let id_unidad = $('#unidad_medida').val();
         let adicional = $('#adicional').val();
         let precio = $('#precio').val();
         let prod_lab = $('#laboratorio').val();
@@ -105,7 +122,7 @@ $(document).ready(function() {
 
         $.post(
             '../controller/ProductoController.php',
-            { funcion, id_edit_prod, nombre, concentracion, adicional, precio, prod_lab, prod_tip_prod, prod_present }
+            { funcion, id_edit_prod, nombre, concentracion, adicional, precio, prod_lab, prod_tip_prod, prod_present, id_unidad, especificacion_talla }
         )
         .done(response => {
             if (response === 'add') {
@@ -192,16 +209,20 @@ $(document).ready(function() {
             }
 
             const avatarSrc = product.avatar && product.avatar.trim() !== '' ? product.avatar : '../libs/img/product/prod_default.png';
+            const unidadTexto = product.unidad_medida ? `${product.unidad_medida} (${product.unidad_codigo})` : 'Unidad (und)';
+            const especTexto = product.especificacion_talla || product.concentracion || 'Sin especificación';
 
             return `
-                <div proId="${product.id}" proNombre="${product.nombre}" conNombre="${product.concentracion}" addNombre="${product.adicional}" preNombre="${product.precio}" nLabNombre="${product.laboratorio_id}" nTypeNombre="${product.tipo_id}" nPreNombre="${product.presentacion_id}" avaNombre="${avatarSrc}" class="col-12 col-sm-6 col-md-4 col-xl-3 d-flex align-items-stretch">
+                <div proId="${product.id}" proNombre="${product.nombre}" conNombre="${product.concentracion}" addNombre="${product.adicional}" preNombre="${product.precio}" nLabNombre="${product.laboratorio_id}" nTypeNombre="${product.tipo_id}" nPreNombre="${product.presentacion_id}" idUnidad="${product.id_unidad || 1}" espTalla="${product.especificacion_talla || ''}" avaNombre="${avatarSrc}" class="col-12 col-sm-6 col-md-4 col-xl-3 d-flex align-items-stretch">
                     <div class="card product-card w-100 shadow-sm border-0 d-flex flex-column justify-content-between">
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <span class="badge ${stockBadge} rounded-pill px-3 py-2 small">
                                     <i class="bi bi-boxes me-1"></i>Stock: ${product.stock}
                                 </span>
-                                <span class="text-muted small fw-semibold">#${product.id}</span>
+                                <span class="badge bg-light text-primary border small fw-semibold">
+                                    ${product.unidad_codigo || 'und'}
+                                </span>
                             </div>
 
                             <div class="text-center mb-3">
@@ -211,11 +232,11 @@ $(document).ready(function() {
                             </div>
 
                             <ul class="list-unstyled small text-muted border-top pt-3 mb-0">
-                                <li class="mb-1 text-truncate"><i class="bi bi-tag text-secondary me-2"></i><b>Concentración:</b> ${product.concentracion || 'N/A'}</li>
-                                <li class="mb-1 text-truncate"><i class="bi bi-info-circle text-secondary me-2"></i><b>Adicional:</b> ${product.adicional || 'N/A'}</li>
-                                <li class="mb-1 text-truncate"><i class="bi bi-building text-secondary me-2"></i><b>Laboratorio:</b> ${product.nombre_laboratorio || 'N/A'}</li>
-                                <li class="mb-1 text-truncate"><i class="bi bi-collection text-secondary me-2"></i><b>Tipo:</b> ${product.tipo || 'N/A'}</li>
-                                <li class="text-truncate"><i class="bi bi-box-seam text-secondary me-2"></i><b>Presentación:</b> ${product.nombre_presentacion || 'N/A'}</li>
+                                <li class="mb-1 text-truncate"><i class="bi bi-rulers text-secondary me-2"></i><b>Unidad:</b> ${unidadTexto}</li>
+                                <li class="mb-1 text-truncate"><i class="bi bi-tag text-secondary me-2"></i><b>Talla / Espec.:</b> ${especTexto}</li>
+                                <li class="mb-1 text-truncate"><i class="bi bi-building text-secondary me-2"></i><b>Fabricante:</b> ${product.nombre_laboratorio || 'N/A'}</li>
+                                <li class="mb-1 text-truncate"><i class="bi bi-collection text-secondary me-2"></i><b>Categoría:</b> ${product.tipo || 'N/A'}</li>
+                                <li class="text-truncate"><i class="bi bi-box-seam text-secondary me-2"></i><b>Empaque:</b> ${product.nombre_presentacion || 'N/A'}</li>
                             </ul>
                         </div>
 
@@ -313,10 +334,14 @@ $(document).ready(function() {
         const laboratorio = $(elemento).attr('nLabNombre');
         const tipo = $(elemento).attr('nTypeNombre');
         const presentacion = $(elemento).attr('nPreNombre');
+        const id_unidad = $(elemento).attr('idUnidad') || 1;
+        const esp_talla = $(elemento).attr('espTalla') || concentracion || '';
 
         $('#id_edit_prod').val(id);
         $('#nombre-producto').val(nombre);
-        $('#concentracion').val(concentracion);
+        $('#especificacion_talla').val(esp_talla);
+        $('#unidad_medida').val(id_unidad).trigger('change');
+        $('#concentracion').val(esp_talla);
         $('#adicional').val(adicional);
         $('#precio').val(precio);
         $('#laboratorio').val(laboratorio).trigger('change');
@@ -339,8 +364,27 @@ $(document).ready(function() {
         const elemento = $(this).closest('.d-flex.align-items-stretch');
         const id = $(elemento).attr('proId');
         const nombre = $(elemento).attr('proNombre');
+        const tipoId = parseInt($(elemento).attr('nTypeNombre')) || 0;
+
         $('#id_lote_prod').val(id);
         $('#nombre_producto_lote').html(nombre);
+
+        // Si es Equipos (2), Papelería/Higiene (4) o Repuestos (5), marcar como sin vencimiento
+        if ([2, 4, 5].includes(tipoId)) {
+            $('#noPerecedero').prop('checked', true);
+            $('#vencimiento').val('').prop('disabled', true).prop('required', false);
+        } else {
+            $('#noPerecedero').prop('checked', false);
+            $('#vencimiento').prop('disabled', false).prop('required', true);
+        }
+    });
+
+    $(document).on('change', '#noPerecedero', function() {
+        if ($(this).is(':checked')) {
+            $('#vencimiento').val('').prop('disabled', true).prop('required', false);
+        } else {
+            $('#vencimiento').prop('disabled', false).prop('required', true);
+        }
     });
 
     $('#form-crear-lote').submit(e => {
@@ -349,7 +393,8 @@ $(document).ready(function() {
         let proveedor = $('#proveedor').val();
         let cod_lote = $('#cod_lote').val();
         let stock = $('#stock').val();
-        let vencimiento = $('#vencimiento').val();
+        let esNoPerecedero = $('#noPerecedero').is(':checked');
+        let vencimiento = esNoPerecedero ? '2035-12-31' : $('#vencimiento').val();
         funcion = 'crear';
 
         $.post('../controller/LoteController.php', { id_producto, proveedor, cod_lote, stock, vencimiento, funcion }, (response) => {
@@ -357,7 +402,7 @@ $(document).ready(function() {
                 Swal.fire({
                     position: 'center',
                     icon: 'success',
-                    title: 'Lote Creado con Éxito',
+                    title: 'Lote / Ingreso Creado con Éxito',
                     showConfirmButton: false,
                     timer: 1000
                 }).then(() => {

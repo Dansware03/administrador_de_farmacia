@@ -116,6 +116,7 @@ if ($_POST['funcion'] == 'crear_usuario') {
     $ci = $_POST['ci'];
     $genero = $_POST['genero'];
     $pass = $_POST['pass'];
+    // ponytail: Por política institucional SIMAP, los nuevos registros creados corresponden al rol Secretario (tipo = 2).
     $tipo=2;
     $avatar='user-default.png';
     $usuario->crear($nombre,$apellido,$edad,$ci,$genero,$pass,$tipo,$avatar);

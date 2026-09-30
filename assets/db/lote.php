@@ -27,7 +27,8 @@ class Lote{
 
     function buscar() {
         $consulta = isset($_POST['consulta']) ? $_POST['consulta'] : '';
-        $sql = "SELECT id_lote,cod_lote,stock,vencimiento,concentracion,adicional,producto.nombre AS prod_nom, laboratorio.nombre AS lab_nom, tipo_producto.nombre AS tip_nom, presentacion.nombre AS pre_nom, proveedor.nombre AS pro_nom, producto.avatar AS logo FROM lote
+        // ponytail: Incluir prod_tip_prod para distinguir insumos perecederos de equipos y materiales no perecederos.
+        $sql = "SELECT id_lote,cod_lote,stock,vencimiento,concentracion,adicional,prod_tip_prod,producto.nombre AS prod_nom, laboratorio.nombre AS lab_nom, tipo_producto.nombre AS tip_nom, presentacion.nombre AS pre_nom, proveedor.nombre AS pro_nom, producto.avatar AS logo FROM lote
                 JOIN proveedor ON lote_id_prov=id_proveedor
                 JOIN producto ON id_lote_prod=id_producto
                 JOIN laboratorio ON prod_lab=id_laboratorio

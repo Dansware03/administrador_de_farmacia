@@ -15,14 +15,9 @@ $(document).ready(function() {
       const usuarios = JSON.parse(Response);
       let templete = '';
       usuarios.forEach(usuario => {
-        let badgeRol = '';
-        if (usuario.tipo_usuario == 3) {
-          badgeRol = '<span class="badge bg-danger">Root</span>';
-        } else if (usuario.tipo_usuario == 1) {
-          badgeRol = '<span class="badge bg-primary">Administrador</span>';
-        } else if (usuario.tipo_usuario == 2) {
-          badgeRol = '<span class="badge bg-success">Farmacéutico</span>';
-        }
+        let badgeRol = (usuario.tipo_usuario == 1) 
+          ? '<span class="badge bg-primary">Administrador</span>' 
+          : '<span class="badge bg-success">Secretario</span>';
 
         templete += `
         <div usuarioId="${usuario.id}" class="col-12 col-sm-6 col-lg-4 d-flex align-items-stretch mb-4">
@@ -64,36 +59,21 @@ $(document).ready(function() {
             </div>
             <div class="card-footer bg-white border-top border-light-subtle p-2 d-flex justify-content-end gap-1">`;
             
-            if (tipo_usuario == 3) {
-              if (usuario.tipo_usuario != 3) {
-                templete += `
-                  <button class="delete-user btn btn-outline-danger btn-sm rounded-pill px-3" type="button" data-bs-toggle="modal" data-bs-target="#check">
-                    <i class="bi bi-trash me-1"></i>Eliminar
-                  </button>
-                `;
-              }
-              if (usuario.tipo_usuario == 2) {
-                templete += `
-                  <button class="ascender btn btn-outline-primary btn-sm rounded-pill px-3" type="button" data-bs-toggle="modal" data-bs-target="#check">
-                    <i class="bi bi-shield-check me-1"></i>Ascender
-                  </button>
-                `;
-              }
-              if (usuario.tipo_usuario == 1) {
-                templete += `
-                  <button class="descender btn btn-outline-secondary btn-sm rounded-pill px-3" type="button" data-bs-toggle="modal" data-bs-target="#check">
-                    <i class="bi bi-shield-slash me-1"></i>Descender
-                  </button>
-                `;
-              }
-            } else {
-              if (tipo_usuario == 1 && usuario.tipo_usuario != 1 && usuario.tipo_usuario !== 3) {
-                templete += `
-                  <button class="delete-user btn btn-outline-danger btn-sm rounded-pill px-3" type="button" data-bs-toggle="modal" data-bs-target="#check">
-                    <i class="bi bi-trash me-1"></i>Eliminar
-                  </button>
-                `;
-              }
+            if (tipo_usuario == 1 && usuario.tipo_usuario == 2) {
+              templete += `
+                <button class="delete-user btn btn-outline-danger btn-sm rounded-pill px-3" type="button" data-bs-toggle="modal" data-bs-target="#check">
+                  <i class="bi bi-trash me-1"></i>Eliminar
+                </button>
+                <button class="ascender btn btn-outline-primary btn-sm rounded-pill px-3" type="button" data-bs-toggle="modal" data-bs-target="#check">
+                  <i class="bi bi-shield-check me-1"></i>Ascender
+                </button>
+              `;
+            } else if (tipo_usuario == 1 && usuario.tipo_usuario == 1 && usuario.id != $('#id_usuario').val()) {
+              templete += `
+                <button class="descender btn btn-outline-secondary btn-sm rounded-pill px-3" type="button" data-bs-toggle="modal" data-bs-target="#check">
+                  <i class="bi bi-shield-slash me-1"></i>Descender
+                </button>
+              `;
             }
 
             templete += `

@@ -1,4 +1,5 @@
 <?php
+// ponytail: Modelo que gestiona el registro de despachos institucionales y deducción de stock en lotes.
 include_once 'conexion.php';
 class Compra {
     private $acceso;
@@ -7,18 +8,18 @@ class Compra {
         $this->acceso = $db->pdo;
     }
     
-    public function registrar_compra($nombre, $ci, $total, $vendedor, $productos) {
+    public function registrar_compra($nombre, $ci, $total, $vendedor, $productos, $id_area = null, $cargo_receptor = '', $observacion = '') {
         // Iniciar una transacción para garantizar la integridad de los datos
         $this->acceso->beginTransaction();
         
         try {
-            // 1. Insertar en la tabla venta
+            // 1. Insertar en la cabecera de despacho (tabla venta)
             $fecha = date('Y-m-d H:i:s');
-            $query = "INSERT INTO venta(fecha, cliente, ci, total, vendedor) VALUES (?,?,?,?,?)";
+            $query = "INSERT INTO venta(fecha, cliente, ci, total, vendedor, id_area, cargo_receptor, observacion) VALUES (?,?,?,?,?,?,?,?)";
             $stmtVenta = $this->acceso->prepare($query);
-            $stmtVenta->execute([$fecha, $nombre, $ci, $total, $vendedor]);
+            $stmtVenta->execute([$fecha, $nombre, $ci, $total, $vendedor, $id_area, $cargo_receptor, $observacion]);
             
-            // Obtener el ID de la venta recién insertada
+            // Obtener el ID del despacho recién insertado
             $id_venta = $this->acceso->lastInsertId();
             
             // 2. Insertar cada producto en la tabla venta_producto

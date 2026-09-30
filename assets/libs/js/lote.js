@@ -27,31 +27,32 @@ $(document).ready(function() {
         }
 
         const template = lotes.map(lote => {
-            let cardBorder = 'border-success';
-            let badgeClass = 'bg-success';
-            let estadoTexto = 'En Regla';
+            let cardBorder = 'border-light';
+            let badgeEstadoHtml = '';
 
             if (lote.estado === 'danger') {
                 cardBorder = 'border-danger';
-                badgeClass = 'bg-danger';
-                estadoTexto = 'Vencido';
+                badgeEstadoHtml = '<span class="badge bg-danger text-white small">Vencido</span>';
             } else if (lote.estado === 'warning') {
                 cardBorder = 'border-warning';
-                badgeClass = 'bg-warning text-dark';
-                estadoTexto = 'Por Vencer';
+                badgeEstadoHtml = '<span class="badge bg-warning text-dark small">Por Vencer</span>';
+            } else if (lote.es_perecedero) {
+                cardBorder = 'border-success';
+                badgeEstadoHtml = '<span class="badge bg-success-subtle text-success border border-success-subtle small">En Regla</span>';
             }
 
             const avatarSrc = lote.avatar && lote.avatar.trim() !== '' ? lote.avatar : '../libs/img/product/prod_default.png';
+            const tieneVencimiento = lote.es_perecedero && lote.vencimiento && lote.vencimiento.trim() !== '';
 
             return `
                 <div loteID="${lote.id}" stockID="${lote.stock}" class="col-12 col-sm-6 col-md-4 col-xl-3 d-flex align-items-stretch">
                     <div class="card product-card w-100 shadow-sm ${cardBorder} border-2 d-flex flex-column justify-content-between">
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="badge ${badgeClass} rounded-pill px-3 py-2 small">
+                                <span class="badge bg-primary rounded-pill px-3 py-2 small">
                                     <i class="bi bi-boxes me-1"></i>Stock: ${lote.stock}
                                 </span>
-                                <span class="badge bg-light text-dark border small">${estadoTexto}</span>
+                                ${badgeEstadoHtml}
                             </div>
 
                             <div class="text-center mb-3">
@@ -61,7 +62,7 @@ $(document).ready(function() {
                             </div>
 
                             <ul class="list-unstyled small text-muted border-top pt-3 mb-0">
-                                <li class="mb-1 text-truncate"><i class="bi bi-calendar-event text-secondary me-2"></i><b>Vence:</b> ${lote.vencimiento || 'N/A'}</li>
+                                ${tieneVencimiento ? `<li class="mb-1 text-truncate"><i class="bi bi-calendar-event text-secondary me-2"></i><b>Vence:</b> ${lote.vencimiento}</li>` : ''}
                                 <li class="mb-1 text-truncate"><i class="bi bi-truck text-secondary me-2"></i><b>Proveedor:</b> ${lote.proveedor || 'N/A'}</li>
                                 <li class="mb-1 text-truncate"><i class="bi bi-building text-secondary me-2"></i><b>Laboratorio:</b> ${lote.nombre_laboratorio || 'N/A'}</li>
                                 <li class="text-truncate"><i class="bi bi-box-seam text-secondary me-2"></i><b>Presentación:</b> ${lote.nombre_presentacion || 'N/A'}</li>

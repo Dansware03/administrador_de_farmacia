@@ -6,11 +6,18 @@ session_start();
 if (isset($_SESSION['us_tipo'])) {
     $userTypeRedirect = [
         1 => '../pages/adm_catalogo.php',
-        2 => '../pages/tec_catalogo.php',
-        3 => '../pages/adm_catalogo.php'
+        2 => '../pages/tec_catalogo.php'
     ];
-    header('Location: ' . $userTypeRedirect[$_SESSION['us_tipo']]);
-    exit;
+    $tipo = $_SESSION['us_tipo'];
+    if (isset($userTypeRedirect[$tipo])) {
+        header('Location: ' . $userTypeRedirect[$tipo]);
+        exit;
+    } else {
+        // Si el rol ya no es válido (ej: sesión antigua con rol 3 eliminado), limpiar sesión
+        session_destroy();
+        header('Location: ../../index.php');
+        exit;
+    }
 }
 
 // Procesar el formulario de login
@@ -29,12 +36,18 @@ if (isset($_POST['user']) && isset($_POST['pass'])) {
 
             $userTypeRedirect = [
                 1 => '../pages/adm_catalogo.php',
-                2 => '../pages/tec_catalogo.php',
-                3 => '../pages/adm_catalogo.php'
+                2 => '../pages/tec_catalogo.php'
             ];
 
-            header('Location: ' . $userTypeRedirect[$_SESSION['us_tipo']]);
-            exit;
+            $tipo = $objeto->us_tipo;
+            if (isset($userTypeRedirect[$tipo])) {
+                header('Location: ' . $userTypeRedirect[$tipo]);
+                exit;
+            } else {
+                session_destroy();
+                header('Location: ../../index.php?login_error=1');
+                exit;
+            }
         }
     } else {
         header('Location: ../../index.php?login_error=1');

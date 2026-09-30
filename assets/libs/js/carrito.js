@@ -21,9 +21,7 @@ $(document).ready(function () {
   }
 
   $(document).on("click", ".agg_compra", function () {
-    const elemento = $(this).closest(
-      ".col-12.col-sm-6.col-md-4.d-flex.align-items-stretch"
-    );
+    const elemento = $(this).closest("[proId]");
     const id = elemento.attr("proId");
     const nombre = elemento.attr("proNombre");
     const adicional = elemento.attr("addNombre");
@@ -34,6 +32,9 @@ $(document).ready(function () {
     const concentracionCompleta = elemento.attr("conNombre");
     const avatar = elemento.attr("avaNombre");
     const stock = elemento.attr("productStock");
+    const uniMedida = elemento.attr("uniMedida") || "Unidad";
+    const uniCodigo = elemento.attr("uniCodigo") || "und";
+    const espTalla = elemento.attr("espTalla") || concentracionCompleta || "";
 
     const producto = {
       id: id,
@@ -44,6 +45,9 @@ $(document).ready(function () {
       prod_tip_prod: prod_tip_prod,
       prod_present: prod_present,
       concentracionCompleta: concentracionCompleta,
+      uniMedida: uniMedida,
+      uniCodigo: uniCodigo,
+      espTalla: espTalla,
       avatar: avatar,
       stock: stock,
       cantidad: 1,
@@ -159,12 +163,17 @@ $(document).ready(function () {
     $("#lista-compra").empty();
     productos.forEach((producto) => {
       const subtotal = (parseFloat(producto.precio || 0) * parseInt(producto.cantidad || 1)).toFixed(2);
+      const unidadTexto = producto.uniMedida ? `${producto.uniMedida} (${producto.uniCodigo || 'und'})` : 'Unidad (und)';
+      const especTexto = producto.espTalla || producto.concentracionCompleta || '-';
       const template = `
         <tr data_id="${producto.id}">
             <td class="fw-bold">${producto.nombre}</td>
             <td><span class="badge bg-secondary">${producto.stock}</span></td>
             <td>$${parseFloat(producto.precio || 0).toFixed(2)}</td>
-            <td>${producto.concentracionCompleta || 'N/A'}</td>
+            <td>
+              <div class="small fw-semibold text-dark">${unidadTexto}</div>
+              <small class="text-muted">${especTexto}</small>
+            </td>
             <td style="width: 120px;">
               <input type="number" min="1" max="${producto.stock}" class="form-control form-control-sm cantidad_producto" value="${producto.cantidad}">
             </td>
@@ -200,43 +209,34 @@ $(document).ready(function () {
   });
 
   if (window.location.pathname.includes("adm_retiro.php")) {
+    cargar_areas_servicio();
     calcularTotal();
+
+    function cargar_areas_servicio() {
+      $.post('../controller/AreaController.php', { funcion: 'cargar_areas' })
+        .done(function(response) {
+          const areas = JSON.parse(response);
+          const opciones = areas.map(a => `<option value="${a.id_area}">${a.nombre_area} (Riesgo: ${a.nivel_riesgo})</option>`);
+          $('#area_destino').html(opciones.join(''));
+        })
+        .fail(function(error) {
+          console.error("Error al cargar áreas de servicio:", error);
+        });
+    }
 
     function calcularTotal() {
       let total = 0;
+      let totalCantidad = 0;
       let productos = RecuperarLS();
       productos.forEach((producto) => {
-        let subtotalProducto = Number(producto.precio * producto.cantidad) || 0;
+        let cant = parseInt(producto.cantidad) || 1;
+        totalCantidad += cant;
+        let subtotalProducto = Number((producto.precio || 0) * cant) || 0;
         total += subtotalProducto;
       });
 
-      let descuentoInput = parseFloat($("#descuento").val()) || 0;
-      let totalConDescuento = Math.max(0, total - descuentoInput);
-      let iva = totalConDescuento * 0.08;
-      let subtotalBase = totalConDescuento - iva;
-
-      $("#subtotal").text(`$${subtotalBase.toFixed(2)}`);
-      $("#total_sin_descuento").text(`$${total.toFixed(2)}`);
-      $("#conIva").text(`$${iva.toFixed(2)}`);
-      $("#total").text(`$${totalConDescuento.toFixed(2)}`);
-
-      calcularVuelto();
-    }
-
-    $("#descuento").on("keyup change", function () {
-      calcularTotal();
-    });
-
-    $("#pago").on("keyup change", function () {
-      calcularVuelto();
-    });
-
-    function calcularVuelto() {
-      let totalTexto = $("#total").text().replace("$", "");
-      let total = parseFloat(totalTexto) || 0;
-      let ingreso = parseFloat($("#pago").val()) || 0;
-      let vuelto = Math.max(0, ingreso - total);
-      $("#vuelto").text(`$${vuelto.toFixed(2)}`);
+      $("#total_items").text(totalCantidad);
+      $("#total").text(`$${total.toFixed(2)}`);
     }
 
     window.calcularTotal = calcularTotal;
@@ -250,6 +250,9 @@ $(document).ready(function () {
   function procesar_compra() {
     let nombre = $("#cliente").val();
     let ci = $("#ci").val();
+    let id_area = $("#area_destino").val();
+    let cargo_receptor = $("#cargo_receptor").val() || "";
+    let observacion = $("#observacion_entrega").val() || "";
     let total = $("#total").text().replace("$", "");
 
     if (RecuperarLS().length === 0) {
@@ -266,7 +269,17 @@ $(document).ready(function () {
       Swal.fire({
         icon: "warning",
         title: "Datos Incompletos",
-        text: "Por favor complete el nombre del solicitante/área y su cédula.",
+        text: "Por favor complete el nombre del solicitante/funcionario y su cédula.",
+        confirmButtonColor: "#1a3a5c"
+      });
+      return;
+    }
+
+    if (!id_area) {
+      Swal.fire({
+        icon: "warning",
+        title: "Área Requerida",
+        text: "Por favor seleccione el área hospitalaria de destino.",
         confirmButtonColor: "#1a3a5c"
       });
       return;
@@ -275,23 +288,28 @@ $(document).ready(function () {
     let productos = JSON.stringify(RecuperarLS());
     $.post(
       "../controller/CompraController.php",
-      { total, nombre, ci, productos },
+      { total, nombre, ci, id_area, cargo_receptor, observacion, productos },
       (response) => {
         if (response.trim() === "add") {
           Swal.fire({
             icon: "success",
-            title: "¡Entrega Registrada!",
-            text: "La solicitud de insumos ha sido procesada exitosamente.",
+            title: "¡Acta de Entrega Registrada!",
+            text: "La salida de insumos del depósito ha sido procesada exitosamente.",
             confirmButtonColor: "#1a3a5c"
           }).then(() => {
             EliminarLS();
-            window.location.href = "adm_catalogo.php";
+            // Redirigir al catálogo correspondiente según URL previa o por defecto
+            if (document.referrer && document.referrer.includes("tec_catalogo.php")) {
+              window.location.href = "tec_catalogo.php";
+            } else {
+              window.location.href = "adm_catalogo.php";
+            }
           });
         } else {
           Swal.fire({
             icon: "error",
             title: "Error al procesar",
-            text: "No se pudo registrar la entrega de insumos.",
+            text: "No se pudo registrar la entrega de insumos: " + response,
             confirmButtonColor: "#1a3a5c"
           });
         }

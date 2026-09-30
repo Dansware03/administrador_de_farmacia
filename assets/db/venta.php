@@ -10,9 +10,12 @@ class Venta {
     }
     
     public function listar_ventas() {
-        $sql = "SELECT v.*, (u.nombre_us || ' ' || u.apellidos_us) as vendedor 
+        $sql = "SELECT v.*, (u.nombre_us || ' ' || u.apellidos_us) as vendedor,
+                       COALESCE(a.nombre_area, 'Área General') as area,
+                       a.nivel_riesgo
                 FROM venta v 
                 JOIN usuario u ON v.vendedor = u.id_usuario 
+                LEFT JOIN area_servicio a ON v.id_area = a.id_area
                 ORDER BY v.id_venta DESC";
         $query = $this->acceso->prepare($sql);
         $query->execute();
@@ -21,9 +24,12 @@ class Venta {
     }
     
     public function listar_ventas_por_fechas($fecha_inicio, $fecha_fin) {
-        $sql = "SELECT v.*, (u.nombre_us || ' ' || u.apellidos_us) as vendedor 
+        $sql = "SELECT v.*, (u.nombre_us || ' ' || u.apellidos_us) as vendedor,
+                       COALESCE(a.nombre_area, 'Área General') as area,
+                       a.nivel_riesgo
                 FROM venta v 
                 JOIN usuario u ON v.vendedor = u.id_usuario 
+                LEFT JOIN area_servicio a ON v.id_area = a.id_area
                 WHERE DATE(v.fecha) BETWEEN :fecha_inicio AND :fecha_fin 
                 ORDER BY v.id_venta DESC";
         $query = $this->acceso->prepare($sql);
@@ -38,10 +44,14 @@ class Venta {
         $sql = "SELECT vp.*, 
                        p.nombre as producto, 
                        p.precio as precio, 
+                       p.especificacion_talla,
+                       COALESCE(um.nombre, 'Unidad') as unidad_medida,
+                       COALESCE(um.codigo, 'und') as unidad_codigo,
                        l.cod_lote as lote, 
                        l.vencimiento 
                 FROM venta_producto vp 
                 JOIN producto p ON vp.producto_id_producto = p.id_producto 
+                LEFT JOIN unidad_medida um ON p.id_unidad = um.id_unidad
                 LEFT JOIN detalle_venta dv ON dv.id_det_venta = vp.venta_id_venta 
                                           AND dv.id_det_prod = p.id_producto 
                 LEFT JOIN lote l ON dv.id_det_lote = l.id_lote 
@@ -107,11 +117,13 @@ class Venta {
         }
     }
     
-    // Nueva función para obtener datos de una venta específica
+    // Obtener datos de un despacho específico
     public function obtener_venta($id_venta) {
-        $sql = "SELECT v.*, (u.nombre_us || ' ' || u.apellidos_us) as vendedor 
+        $sql = "SELECT v.*, (u.nombre_us || ' ' || u.apellidos_us) as vendedor,
+                       a.nombre_area, a.nivel_riesgo
                 FROM venta v 
                 JOIN usuario u ON v.vendedor = u.id_usuario 
+                LEFT JOIN area_servicio a ON v.id_area = a.id_area
                 WHERE v.id_venta = :id_venta";
         $query = $this->acceso->prepare($sql);
         $query->bindParam(':id_venta', $id_venta);
@@ -131,8 +143,8 @@ class Venta {
         return $resultado ? $resultado['stock'] : 0;
     }
     
-    // Nueva función para actualizar una venta existente
-    public function actualizar_venta($id_venta, $cliente, $ci, $total, $productos) {
+    // Actualizar acta de entrega y recalcular existencias
+    public function actualizar_venta($id_venta, $cliente, $ci, $total, $productos, $id_area = null, $cargo_receptor = '', $observacion = '') {
         // Iniciar transacción
         $this->acceso->beginTransaction();
         
@@ -178,16 +190,22 @@ class Venta {
             $query->bindParam(':id_venta', $id_venta);
             $query->execute();
             
-            // Actualizar datos de la venta
+            // Actualizar datos del acta de entrega
             $sql = "UPDATE venta SET 
                     cliente = :cliente, 
                     ci = :ci, 
-                    total = :total 
+                    total = :total,
+                    id_area = :id_area,
+                    cargo_receptor = :cargo_receptor,
+                    observacion = :observacion
                     WHERE id_venta = :id_venta";
             $query = $this->acceso->prepare($sql);
             $query->bindParam(':cliente', $cliente);
             $query->bindParam(':ci', $ci);
             $query->bindParam(':total', $total);
+            $query->bindParam(':id_area', $id_area);
+            $query->bindParam(':cargo_receptor', $cargo_receptor);
+            $query->bindParam(':observacion', $observacion);
             $query->bindParam(':id_venta', $id_venta);
             $query->execute();
             

@@ -1,4 +1,4 @@
-<?php session_start(); if ($_SESSION['us_tipo']==1||$_SESSION['us_tipo']==3) { include_once 'layouts/header.php'; ?>
+<?php session_start(); if ($_SESSION['us_tipo']==1) { include_once 'layouts/header.php'; ?>
 <title><?php echo htmlspecialchars($_SESSION['nombre_us']); ?> | Historial de Salidas</title>
 <?php include_once 'layouts/nav.php'; ?>
 
@@ -14,11 +14,17 @@
       </div>
       <div class="modal-body p-4">
         <div class="row g-3 p-3 bg-light rounded-3 mb-4">
-          <div class="col-md-6">
-            <small class="text-muted d-block">Receptor / Área:</small>
+          <div class="col-md-4">
+            <small class="text-muted d-block">Receptor / Funcionario:</small>
             <strong class="fs-6 text-dark" id="cliente_detalle">---</strong>
+            <small class="text-secondary d-block" id="cargo_detalle"></small>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-4">
+            <small class="text-muted d-block">Área de Servicio:</small>
+            <strong class="fs-6 text-primary" id="area_detalle">---</strong>
+            <span id="riesgo_badge_detalle" class="badge bg-secondary small mt-1"></span>
+          </div>
+          <div class="col-md-4">
             <small class="text-muted d-block">Cédula / Identificador:</small>
             <strong class="fs-6 text-dark" id="ci_detalle">---</strong>
           </div>
@@ -152,8 +158,9 @@
                 <tr>
                   <th>N°</th>
                   <th>Fecha y Hora</th>
-                  <th>Receptor / Área</th>
-                  <th>Cédula / Ident.</th>
+                  <th>Área Destino</th>
+                  <th>Receptor / Funcionario</th>
+                  <th>Cédula</th>
                   <th>Total Ref.</th>
                   <th>Responsable</th>
                   <th class="text-center">Acciones</th>

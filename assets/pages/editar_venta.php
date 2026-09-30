@@ -1,4 +1,4 @@
-<?php session_start(); if ($_SESSION['us_tipo']==1||$_SESSION['us_tipo']==3) { include_once 'layouts/header.php'; ?>
+<?php session_start(); if ($_SESSION['us_tipo']==1) { include_once 'layouts/header.php'; ?>
 <title><?php echo htmlspecialchars($_SESSION['nombre_us']); ?> | Modificar Solicitud</title>
 <?php include_once 'layouts/nav.php'; $id_venta = $_GET['id'] ?? ''; ?>
 
@@ -78,21 +78,39 @@
             </div>
           </div>
 
-          <!-- Datos de la solicitud -->
+          <!-- Datos de la entrega / acta -->
           <div class="row g-3 mb-4 p-3 bg-light rounded-3 border">
             <div class="col-md-6">
-              <label for="cliente" class="form-label small fw-semibold text-secondary">Nombre del Solicitante / Área:</label>
+              <label for="cliente" class="form-label small fw-semibold text-secondary">Nombre del Receptor / Funcionario: <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-person"></i></span>
-                <input type="text" class="form-control" id="cliente" name="cliente">
+                <input type="text" class="form-control" id="cliente" name="cliente" required>
               </div>
             </div>
             <div class="col-md-6">
-              <label for="ci" class="form-label small fw-semibold text-secondary">Cédula / Identificador:</label>
+              <label for="ci" class="form-label small fw-semibold text-secondary">Cédula / Identificador: <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
-                <input type="text" class="form-control" id="ci" name="ci">
+                <input type="text" class="form-control" id="ci" name="ci" required>
               </div>
+            </div>
+            <div class="col-md-6">
+              <label for="area_destino" class="form-label small fw-semibold text-secondary">Área Hospitalaria de Destino: <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-hospital"></i></span>
+                <select class="form-select select2" id="area_destino" style="width: 85%;" required></select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="cargo_receptor" class="form-label small fw-semibold text-secondary">Cargo / Función del Receptor:</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-briefcase"></i></span>
+                <input type="text" class="form-control" id="cargo_receptor" placeholder="Ej: Enfermera Jefe / Supervisor de Aseo">
+              </div>
+            </div>
+            <div class="col-12">
+              <label for="observacion" class="form-label small fw-semibold text-secondary">Observaciones / Justificación de la Modificación:</label>
+              <textarea class="form-control" id="observacion" rows="2" placeholder="Motivo del ajuste o notas de entrega..."></textarea>
             </div>
           </div>
 

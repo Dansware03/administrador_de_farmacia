@@ -92,5 +92,6 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+<?php if (isset($page_scripts) && !empty($page_scripts)) { echo $page_scripts; } ?>
 </body>
 </html>

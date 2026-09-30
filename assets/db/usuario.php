@@ -97,6 +97,7 @@ class Usuario {
         $query->execute(array(':id_usuario'=>$id_usuario,':pass'=>$pass));
         $this->objetos = $query->fetchAll();
         if (!empty($this->objetos)) {
+            // ponytail: Ascenso institucional a rol Administrador (us_tipo = 1)
             $tipo=1;
             $sql="UPDATE usuario SET us_tipo=:tipo where id_usuario=:id";
             $query=$this->acceso->prepare($sql);
@@ -112,6 +113,7 @@ class Usuario {
         $query->execute(array(':id_usuario'=>$id_usuario,':pass'=>$pass));
         $this->objetos = $query->fetchAll();
         if (!empty($this->objetos)) {
+            // ponytail: Descenso institucional a rol Secretario (us_tipo = 2)
             $tipo = 2;
             $sql = "UPDATE usuario SET us_tipo=:tipo where id_usuario=:id";
             $query = $this->acceso->prepare($sql);

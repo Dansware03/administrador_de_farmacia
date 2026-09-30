@@ -1,7 +1,6 @@
 <?php
 class Conexion {
-    //private $db_path = "../../../../apps/phpLiteAdmin/bdfarmacia.db";
-    private $db_path = "../db/bdfarmacia.db"; // Ruta al archivo SQLite
+    private $db_path = "../db/simap.db"; // Ruta al archivo SQLite SIMAP
     public $pdo = null;
     private $atributos = [
         PDO::ATTR_CASE => PDO::CASE_NATURAL,

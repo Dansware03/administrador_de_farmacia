@@ -1,4 +1,4 @@
-<?php session_start(); if ($_SESSION['us_tipo']==1||$_SESSION['us_tipo']==3) { include_once 'layouts/header.php'; ?>
+<?php session_start(); if ($_SESSION['us_tipo']==1||$_SESSION['us_tipo']==2) { include_once 'layouts/header.php'; ?>
 <title><?php echo htmlspecialchars($_SESSION['nombre_us']); ?> | Procesar Entrega de Insumos</title>
 <?php include_once 'layouts/nav.php'; ?>
 
@@ -39,11 +39,11 @@
                 <div class="row g-3">
                   <div class="col-md-6">
                     <label for="cliente" class="form-label fw-semibold small text-secondary">
-                      Nombre del Solicitante o Departamento <span class="text-danger">*</span>
+                      Nombre del Receptor / Funcionario <span class="text-danger">*</span>
                     </label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="bi bi-person"></i></span>
-                      <input type="text" class="form-control" id="cliente" placeholder="Ej: Mantenimiento General / Juan Pérez" required>
+                      <input type="text" class="form-control" id="cliente" placeholder="Ej: Lic. Adriana López" required>
                     </div>
                   </div>
 
@@ -55,6 +55,33 @@
                       <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
                       <input type="number" class="form-control" id="ci" placeholder="Ej: 12345678" required>
                     </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="area_destino" class="form-label fw-semibold small text-secondary">
+                      Área Hospitalaria de Destino <span class="text-danger">*</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-hospital"></i></span>
+                      <select class="form-select select2" id="area_destino" style="width: 85%;" required></select>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="cargo_receptor" class="form-label fw-semibold small text-secondary">
+                      Cargo / Función del Receptor
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-briefcase"></i></span>
+                      <input type="text" class="form-control" id="cargo_receptor" placeholder="Ej: Enfermera Jefe / Supervisor de Aseo">
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <label for="observacion_entrega" class="form-label fw-semibold small text-secondary">
+                      Observaciones / Justificación de la Salida
+                    </label>
+                    <textarea class="form-control" id="observacion_entrega" rows="2" placeholder="Observaciones de la entrega institucional o motivo de dotación..."></textarea>
                   </div>
 
                   <div class="col-12">
@@ -82,8 +109,8 @@
                     <tr>
                       <th class="ps-3">Insumo</th>
                       <th>Stock Disp.</th>
-                      <th>Precio Unit.</th>
-                      <th>Concentración</th>
+                      <th>Costo Ref.</th>
+                      <th>Unidad / Espec.</th>
                       <th>Cantidad</th>
                       <th>Subtotal</th>
                       <th class="text-center">Quitar</th>
@@ -112,51 +139,25 @@
               </div>
               <div class="card-body p-4">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                  <span class="text-muted">Subtotal Base</span>
-                  <span class="fw-semibold text-dark" id="subtotal">$0.00</span>
-                </div>
-
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                  <span class="text-muted">IVA (8%)</span>
-                  <span class="fw-semibold text-dark" id="conIva">$0.00</span>
+                  <span class="text-muted">Cantidad de Insumos</span>
+                  <span class="fw-semibold text-dark" id="total_items">0</span>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                  <span class="text-muted">Total sin Descuento</span>
-                  <span class="fw-semibold text-dark" id="total_sin_descuento">$0.00</span>
-                </div>
-
-                <div class="mb-3">
-                  <label for="descuento" class="form-label small text-secondary fw-semibold">Descuento ($)</label>
-                  <div class="input-group input-group-sm">
-                    <span class="input-group-text"><i class="bi bi-percent"></i></span>
-                    <input id="descuento" type="number" min="0" value="0" step="0.01" class="form-control" placeholder="0.00">
-                  </div>
+                  <span class="text-muted">Tipo de Movimiento</span>
+                  <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle">Dotación / Suministro</span>
                 </div>
 
                 <hr class="my-3">
 
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                  <span class="fs-5 fw-bold text-primary">TOTAL</span>
+                  <span class="fs-6 fw-bold text-secondary">Costo Ref. Total:</span>
                   <span class="fs-4 fw-bold text-primary" id="total">$0.00</span>
-                </div>
-
-                <div class="mb-3">
-                  <label for="pago" class="form-label small text-secondary fw-semibold">Monto Recibido / Asignado ($)</label>
-                  <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-cash-stack"></i></span>
-                    <input type="number" id="pago" min="0" step="0.01" class="form-control" placeholder="0.00">
-                  </div>
-                </div>
-
-                <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded-3 mb-4">
-                  <span class="fw-semibold text-secondary">Cambio / Restante:</span>
-                  <span class="fw-bold fs-5 text-success" id="vuelto">$0.00</span>
                 </div>
 
                 <div class="d-grid gap-2">
                   <button type="button" class="btn btn-primary btn-lg shadow-sm fw-semibold" id="procesar_compra">
-                    <i class="bi bi-check2-circle me-1"></i>Confirmar Entrega
+                    <i class="bi bi-check2-circle me-1"></i>Procesar Acta de Entrega
                   </button>
                 </div>
               </div>

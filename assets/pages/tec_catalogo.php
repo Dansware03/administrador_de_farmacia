@@ -1,6 +1,8 @@
-<?php session_start(); if ($_SESSION['us_tipo']==2) { include_once 'layouts/header.php'; ?>
-<title><?php echo htmlspecialchars($_SESSION['nombre_us']); ?> | Catálogo Técnico</title>
-<?php include_once 'layouts/nav.php'; ?>
+<?php session_start();
+if ($_SESSION['us_tipo'] == 2) {
+  include_once 'layouts/header.php'; ?>
+  <title><?php echo htmlspecialchars($_SESSION['nombre_us']); ?> | Solicitud de Insumos (Secretaría)</title>
+  <?php include_once 'layouts/nav.php'; ?>
 
   <!-- Content Wrapper -->
   <div class="content-wrapper">
@@ -12,12 +14,13 @@
             <h1 class="h3 fw-bold mb-1 text-primary">
               <i class="bi bi-shield-check me-2"></i>Catálogo de Insumos y Materiales
             </h1>
-            <p class="text-muted small mb-0">Área técnica y asistencial - Consulta de disponibilidad y solicitud de materiales</p>
+            <p class="text-muted small mb-0">Secretaría y personal asistencial - Consulta de disponibilidad y solicitud de
+              materiales</p>
           </div>
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0 small">
               <li class="breadcrumb-item"><a href="tec_catalogo.php" class="text-decoration-none">Inicio</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Catálogo Técnico</li>
+              <li class="breadcrumb-item active" aria-current="page">Catálogo Secretario</li>
             </ol>
           </nav>
         </div>
@@ -28,33 +31,84 @@
     <section>
       <div class="container-fluid">
         <!-- Banner Informativo Técnico -->
-        <div class="alert alert-primary bg-primary bg-opacity-10 border-0 shadow-sm d-flex align-items-center gap-3 p-3 mb-4 rounded-3" role="alert">
-          <i class="bi bi-info-circle-fill text-primary fs-3 flex-shrink-0"></i>
-          <div class="small">
-            <strong class="d-block text-primary fs-6">Perfil Asistencial / Técnico:</strong>
-            Puede consultar el stock de materiales de protección y limpieza, y agregarlos a su solicitud de entrega mediante el botón en cada insumo.
+        <div
+          class="alert alert-primary bg-primary bg-opacity-10 border-0 shadow-sm d-flex align-items-center justify-content-between p-3 mb-4 rounded-3 tec-banner"
+          role="alert">
+          <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-shield-check text-primary fs-3 flex-shrink-0"></i>
+            <div class="small">
+              <strong class="d-block text-primary fs-6">Perfil de Secretaría / Asistencial:</strong>
+              Consulte la dotación de insumos de protección y bioseguridad. Añada materiales a su solicitud usando el
+              botón de cada tarjeta.
+            </div>
+          </div>
+          <div class="d-none d-md-block text-end">
+            <a href="adm_retiro.php" class="btn btn-primary btn-sm fw-semibold shadow-sm text-nowrap">
+              <i class="bi bi-cart-check me-1"></i>Ver Solicitud
+            </a>
           </div>
         </div>
 
-        <!-- Buscador -->
+        <!-- Buscador y Filtros Rápidos -->
         <div class="card border-0 shadow-sm mb-4">
           <div class="card-body p-3">
-            <div class="input-group input-group-lg">
-              <span class="input-group-text bg-light border-end-0 text-muted">
-                <i class="bi bi-search"></i>
-              </span>
-              <input type="text" id="buscar_producto" class="form-control border-start-0 bg-light" placeholder="Escriba el nombre del insumo o material a consultar..." aria-label="Buscar insumos o materiales">
+            <div class="row g-2 align-items-center">
+              <div class="col-12 col-md-6 col-lg-7">
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted">
+                    <i class="bi bi-search"></i>
+                  </span>
+                  <input type="text" id="buscar_producto" class="form-control border-start-0 bg-light"
+                    placeholder="Buscar por nombre de insumo, material, código o categoría..."
+                    aria-label="Buscar insumos o materiales">
+                </div>
+              </div>
+              <div class="col-12 col-md-6 col-lg-5">
+                <div class="d-flex flex-wrap gap-2 justify-content-md-end" id="filtros-chips">
+                  <button type="button" class="simap-filter-chip active" data-filter="todos">Todos</button>
+                  <button type="button" class="simap-filter-chip" data-filter="stock">En Stock</button>
+                  <button type="button" class="simap-filter-chip" data-filter="bajo">Bajo Stock (&le;10)</button>
+                  <button type="button" class="simap-filter-chip" data-filter="agotado">Agotados</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Grid de Productos -->
         <div id="productos" class="row g-3 g-md-4 align-items-stretch"></div>
+
+        <!-- Barra de Paginación Moderna y Resumen -->
+        <div
+          class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mt-4 pt-3 border-top pb-4"
+          id="contenedor-paginacion">
+          <div class="d-flex align-items-center gap-3 text-muted small">
+            <span id="info-paginacion">Cargando inventario...</span>
+            <div class="d-flex align-items-center gap-1">
+              <label for="items-por-pagina" class="mb-0 text-nowrap">Mostrar:</label>
+              <select id="items-por-pagina" class="form-select form-select-sm py-1 pe-4" style="width: auto;">
+                <option value="12" selected>12</option>
+                <option value="24">24</option>
+                <option value="48">48</option>
+              </select>
+            </div>
+          </div>
+          <nav aria-label="Paginación de insumos hospitalarios">
+            <ul class="pagination pagination-sm mb-0 gap-1" id="paginacion-lista"></ul>
+          </nav>
+        </div>
       </div>
     </section>
   </div>
   <!-- /.content-wrapper -->
 
-<?php include_once 'layouts/footer.php'; } else { header('Location: ../../index.php'); } ?>
-<script src="../libs/js/catalogo.js"></script>
-<script src="../libs/js/carrito.js"></script>
+  <?php
+  $page_scripts = '
+<script src="../libs/js/catalogo.js?v=635af958"></script>
+<script src="../libs/js/carrito.js?v=635af958"></script>
+';
+  include_once 'layouts/footer.php';
+} else {
+  header('Location: ../../index.php');
+}
+?>

@@ -94,12 +94,15 @@ if (isset($_POST['funcion'])) {
             $ci = $_POST['ci'];
             $total = $_POST['total'];
             $productos = $_POST['productos'];
+            $id_area = !empty($_POST['id_area']) ? $_POST['id_area'] : null;
+            $cargo_receptor = $_POST['cargo_receptor'] ?? '';
+            $observacion = $_POST['observacion'] ?? '';
             
             try {
-                $venta->actualizar_venta($id_venta, $cliente, $ci, $total, $productos);
+                $venta->actualizar_venta($id_venta, $cliente, $ci, $total, $productos, $id_area, $cargo_receptor, $observacion);
                 $mensaje = array(
                     'status' => 'success',
-                    'message' => 'Venta actualizada correctamente'
+                    'message' => 'Acta de entrega actualizada correctamente'
                 );
             } catch (Exception $e) {
                 $mensaje = array(

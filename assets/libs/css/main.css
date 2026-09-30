@@ -55,3 +55,9 @@
     background-color: #fef2f2 !important;
     border-left: 4px solid #ef4444;
 }
+
+/* Banner de Perfil Asistencial / Tecnico */
+.tec-banner {
+    border-left: 4px solid var(--simap-primary) !important;
+    background-color: #f0f7ff !important;
+}

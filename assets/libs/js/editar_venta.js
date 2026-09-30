@@ -5,6 +5,19 @@ $(document).ready(function() {
     let stock_original = {};
     let total_venta = 0;
 
+    cargar_areas();
+
+    function cargar_areas(id_seleccionado = null) {
+        $.post('../controller/AreaController.php', { funcion: 'cargar_areas' }, function(response) {
+            let areas = JSON.parse(response);
+            let opciones = areas.map(a => `<option value="${a.id_area}">${a.nombre_area} (Riesgo: ${a.nivel_riesgo})</option>`);
+            $('#area_destino').html(opciones.join(''));
+            if (id_seleccionado) {
+                $('#area_destino').val(id_seleccionado).trigger('change');
+            }
+        });
+    }
+
     // Cargar datos de la venta/salida
     function cargar_venta() {
         $.post('../controller/VentaController.php', {
@@ -16,6 +29,11 @@ $(document).ready(function() {
                 let venta = data.venta;
                 $('#cliente').val(venta.cliente);
                 $('#ci').val(venta.ci);
+                $('#cargo_receptor').val(venta.cargo_receptor || '');
+                $('#observacion').val(venta.observacion || '');
+                if (venta.id_area) {
+                    cargar_areas(venta.id_area);
+                }
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -44,9 +62,13 @@ $(document).ready(function() {
     function mostrar_productos_tabla() {
         let template = '';
         productos_venta.forEach(producto => {
+            const unidad = producto.unidad_codigo ? `(${producto.unidad_codigo})` : '';
             template += `
                 <tr>
-                    <td class="fw-semibold text-dark">${producto.producto}</td>
+                    <td>
+                        <div class="fw-semibold text-dark">${producto.producto}</div>
+                        <small class="text-muted">${producto.especificacion_talla || ''} ${unidad}</small>
+                    </td>
                     <td><span class="badge bg-light text-secondary border">${producto.lote || 'N/A'}</span></td>
                     <td><small class="text-muted">${producto.vencimiento || 'N/A'}</small></td>
                     <td>$${parseFloat(producto.precio).toFixed(2)}</td>
@@ -169,9 +191,17 @@ $(document).ready(function() {
     $('#btn_actualizar_venta').click(function() {
         let cliente = $('#cliente').val();
         let ci = $('#ci').val();
+        let id_area = $('#area_destino').val();
+        let cargo_receptor = $('#cargo_receptor').val() || '';
+        let observacion = $('#observacion').val() || '';
         
         if (productos_venta.length === 0) {
             Swal.fire('Error', 'No hay ningún insumo en la solicitud', 'error');
+            return;
+        }
+
+        if (!cliente || cliente.trim() === '' || !ci || ci.trim() === '') {
+            Swal.fire('Atención', 'Complete el nombre del funcionario y su cédula', 'warning');
             return;
         }
         
@@ -191,6 +221,9 @@ $(document).ready(function() {
                     id_venta: id_venta,
                     cliente: cliente,
                     ci: ci,
+                    id_area: id_area,
+                    cargo_receptor: cargo_receptor,
+                    observacion: observacion,
                     total: total_venta,
                     productos: JSON.stringify(productos_venta)
                 }, function(response) {

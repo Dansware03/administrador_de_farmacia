@@ -16,6 +16,16 @@ $(document).ready(function() {
         columns: [
             { data: "id_venta" },
             { data: "fecha" },
+            { 
+                data: "area",
+                render: function(data, type, row) {
+                    let badgeClass = "bg-secondary";
+                    if (row.nivel_riesgo === "Alto") badgeClass = "bg-danger";
+                    else if (row.nivel_riesgo === "Medio") badgeClass = "bg-warning text-dark";
+                    else if (row.nivel_riesgo === "Bajo") badgeClass = "bg-success";
+                    return `<span class="fw-semibold text-dark">${data || 'General'}</span> <span class="badge ${badgeClass} ms-1 small" style="font-size:0.7rem;">${row.nivel_riesgo || 'Bajo'}</span>`;
+                }
+            },
             { data: "cliente" },
             { data: "ci" },
             { 
@@ -71,6 +81,15 @@ $(document).ready(function() {
         id_venta_seleccionada = data.id_venta;
         
         $('#cliente_detalle').text(data.cliente);
+        $('#cargo_detalle').text(data.cargo_receptor || 'Personal Asignado');
+        $('#area_detalle').text(data.area || 'Área General');
+        let riesgo = data.nivel_riesgo || 'Bajo';
+        let badgeClass = "bg-secondary";
+        if (riesgo === "Alto") badgeClass = "bg-danger";
+        else if (riesgo === "Medio") badgeClass = "bg-warning text-dark";
+        else if (riesgo === "Bajo") badgeClass = "bg-success";
+        $('#riesgo_badge_detalle').attr('class', `badge ${badgeClass} small mt-1`).text(`Riesgo: ${riesgo}`);
+
         $('#ci_detalle').text(data.ci);
         $('#fecha_detalle').text(data.fecha);
         $('#vendedor_detalle').text(data.vendedor);
@@ -88,9 +107,13 @@ $(document).ready(function() {
                 let template = '';
                 
                 detalles.forEach(detalle => {
+                    const unidad = detalle.unidad_codigo ? `(${detalle.unidad_codigo})` : '';
                     template += `
                     <tr>
-                        <td class="fw-semibold text-dark">${detalle.producto}</td>
+                        <td>
+                            <div class="fw-semibold text-dark">${detalle.producto}</div>
+                            <small class="text-muted">${detalle.especificacion_talla || ''} ${unidad}</small>
+                        </td>
                         <td><span class="badge bg-primary-subtle text-primary fw-bold">${detalle.cantidad}</span></td>
                         <td>$${parseFloat(detalle.precio).toFixed(2)}</td>
                         <td class="fw-semibold">$${parseFloat(detalle.subtotal).toFixed(2)}</td>

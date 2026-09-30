@@ -13,14 +13,7 @@ $(document).ready(function() {
             $('#edad').html(usuario.edad ? usuario.edad + ' años' : 'No especificada');
             $('#ci_us').html(usuario.ci);
             
-            let tipoBadge = 'bg-secondary';
-            if (usuario.tipo == 'Root') {
-                tipoBadge = 'bg-danger';
-            } else if (usuario.tipo == 'Administrador') {
-                tipoBadge = 'bg-primary';
-            } else if (usuario.tipo == 'Farmaceutico') {
-                tipoBadge = 'bg-success';
-            }
+            let tipoBadge = (usuario.tipo == 'Administrador') ? 'bg-primary' : 'bg-success';
             $('#tipo_us').html(`<span class="badge ${tipoBadge} px-3 py-2 fs-6 shadow-sm">${usuario.tipo}</span>`);
             
             // Llenar campos de contacto y perfil

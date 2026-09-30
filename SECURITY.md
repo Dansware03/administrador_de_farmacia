@@ -1,4 +1,4 @@
-# Política de Seguridad - Sistema de Administración de Farmacia
+# Política de Seguridad - SIMAP (Sistema de Inventario Hospitalario)
 
 ## Versiones en Desarrollo
 
@@ -6,11 +6,11 @@ Utiliza esta sección para informar a los usuarios sobre las versiones de desarr
 
 | Versión   | Estado            |
 | --------- | ------------------ |
-| 0.0.50    | :white_check_mark: |
+| 1.0.0     | :white_check_mark: |
 
 ## Reportar Problemas o Vulnerabilidades
 
-Agradecemos cualquier contribución para mejorar la seguridad y la calidad de nuestro sistema de administración de farmacia en desarrollo. Si encuentras problemas o vulnerabilidades, por favor, repórtalos.
+Agradecemos cualquier contribución para mejorar la seguridad y la calidad de nuestro sistema SIMAP de inventario y despacho de insumos hospitalarios. Si encuentras problemas o vulnerabilidades, por favor, repórtalos.
 
 ### Proceso de Reporte
 

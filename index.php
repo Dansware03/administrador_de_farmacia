@@ -5,7 +5,15 @@ if (!empty($_SESSION['us_tipo'])) {
 } else {
     session_destroy();
 }
-include_once 'headers.php'; ?>
+if (!headers_sent()) {
+    header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';");
+    header("Strict-Transport-Security: max-age=31536000; includeSubDomains; preload");
+    header("X-Frame-Options: DENY");
+    header("X-XSS-Protection: 1; mode=block");
+    header("Referrer-Policy: no-referrer");
+    header("X-Content-Type-Options: nosniff");
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -13,6 +21,7 @@ include_once 'headers.php'; ?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIMAP - Iniciar Sesión</title>
+    <link rel="icon" type="image/png" href="assets/libs/img/logo.png">
     <!-- Bootstrap 5 y Bootstrap Icons (Offline) -->
     <link rel="stylesheet" href="assets/libs/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/libs/css/bootstrap-icons.min.css">
@@ -34,8 +43,8 @@ include_once 'headers.php'; ?>
                 </div>
 
                 <div class="text-center px-4">
-                    <img src="assets/libs/img/doctores.svg" alt="Ilustración SIMAP" class="img-fluid mb-4"
-                        style="max-height: 280px;">
+                    <img src="assets/libs/img/logo.png" alt="Logo Clínica Popular Especializada La Fría" class="img-fluid rounded-circle shadow-lg mb-4 bg-white p-2"
+                        style="width: 170px; height: 170px; object-fit: contain;">
                     <h2 class="fw-bold tracking-tight mb-2">SIMAP</h2>
                     <p class="lead text-light-50 mb-1 fs-6">
                         Sistema de Inventario de Materiales e Insumos de Protección
@@ -55,9 +64,9 @@ include_once 'headers.php'; ?>
                 <div class="login-card">
                     <!-- Cabecera Formulario -->
                     <div class="text-center mb-4">
-                        <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle p-3 mb-3 shadow-sm"
-                            style="width: 80px; height: 80px;">
-                            <img src="assets/libs/img/logo.png" alt="Logo" class="img-fluid" style="max-height: 55px;">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-white rounded-circle p-1 mb-3 shadow"
+                            style="width: 100px; height: 100px;">
+                            <img src="assets/libs/img/logo.png" alt="Logo SIMAP" class="img-fluid rounded-circle" style="width: 90px; height: 90px; object-fit: contain;">
                         </div>
                         <h3 class="fw-bold text-dark mb-1">Bienvenido</h3>
                         <p class="text-muted small">Ingrese sus credenciales para acceder al sistema</p>

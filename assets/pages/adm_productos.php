@@ -1,4 +1,4 @@
-<?php session_start(); if ($_SESSION['us_tipo']==1||$_SESSION['us_tipo']==3) { include_once 'layouts/header.php'; ?>
+<?php session_start(); if ($_SESSION['us_tipo']==1) { include_once 'layouts/header.php'; ?>
 <title><?php echo htmlspecialchars($_SESSION['nombre_us']); ?> | Gestión de Insumos</title>
 <?php include_once 'layouts/nav.php'; ?>
 
@@ -21,21 +21,14 @@
             </div>
 
             <div class="col-md-6">
-              <label for="concentracion" class="form-label fw-semibold small text-secondary">Concentración / Especificación <span class="text-danger">*</span></label>
-              <div class="input-group">
-                <input id="concentracion" type="text" class="form-control" placeholder="Ej: 500" required>
-                <select class="form-select" id="unidad" name="unidad" style="max-width: 130px;">
-                  <option value="mg/ml">mg/ml</option>
-                  <option value="mcg/ml">mcg/ml</option>
-                  <option value="g/l">g/l</option>
-                  <option value="%">%</option>
-                  <option value="ml">ml</option>
-                  <option value="litro">litro</option>
-                  <option value="unidad">unidad</option>
-                  <option value="par">par</option>
-                  <option value="caja">caja</option>
-                </select>
-              </div>
+              <label for="unidad_medida" class="form-label fw-semibold small text-secondary">Unidad de Medida <span class="text-danger">*</span></label>
+              <select class="form-select select2" id="unidad_medida" name="unidad_medida" style="width: 100%;" required></select>
+            </div>
+
+            <div class="col-md-6">
+              <label for="especificacion_talla" class="form-label fw-semibold small text-secondary">Talla / Especificación Física</label>
+              <input id="especificacion_talla" type="text" class="form-control" placeholder="Ej: Talla M, 70%, 1000ml, 5.25%">
+              <input type="hidden" id="concentracion" value="">
             </div>
 
             <div class="col-md-6">
@@ -117,7 +110,13 @@
             </div>
 
             <div class="col-12">
-              <label for="vencimiento" class="form-label fw-semibold small text-secondary">Fecha de Vencimiento</label>
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label for="vencimiento" class="form-label fw-semibold small text-secondary mb-0">Fecha de Vencimiento</label>
+                <div class="form-check form-switch mb-0">
+                  <input class="form-check-input" type="checkbox" id="noPerecedero" name="noPerecedero">
+                  <label class="form-check-label small text-muted" for="noPerecedero">Sin vencimiento</label>
+                </div>
+              </div>
               <input id="vencimiento" type="date" class="form-control">
             </div>
           </div>
