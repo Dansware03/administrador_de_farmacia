@@ -156,7 +156,7 @@ CREATE TABLE "usuario" (
 	PRIMARY KEY("id_usuario" AUTOINCREMENT)
 );
 
-INSERT INTO "usuario" ("id_usuario", "nombre_us", "apellidos_us", "edad", "ci_us", "contrasena_us", "telefono_us", "correo_us", "genero_us", "info_us", "avatar", "us_tipo") VALUES (1, 'Administrador', 'SIMAP', '2003-01-06', 123456789, 123456789, 123456789, 'admin@simap.gob.ve', 'hombre', 'Administrador Principal SIMAP', '67cb629bd7e1e-user-default.png', 1);
+INSERT INTO "usuario" ("id_usuario", "nombre_us", "apellidos_us", "edad", "ci_us", "contrasena_us", "telefono_us", "correo_us", "genero_us", "info_us", "avatar", "us_tipo") VALUES (1, 'Administrador', 'SIMAP', '2003-01-06', '123456789', '$2y$10$4cQ98SMc6D5Jta3kQOY/BOHQyePT7JRtvwtcen4FaEVcUpDlYOlWG', '123456789', 'admin@simap.gob.ve', 'hombre', 'Administrador Principal SIMAP', 'user-default.png', 1);
 
 -- --------------------------------------------------------
 -- Tabla: `producto`

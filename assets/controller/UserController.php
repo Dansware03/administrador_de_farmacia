@@ -29,7 +29,8 @@ if ($_POST['funcion']=='buscar_usuario'){
 }
 if ($_POST['funcion']=='capturar_datos'){
     $json=array();
-    $id_usuario=$_POST['id_usuario'];
+    // ponytail: Garantizar que capturar_datos use la sesión activa del usuario
+    $id_usuario = $_SESSION['usuario'];
     $usuario->obtener_datos($id_usuario);
     foreach ($usuario->objetos as $objeto) {
         $json[]=array(
@@ -37,51 +38,55 @@ if ($_POST['funcion']=='capturar_datos'){
             'correo'=>$objeto->correo_us,
             'genero'=>$objeto->genero_us,
             'info'=>$objeto->info_us
-
         );
     }
     $jsonstring = json_encode($json[0]);
     echo $jsonstring;
 }
 if ($_POST['funcion']=='editar_usuario'){
-    $id_usuario=$_POST['id_usuario'];
-    $telefono=$_POST['telefono'];
-    $correo=$_POST['correo'];
-    $genero=$_POST['genero'];
-    $info=$_POST['info'];
-    $usuario->editar($id_usuario,$telefono,$correo,$genero,$info);
+    // ponytail: Anti-IDOR: siempre actualizar el usuario de la sesión autenticada
+    $id_usuario = $_SESSION['usuario'];
+    $telefono = trim($_POST['telefono'] ?? '');
+    $correo = trim($_POST['correo'] ?? '');
+    $genero = trim($_POST['genero'] ?? '');
+    $info = trim($_POST['info'] ?? '');
+    $usuario->editar($id_usuario, $telefono, $correo, $genero, $info);
     echo 'editado';
 }
 if ($_POST['funcion']=='cambiar_contra'){
-    $id_usuario=$_POST['id_usuario'];
-    $oldpass=$_POST['oldpass'];
-    $newpass=$_POST['newpass'];
-    $usuario->cambiar_contra($id_usuario,$oldpass,$newpass);
+    // ponytail: Anti-IDOR: el cambio de contraseña solo aplica al usuario autenticado
+    $id_usuario = $_SESSION['usuario'];
+    $oldpass = $_POST['oldpass'] ?? '';
+    $newpass = $_POST['newpass'] ?? '';
+    $usuario->cambiar_contra($id_usuario, $oldpass, $newpass);
 }
 if ($_POST['funcion']=='cambiar_foto'){
-    if (($_FILES['foto']['type'] == 'image/jpeg') || ($_FILES['foto']['type'] == 'image/png') || ($_FILES['foto']['type'] == 'image/jpg') || ($_FILES['foto']['type'] == 'image/bmp')){
-    $nombre=uniqid().'-'.$_FILES['foto']['name'];
-    $ruta='../libs/img/avatars/'.$nombre;
-    move_uploaded_file($_FILES['foto']['tmp_name'],$ruta);
-    $usuario->cambiar_foto($id_usuario,$nombre);
-    foreach ($usuario->objetos as $objeto) {
-        unlink('../libs/img/avatars/' . $objeto->avatar);
+    $id_usuario = $_SESSION['usuario'];
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+    $fileType = $_FILES['foto']['type'] ?? '';
+    $ext = strtolower(pathinfo($_FILES['foto']['name'] ?? '', PATHINFO_EXTENSION));
+    $allowedExts = ['jpeg', 'jpg', 'png', 'webp'];
+
+    if (in_array($fileType, $allowedTypes) && in_array($ext, $allowedExts) && ($_FILES['foto']['size'] ?? 0) <= 5242880) {
+        $nombre = uniqid('usr_') . '.' . $ext;
+        $ruta = '../libs/img/avatars/' . $nombre;
+        if (move_uploaded_file($_FILES['foto']['tmp_name'], $ruta)) {
+            $prevAvatares = $usuario->cambiar_foto($id_usuario, $nombre);
+            // ponytail: Proteger user-default.png para que nunca se elimine del disco
+            if (!empty($prevAvatares)) {
+                foreach ($prevAvatares as $objeto) {
+                    $oldAvatar = $objeto->avatar ?? '';
+                    if (!empty($oldAvatar) && strpos($oldAvatar, 'user-default') === false && file_exists('../libs/img/avatars/' . $oldAvatar)) {
+                        unlink('../libs/img/avatars/' . $oldAvatar);
+                    }
+                }
+            }
+            echo json_encode(['ruta' => $ruta, 'alert' => 'edit']);
+            exit;
+        }
     }
-        $json= array();
-        $json[]=array(
-            'ruta'=>$ruta,
-            'alert'=>'edit'
-        );
-        $jsonstring = json_encode($json[0]);
-        echo $jsonstring;
-    }else {
-        $json= array();
-        $json[]=array(
-            'alert'=>'noedit'
-        );
-        $jsonstring = json_encode($json[0]);
-        echo $jsonstring;
-    }
+    echo json_encode(['alert' => 'noedit']);
+    exit;
 }
 if ($_POST['funcion'] == 'buscar_usuario_adm') {
     $json = array();
