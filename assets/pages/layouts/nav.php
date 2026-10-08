@@ -13,8 +13,8 @@ $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
   <link rel="stylesheet" href="../libs/css/select2.min.css">
   <link rel="stylesheet" href="../libs/css/datatables.min.css">
   <!-- Estilos del Sistema SIMAP -->
-  <link rel="stylesheet" href="../libs/css/app.css">
-  <link rel="stylesheet" href="../libs/css/main.css">
+  <link rel="stylesheet" href="<?php echo asset_v('../libs/css/app.css'); ?>">
+  <link rel="stylesheet" href="<?php echo asset_v('../libs/css/main.css'); ?>">
 </head>
 <body>
 <!-- Preloader Global SIMAP -->

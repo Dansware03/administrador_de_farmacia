@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/asset_helper.php'; ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>

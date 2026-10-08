@@ -226,7 +226,7 @@
 
 <?php 
 $page_scripts = '
-<script src="../libs/js/usuario.js?v=20260930_1"></script>
+<script src="' . asset_v('../libs/js/usuario.js') . '"></script>
 ';
 include_once 'layouts/footer.php'; 
 } else { 

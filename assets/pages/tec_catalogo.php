@@ -104,8 +104,8 @@ if ($_SESSION['us_tipo'] == 2) {
 
   <?php
   $page_scripts = '
-<script src="../libs/js/catalogo.js?v=635af958"></script>
-<script src="../libs/js/carrito.js?v=635af958"></script>
+<script src="' . asset_v('../libs/js/catalogo.js') . '"></script>
+<script src="' . asset_v('../libs/js/carrito.js') . '"></script>
 ';
   include_once 'layouts/footer.php';
 } else {
