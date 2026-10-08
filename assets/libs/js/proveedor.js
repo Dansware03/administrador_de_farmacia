@@ -77,7 +77,7 @@ $(document).ready(function () {
     });
 
     function buscar_prov(consulta) {
-        funcion = "buscar";
+        funcion = "buscar_prov";
         $.post('../controller/ProveedorController.php', { consulta, funcion }, (response) => {
             try {
                 const proveedores = JSON.parse(response);
@@ -157,7 +157,7 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '.avatar', function(e) {
-        funcion = "cambiar_logo";
+        funcion = "cambiar_avatar";
         const elemento = $(this).closest('.d-flex.align-items-stretch');
         const id = $(elemento).attr('provId');
         const nombre = $(elemento).attr('provNombre');
@@ -231,7 +231,7 @@ $(document).ready(function () {
         const elemento = $(this).closest('.d-flex.align-items-stretch');
         const id = $(elemento).attr('provId');
         const nombre = $(elemento).attr('provNombre');
-        funcion = 'borrar';
+        funcion = 'borrar_prove';
 
         Swal.fire({
             title: `¿Eliminar Proveedor "${nombre}"?`,
