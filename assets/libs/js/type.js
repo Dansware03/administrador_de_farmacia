@@ -1,7 +1,26 @@
+/**
+ * SIMAP - Gestión de Categorías y Tipos de Insumo
+ *
+ * Administra el catálogo de familias y agrupaciones de insumos médicos.
+ * Maneja operaciones asíncronas para listado en vivo, altas, modificaciones
+ * y bajas controladas con alertas SweetAlert2.
+ *
+ * Flujo de Integración Extremo a Extremo:
+ * 1. UI: Botones y formulario en modal `#crear-tipo` dentro de `adm_tipo.php`.
+ * 2. AJAX: POST hacia `assets/controller/TypeController.php`.
+ * 3. Backend: Persistencia en modelo `tipo_producto` y comprobación de claves foráneas.
+ * 4. Respuesta: Feedback interactivo y refresco en el contenedor `#tipos`.
+ *
+ * @package SIMAP\Frontend\JS
+ * @author Grupo de Proyecto
+ * @version 1.0.0
+ */
+
 $(document).ready(function() {
     buscar_type();
     var edit = false;
 
+    // Crear o modificar una categoría de insumos
     $('#form-crear-tipo').submit(function (e) {
         e.preventDefault();
         let nombre_type = $('#nombre-tipo').val();
@@ -38,6 +57,7 @@ $(document).ready(function() {
         });
     });
 
+    // Cargar y filtrar categorías en la tabla
     function buscar_type(consulta) {
         let funcion = "buscar";
         $.post('../controller/TypeController.php', { consulta, funcion }, (Response) => {
@@ -67,11 +87,13 @@ $(document).ready(function() {
         });
     }
 
+    // Filtrado en vivo al tipear
     $(document).on('keyup', '#buscar-tipo', function () {
         let valor = $(this).val();
         buscar_type(valor !== "" ? valor : undefined);
     });
 
+    // Eliminación de categoría con verificación de productos asociados
     $(document).on('click', '.borrar_type', function () {
         const funcion = "borrar";
         const elemento = $(this).closest('tr');
@@ -113,6 +135,7 @@ $(document).ready(function() {
         });
     });
 
+    // Preparar campos para modificación
     $(document).on('click', '.editar_type', function () {
         const elemento = $(this).closest('tr');
         const id = elemento.attr('typeId');

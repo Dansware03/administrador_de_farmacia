@@ -1,4 +1,24 @@
-// SIMAP - Historial de Despachos y Actas de Entrega
+/**
+ * SIMAP - Historial de Despachos y Emisión de Actas
+ *
+ * Administra la tabla DataTables de entregas institucionales en `adm_despachos.php`:
+ * - Carga asíncrona de registros de despacho con orden descendente por ID.
+ * - Despliegue modal del acta detallada con desglose de insumos, lotes y vencimientos.
+ * - Anulación reversible de actas con restitución automática de existencias en lotes.
+ * - Filtrado dinámico por rangos de fechas (inicio y fin).
+ * - Acceso directo a la impresión del acta oficial en formato PDF.
+ *
+ * Flujo de Integración Extremo a Extremo:
+ * 1. UI: Tabla DataTables `#tabla_despachos`, modales `#vista_despacho` y `#confirmar_revertir`.
+ * 2. AJAX: POST/GET hacia `assets/controller/DespachoController.php`.
+ * 3. Backend: Métodos en modelo `Despacho` (`listar_despachos`, `ver_detalle_despacho`, `revertir_despacho`).
+ * 4. Respuesta: Refresco reactivo de DataTables y ventanas emergentes de impresión.
+ *
+ * @package SIMAP\Frontend\JS
+ * @author Grupo de Proyecto
+ * @version 1.0.0
+ */
+
 $(document).ready(function() {
     let tabla_despachos = $('#tabla_despachos').DataTable({
         responsive: true,
@@ -64,7 +84,7 @@ $(document).ready(function() {
 
     let id_despacho_seleccionado;
 
-    // Ver detalles del despacho
+    // Ver detalles del despacho en modal
     $('#tabla_despachos tbody').on('click', '.ver_detalles', function() {
         let data = tabla_despachos.row($(this).parents('tr')).data();
         id_despacho_seleccionado = data.id_despacho;
@@ -72,7 +92,6 @@ $(document).ready(function() {
         $('#receptor_detalle').text(data.receptor);
         $('#cargo_detalle').text(data.cargo_receptor || 'Personal Asignado');
         $('#area_detalle').text(data.area || 'Área General');
-
         $('#ci_detalle').text(data.ci_receptor);
         $('#fecha_detalle').text(data.fecha);
         $('#responsable_detalle').text(data.responsable_nombre);
@@ -122,7 +141,7 @@ $(document).ready(function() {
         id_despacho_seleccionado = data.id_despacho;
     });
 
-    // Confirmar anulación
+    // Confirmar anulación y reintegrar existencias en lotes
     $('#btn_confirmar_revertir').click(function() {
         $.ajax({
             url: '../controller/DespachoController.php',
@@ -164,28 +183,27 @@ $(document).ready(function() {
         });
     });
 
-    // Editar despacho
+    // Redirigir a edición de despacho
     $('#tabla_despachos tbody').on('click', '.editar', function() {
         let data = tabla_despachos.row($(this).parents('tr')).data();
         id_despacho_seleccionado = data.id_despacho;
         window.location.href = `adm_editar_despacho.php?id=${id_despacho_seleccionado}`;
     });
 
-    // Imprimir acta desde tabla
+    // Imprimir acta oficial
     $('#tabla_despachos tbody').on('click', '.imprimir', function() {
         let data = tabla_despachos.row($(this).parents('tr')).data();
         id_despacho_seleccionado = data.id_despacho;
         window.open(`../pages/acta_despacho.php?id=${id_despacho_seleccionado}`, '_blank');
     });
 
-    // Imprimir acta desde modal
     $('#btn_imprimir').click(function() {
         if (id_despacho_seleccionado) {
             window.open(`../pages/acta_despacho.php?id=${id_despacho_seleccionado}`, '_blank');
         }
     });
 
-    // Filtrar por fechas
+    // Filtrar por rango de fechas
     $('#btn_filtrar').click(function() {
         let fecha_inicio = $('#fecha_inicio').val();
         let fecha_fin = $('#fecha_fin').val();
@@ -202,7 +220,7 @@ $(document).ready(function() {
         tabla_despachos.ajax.url(`../controller/DespachoController.php?funcion=listar_despachos&fecha_inicio=${fecha_inicio}&fecha_fin=${fecha_fin}`).load();
     });
 
-    // Limpiar filtros
+    // Limpiar filtro de fechas
     $('#btn_limpiar').click(function() {
         $('#fecha_inicio').val('');
         $('#fecha_fin').val('');

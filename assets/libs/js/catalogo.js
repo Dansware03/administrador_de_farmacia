@@ -1,3 +1,24 @@
+/**
+ * SIMAP - Catálogo Visual de Insumos y Monitor de Lotes en Riesgo
+ *
+ * Administra la galería interactiva de insumos médicos en `adm_catalogo.php`:
+ * - Carga asíncrona de productos con paginación inteligente en cliente.
+ * - Filtros rápidos por chips: todos, con existencia, bajo stock y agotados.
+ * - Búsqueda de alta velocidad con técnica de debounce (280ms).
+ * - Monitor reactivo de lotes en riesgo (próximos a vencer y caducados) con desglose en barra superior.
+ * - Integración con el carrito de solicitud de insumos.
+ *
+ * Flujo de Integración Extremo a Extremo:
+ * 1. UI: Galería `#productos`, paginador `#contenedor-paginacion` y dropdown `#cat-alertas-lotes`.
+ * 2. AJAX: POST hacia `assets/controller/ProductoController.php` y `LoteController.php`.
+ * 3. Backend: Consultas SQLite con soporte para cálculo de caducidad y existencias.
+ * 4. Respuesta: Renderizado dinámico y actualización de contadores de KPIs.
+ *
+ * @package SIMAP\Frontend\JS
+ * @author Grupo de Proyecto
+ * @version 1.0.0
+ */
+
 $(document).ready(function () {
   $("#cat-carrito").show();
   var funcion;
@@ -11,6 +32,7 @@ $(document).ready(function () {
   buscar_product();
   mostrar_lotes_riesgo();
 
+  // Cargar catálogo de insumos
   function buscar_product(consulta = "") {
     $.post(
       "../controller/ProductoController.php",
@@ -28,6 +50,7 @@ $(document).ready(function () {
     );
   }
 
+  // Actualizar indicadores clave de inventario
   function actualizarKPIsProductos(products) {
     if (!products) return;
     const total = products.length;
@@ -40,6 +63,7 @@ $(document).ready(function () {
     $("#kpi-stock-bajo").text(bajoStock);
   }
 
+  // Aplicar filtros seleccionados y disparar paginación
   function aplicarFiltroYRenderizar() {
     let filtrados = productosCache;
     if (filtroActual === "stock") {
@@ -56,7 +80,7 @@ $(document).ready(function () {
     renderizarConPaginacion();
   }
 
-  // Manejo de chips de filtro
+  // Selección de chip de filtro
   $(document).on("click", ".simap-filter-chip", function () {
     $(".simap-filter-chip").removeClass("active");
     $(this).addClass("active");
@@ -65,21 +89,20 @@ $(document).ready(function () {
     aplicarFiltroYRenderizar();
   });
 
-  // Selector de cantidad por página
+  // Selector de cantidad de tarjetas por página
   $(document).on("change", "#items-por-pagina", function () {
     itemsPorPagina = parseInt($(this).val()) || 12;
     paginaActual = 1;
     renderizarConPaginacion();
   });
 
-  // Clic en botones de paginación
+  // Navegación entre páginas
   $(document).on("click", ".pagina-btn", function (e) {
     e.preventDefault();
     const targetPage = parseInt($(this).data("page"));
     if (!isNaN(targetPage) && targetPage !== paginaActual) {
       paginaActual = targetPage;
       renderizarConPaginacion();
-      // Scroll suave hacia arriba de la sección de productos
       const grid = document.getElementById("productos");
       if (grid) {
         grid.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -87,6 +110,7 @@ $(document).ready(function () {
     }
   });
 
+  // Calcular límites de página y construir vista
   function renderizarConPaginacion() {
     const totalItems = listaFiltradaActual.length;
     const totalPaginas = Math.ceil(totalItems / itemsPorPagina) || 1;
@@ -102,8 +126,8 @@ $(document).ready(function () {
     actualizarControlesPaginacion(totalItems, totalPaginas, inicio, fin);
   }
 
+  // Construir botones y enlaces de paginador
   function actualizarControlesPaginacion(totalItems, totalPaginas, inicio, fin) {
-    const contenedor = $("#contenedor-paginacion");
     const info = $("#info-paginacion");
     const lista = $("#paginacion-lista");
 
@@ -122,7 +146,6 @@ $(document).ready(function () {
     }
 
     let html = "";
-    // Botón Anterior
     const prevDisabled = paginaActual === 1 ? "disabled" : "";
     html += `
       <li class="page-item ${prevDisabled}">
@@ -132,7 +155,6 @@ $(document).ready(function () {
       </li>
     `;
 
-    // Botones de Páginas (rango inteligente de hasta 5 páginas visibles)
     let startPage = Math.max(1, paginaActual - 2);
     let endPage = Math.min(totalPaginas, startPage + 4);
     if (endPage - startPage < 4) {
@@ -158,7 +180,6 @@ $(document).ready(function () {
       html += `<li class="page-item"><a class="page-link pagina-btn" href="#" data-page="${totalPaginas}">${totalPaginas}</a></li>`;
     }
 
-    // Botón Siguiente
     const nextDisabled = paginaActual === totalPaginas ? "disabled" : "";
     html += `
       <li class="page-item ${nextDisabled}">
@@ -171,6 +192,7 @@ $(document).ready(function () {
     lista.html(html);
   }
 
+  // Renderizar tarjetas de la página activa
   function mostrarProductos(products) {
     const productContainer = $("#productos");
     if (!products || products.length === 0) {
@@ -212,7 +234,6 @@ $(document).ready(function () {
           <div proId="${product.id}" proNombre="${product.nombre}" productStock="${product.stock}" conNombre="${product.concentracion}" addNombre="${product.adicional}" nLabNombre="${product.laboratorio_id}" nTypeNombre="${product.tipo_id}" nPreNombre="${product.presentacion_id}" idUnidad="${product.id_unidad || 1}" uniMedida="${unidadNombre}" uniCodigo="${unidadCodigo}" espTalla="${product.especificacion_talla || ''}" avaNombre="${avatarSrc}" class="col-12 col-sm-6 col-lg-4 col-xl-3 d-flex align-items-stretch">
             <div class="product-card-modern w-100 d-flex flex-column justify-content-between">
               <div>
-                <!-- Encabezado de la tarjeta -->
                 <div class="d-flex justify-content-between align-items-center mb-2">
                   <span class="product-category-chip text-truncate" title="${categoriaNombre}">
                     ${categoriaNombre}
@@ -220,7 +241,6 @@ $(document).ready(function () {
                   <div>${stockBadgeHtml}</div>
                 </div>
 
-                <!-- Imagen e Identificación del Insumo -->
                 <div class="text-center my-2">
                   <div class="product-thumb-wrap mx-auto mb-2">
                     <img src="${avatarSrc}" alt="${product.nombre}" class="product-thumb-img" onerror="this.src='../libs/img/product/prod_default.png'">
@@ -229,7 +249,6 @@ $(document).ready(function () {
                   <span class="text-muted small d-block mb-2">Cód: #${product.id}</span>
                 </div>
 
-                <!-- Metadatos de Dotación / Especificación -->
                 <div class="d-flex flex-wrap gap-1 justify-content-center mb-3">
                   <span class="spec-badge" title="Unidad de medida">
                     <i class="bi bi-rulers text-secondary me-1"></i>${unidadCodigo}
@@ -249,7 +268,6 @@ $(document).ready(function () {
                 </div>
               </div>
 
-              <!-- Acción de Solicitud -->
               <div class="mt-3 pt-2">
                 <button class="agg_compra btn btn-primary w-100 shadow-sm d-flex align-items-center justify-content-center gap-2 py-2 fw-semibold" ${botonDeshabilitado} title="Agregar a Solicitud de Insumos" aria-label="Agregar ${product.nombre} a la solicitud de insumos" type="button">
                   <i class="bi bi-cart-plus"></i>
@@ -265,7 +283,7 @@ $(document).ready(function () {
     productContainer.empty().append(template);
   }
 
-  // Buscador con debounce nativo para máxima velocidad y evitar peticiones repetitivas
+  // Búsqueda reactiva con debounce de 280ms
   $(document).on("keyup", "#buscar_producto", function () {
     const valor = $(this).val();
     clearTimeout(debounceTimer);
@@ -274,6 +292,7 @@ $(document).ready(function () {
     }, 280);
   });
 
+  // Consultar lotes en riesgo de vencimiento
   function mostrar_lotes_riesgo() {
     funcion = "buscar_lote";
     $.post("../controller/LoteController.php", { funcion }, (response) => {
@@ -286,6 +305,7 @@ $(document).ready(function () {
     });
   }
 
+  // Renderizar alertas de lotes en el menú desplegable superior
   function mostrarlotes(lotes) {
     const navbarList = $("#lista_lotes_navbar");
     const badgeAlerta = $("#badge-lotes-alerta");

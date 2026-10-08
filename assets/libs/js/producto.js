@@ -1,3 +1,24 @@
+/**
+ * SIMAP - Catálogo Maestro de Insumos Médicos y Dotación Inicial
+ *
+ * Administra la creación, modificación, asignación de lotes, dotación inicial y eliminación
+ * de insumos médicos en `adm_producto.php`.
+ * - Carga asíncrona de selectores: proveedores, fabricantes, categorías, presentaciones y unidades de medida.
+ * - Sub-modales de registro rápido para evitar abandonar el formulario maestro.
+ * - Soporte para dotación inicial con lote y existencias en el mismo flujo de creación.
+ * - Subida asíncrona de imágenes y logotipos con FormData.
+ *
+ * Flujo de Integración Extremo a Extremo:
+ * 1. UI: Tarjetas de productos en `#productos` y modal `#crearproducto`.
+ * 2. AJAX: POST hacia `assets/controller/ProductoController.php` y `LoteController.php`.
+ * 3. Backend: Persistencia en modelos `Producto` y `Lote` con PDO.
+ * 4. Respuesta: Notificaciones interactivas y recálculo de tarjetas en el DOM.
+ *
+ * @package SIMAP\Frontend\JS
+ * @author Grupo de Proyecto
+ * @version 1.0.0
+ */
+
 $(document).ready(function() {
     var funcion;
     var edit = false;
@@ -12,7 +33,9 @@ $(document).ready(function() {
     rellenar_type();
     rellenar_presentacion();
     rellenar_unidad_medida();
+    rellenar_proveedor_inicial();
 
+    // Cargar unidades de medida institucionales
     function rellenar_unidad_medida() {
         $.post('../controller/AreaController.php', { funcion: 'cargar_unidades' })
             .done(function(response) {
@@ -25,9 +48,9 @@ $(document).ready(function() {
             });
     }
 
+    // Cargar selectores de entidades maestras
     function rellenar_proveedor() {
-        const funcion = "rellenar_proveedor";
-        $.post('../controller/ProveedorController.php', { funcion })
+        $.post('../controller/ProveedorController.php', { funcion: 'rellenar_proveedor' })
             .done(function (response) {
                 const proveedores = JSON.parse(response);
                 const opciones = proveedores.map(proveedor => `<option value="${proveedor.id}">${proveedor.nombre}</option>`);
@@ -39,8 +62,7 @@ $(document).ready(function() {
     }
 
     function rellenar_laboratorio() {
-        const funcion = "rellenar_laboratorio";
-        $.post('../controller/LaboratoryController.php', { funcion })
+        $.post('../controller/LaboratoryController.php', { funcion: 'rellenar_laboratorio' })
             .done(function (response) {
                 const laboratorios = JSON.parse(response);
                 const opciones = laboratorios.map(laboratorio => `<option value="${laboratorio.id}">${laboratorio.nombre}</option>`);
@@ -52,8 +74,7 @@ $(document).ready(function() {
     }
 
     function rellenar_type() {
-        const funcion = "rellenar_type";
-        $.post('../controller/TypeController.php', { funcion })
+        $.post('../controller/TypeController.php', { funcion: 'rellenar_type' })
             .done(function(response) {
                 const types = JSON.parse(response);
                 let template = '';
@@ -68,8 +89,7 @@ $(document).ready(function() {
     }
 
     function rellenar_presentacion() {
-        const funcion = "rellenar_presentacion";
-        $.post('../controller/PresentacionesController.php', { funcion })
+        $.post('../controller/PresentacionesController.php', { funcion: 'rellenar_presentacion' })
             .done(function(response) {
                 const presentaciones = JSON.parse(response);
                 let template = '';
@@ -83,8 +103,6 @@ $(document).ready(function() {
             });
     }
 
-    rellenar_proveedor_inicial();
-
     function rellenar_proveedor_inicial() {
         $.post('../controller/ProveedorController.php', { funcion: 'rellenar_proveedor' })
             .done(function (response) {
@@ -94,7 +112,7 @@ $(document).ready(function() {
             });
     }
 
-    // Toggle de dotación inicial en creación
+    // Control de visibilidad para dotación inicial al crear insumos
     $('#check_dotacion_inicial').on('change', function() {
         if ($(this).is(':checked')) {
             $('#campos_dotacion_inicial').removeClass('d-none');
@@ -113,7 +131,7 @@ $(document).ready(function() {
         }
     });
 
-    // Sub-modal rápido Fabricante / Laboratorio
+    // Sub-modal de registro rápido: Fabricante / Laboratorio
     $('#form_lab_rapido').on('submit', function(e) {
         e.preventDefault();
         const nombre = $('#modal_nombre_lab').val().trim();
@@ -131,7 +149,7 @@ $(document).ready(function() {
         });
     });
 
-    // Sub-modal rápido Categoría / Tipo
+    // Sub-modal de registro rápido: Categoría
     $('#form_tipo_rapido').on('submit', function(e) {
         e.preventDefault();
         const nombre = $('#modal_nombre_tipo').val().trim();
@@ -149,7 +167,7 @@ $(document).ready(function() {
         });
     });
 
-    // Sub-modal rápido Presentación
+    // Sub-modal de registro rápido: Presentación
     $('#form_pres_rapida').on('submit', function(e) {
         e.preventDefault();
         const nombre = $('#modal_nombre_pres').val().trim();
@@ -167,6 +185,7 @@ $(document).ready(function() {
         });
     });
 
+    // Preparar formulario modal para crear insumo
     $(document).on('click', '.crearpd', function() {
         $('#form-crear-producto').trigger('reset');
         $('#crearProductoLabel').html('<i class="bi bi-box-seam me-2"></i>Nuevo Insumo');
@@ -177,6 +196,7 @@ $(document).ready(function() {
         edit = false;
     });
 
+    // Procesar creación o edición de producto
     $('#form-crear-producto').submit(e => {
         e.preventDefault();
         let id_edit_prod = $('#id_edit_prod').val();
@@ -259,6 +279,7 @@ $(document).ready(function() {
         });
     });
 
+    // Consultar productos
     function buscar_product(consulta) {
         $.post('../controller/ProductoController.php', { consulta, funcion: 'buscar_product' }, (Response) => {
             try {
@@ -270,6 +291,7 @@ $(document).ready(function() {
         });
     }
 
+    // Renderizar tarjetas de productos
     function mostrarProductos(products) {
         const productContainer = $('#productos');
         if (!products || products.length === 0) {
@@ -344,6 +366,7 @@ $(document).ready(function() {
         productContainer.empty().append(template);
     }
 
+    // Filtrado en vivo
     $(document).on('keyup', '#buscar_producto', function () {
         let valor = $(this).val();
         if (valor !== "") {
@@ -353,6 +376,7 @@ $(document).ready(function() {
         }
     });
 
+    // Cambiar avatar/imagen de insumo
     $(document).on('click', '.imagen', function(e) {
         funcion = "cambiar_avatar";
         const elemento = $(this).closest('.d-flex.align-items-stretch');
@@ -366,6 +390,7 @@ $(document).ready(function() {
         $('#nombre_logo').html(nombre);
     });
 
+    // Subida asíncrona de imagen con FormData
     $('#form-logo').submit((e) => {
         e.preventDefault();
         const fileInput = $('#foto')[0];
@@ -407,6 +432,7 @@ $(document).ready(function() {
         });
     });
 
+    // Cargar datos en el modal de edición
     $(document).on('click', '.editar', function() {
         const elemento = $(this).closest('.d-flex.align-items-stretch');
         const id = $(elemento).attr('proId');
@@ -435,6 +461,7 @@ $(document).ready(function() {
         edit = true;
     });
 
+    // Asignar lote a producto existente
     $(document).on('click', '.lote', function() {
         const elemento = $(this).closest('.d-flex.align-items-stretch');
         const id = $(elemento).attr('proId');
@@ -444,7 +471,6 @@ $(document).ready(function() {
         $('#id_lote_prod').val(id);
         $('#nombre_producto_lote').html(nombre);
 
-        // Si es Equipos (2), Papelería/Higiene (4) o Repuestos (5), marcar como sin vencimiento
         if ([2, 4, 5].includes(tipoId)) {
             $('#noPerecedero').prop('checked', true);
             $('#vencimiento').val('').prop('disabled', true).prop('required', false);
@@ -462,6 +488,7 @@ $(document).ready(function() {
         }
     });
 
+    // Guardar nuevo lote asignado
     $('#form-crear-lote').submit(e => {
         e.preventDefault();
         let id_producto = $('#id_lote_prod').val();
@@ -498,6 +525,7 @@ $(document).ready(function() {
         });
     });
 
+    // Eliminar insumo médico
     $(document).on('click', '.borrar_produts', function() {
         const elemento = $(this).closest('.d-flex.align-items-stretch');
         const id = $(elemento).attr('proId');

@@ -1,4 +1,20 @@
-// SIMAP - Gestión de Usuarios y Accesos
+/**
+ * SIMAP - Administración y Control de Acceso de Usuarios
+ *
+ * Administra el panel de gestión de operadores y personal asistencial (`adm_usuario.php`):
+ * - Consulta asíncrona de usuarios con filtros en tiempo real.
+ * - Registro de nuevos usuarios con rol asignado y avatar predeterminado.
+ * - Ascenso a Administrador y descenso a Secretario con confirmación de credenciales.
+ * - Eliminación segura de cuentas con validación de contraseña maestra.
+ * - Aplicación estricta de reglas de negocio en la interfaz:
+ *   * Bloqueo de auto-descenso y auto-eliminación.
+ *   * Protección visual para preservar al último administrador activo del sistema.
+ *
+ * @package SIMAP\Frontend\JS
+ * @author Grupo de Proyecto
+ * @version 1.0.0
+ */
+
 $(document).ready(function() {
   let funcion;
   const tipo_usuario = $('#tipo_usuario').val();
@@ -10,6 +26,7 @@ $(document).ready(function() {
   
   buscar_datos();
 
+  // Consultar usuarios y renderizar tarjetas interactivas
   function buscar_datos(consulta = '') {
     funcion = 'buscar_usuario_adm';
     $.post('../controller/UserController.php', { consulta, funcion }, (Response) => {
@@ -30,9 +47,6 @@ $(document).ready(function() {
         `);
         return;
       }
-
-      // Contar administradores para saber si se puede descender o eliminar
-      const totalAdmins = usuarios.filter(u => u.tipo_usuario == 1).length;
 
       let templete = '';
       usuarios.forEach(usuario => {
@@ -88,215 +102,215 @@ $(document).ready(function() {
             </div>
             <div class="card-footer bg-white border-top border-light-subtle p-2 d-flex justify-content-end gap-1">`;
             
-            // Reglas de negocio: Si es la propia cuenta del operador, no permitir descender ni eliminar
+            // Reglas de negocio: si es la propia cuenta, bloquear degradación y eliminación
             if (esUsuarioActual) {
               templete += `
                 <span class="text-muted small px-2 py-1"><i class="bi bi-lock me-1"></i>Cuenta en uso</span>
               `;
             } else if (tipo_usuario == 1 && usuario.tipo_usuario == 2) {
-              // Usuario Secretario: Se puede eliminar o ascender
+              // Usuario Secretario: se permite ascender o eliminar
               templete += `
                 <button class="delete-user btn btn-outline-danger btn-sm rounded-pill px-3" type="button" data-bs-toggle="modal" data-bs-target="#check">
                   <i class="bi bi-trash me-1"></i>Eliminar
                 </button>
-                <button class="ascender btn btn-outline-primary btn-sm rounded-pill px-3" type="button" data-bs-toggle="modal" data-bs-target="#check">
-                  <i class="bi bi-shield-check me-1"></i>Ascender
+                <button class="ascender btn btn-outline-primary btn-sm rounded-pill px-3" type="button" data-bs-toggle="modal" data-bs-target="#confirmar">
+                  <i class="bi bi-arrow-up-circle me-1"></i>Ascender
                 </button>
               `;
             } else if (tipo_usuario == 1 && usuario.tipo_usuario == 1) {
-              // Otro Administrador: Se puede descender si hay más de 1 administrador
-              if (totalAdmins > 1) {
-                templete += `
-                  <button class="delete-user btn btn-outline-danger btn-sm rounded-pill px-3" type="button" data-bs-toggle="modal" data-bs-target="#check">
-                    <i class="bi bi-trash me-1"></i>Eliminar
-                  </button>
-                  <button class="descender btn btn-outline-secondary btn-sm rounded-pill px-3" type="button" data-bs-toggle="modal" data-bs-target="#check">
-                    <i class="bi bi-shield-slash me-1"></i>Descender
-                  </button>
-                `;
-              } else {
-                templete += `
-                  <span class="text-muted small px-2 py-1"><i class="bi bi-shield-lock me-1"></i>Único Administrador</span>
-                `;
-              }
+              // Usuario Administrador alternativo: se permite descender o eliminar
+              templete += `
+                <button class="descender btn btn-outline-secondary btn-sm rounded-pill px-3" type="button" data-bs-toggle="modal" data-bs-target="#confirmar">
+                  <i class="bi bi-arrow-down-circle me-1"></i>Descender
+                </button>
+                <button class="delete-user btn btn-outline-danger btn-sm rounded-pill px-3" type="button" data-bs-toggle="modal" data-bs-target="#check">
+                  <i class="bi bi-trash me-1"></i>Eliminar
+                </button>
+              `;
             }
 
             templete += `
             </div>
           </div>
-        </div>`;
+        </div>
+        `;
       });
       $('#usuarios').html(templete);
     });
   }
 
-  // Búsqueda en tiempo real
+  // Filtrado de usuarios por búsqueda en vivo
   $(document).on('keyup', '#buscar', function() {
-    const valor = $(this).val();
-    buscar_datos(valor);
-  });
-
-  // Toggle de visualización de contraseña en modal nuevo usuario
-  $('#toggleNewPass').on('click', function() {
-    const input = $('#pass');
-    const icon = $(this).find('i');
-    if (input.attr('type') === 'password') {
-      input.attr('type', 'text');
-      icon.removeClass('bi-eye').addClass('bi-eye-slash');
+    let valor = $(this).val();
+    if (valor != '') {
+      buscar_datos(valor);
     } else {
-      input.attr('type', 'password');
-      icon.removeClass('bi-eye-slash').addClass('bi-eye');
-    }
-  });
-
-  // Toggle de visualización de contraseña en modal check
-  $('#toggleCheckPass').on('click', function() {
-    const input = $('#oldpass');
-    const icon = $(this).find('i');
-    if (input.attr('type') === 'password') {
-      input.attr('type', 'text');
-      icon.removeClass('bi-eye').addClass('bi-eye-slash');
-    } else {
-      input.attr('type', 'password');
-      icon.removeClass('bi-eye-slash').addClass('bi-eye');
+      buscar_datos();
     }
   });
 
   // Registro de nuevo usuario
-  $('#form-crear').submit(function(e) {
+  $('#form-crear').submit(e => {
     e.preventDefault();
-    const pass = $('#pass').val();
-    const ci = $('#ci').val();
+    let nombre = $('#nombre').val();
+    let apellido = $('#apellido').val();
+    let edad = $('#edad').val();
+    let ci = $('#ci').val();
+    let pass = $('#pass').val();
+    let genero = $('#genero').val();
+    funcion = 'crear_usuario';
 
-    if (pass.length < 6) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Contraseña insegura',
-        text: 'La contraseña debe tener un mínimo de 6 caracteres.'
-      });
-      return;
-    }
-
-    if (!/^\d{6,10}$/.test(ci)) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Cédula inválida',
-        text: 'La cédula debe ser numérica y contener entre 6 y 10 dígitos.'
-      });
-      return;
-    }
-
-    const formData = {
-      nombre: $('#nombre').val(),
-      apellido: $('#apellido').val(),
-      edad: $('#edad').val(),
-      ci: ci,
-      genero: $('#genero').val(),
-      pass: pass,
-      funcion: 'crear_usuario'
-    };
-
-    $.post('../controller/UserController.php', formData, function(response) {
-      if (response === 'add') {
+    $.post('../controller/UserController.php', { nombre, apellido, edad, ci, pass, genero, funcion }, (Response) => {
+      if (Response == 'add') {
         $('#form-crear').trigger('reset');
         Swal.fire({
+          position: 'center',
           icon: 'success',
-          title: 'Personal registrado con éxito',
-          text: 'El nuevo usuario ha sido añadido con rol Secretario.',
+          title: 'Usuario Registrado con Éxito',
           showConfirmButton: false,
-          timer: 1600
+          timer: 1000
+        }).then(() => {
+          const modalObj = bootstrap.Modal.getInstance(document.getElementById('crearusuario'));
+          if (modalObj) modalObj.hide();
+          buscar_datos();
         });
-        const modalEl = document.getElementById('newuser');
-        const modalInstance = bootstrap.Modal.getInstance(modalEl);
-        if (modalInstance) modalInstance.hide();
-        buscar_datos();
       } else {
         Swal.fire({
+          position: 'center',
           icon: 'error',
-          title: 'Error al registrar',
-          text: 'No se pudo crear el usuario. Verifique si la cédula ya se encuentra registrada en el sistema.'
+          title: 'La cédula ya está registrada',
+          showConfirmButton: false,
+          timer: 1500
         });
       }
     });
   });
 
-  // Preparar modal de confirmación con nombre de usuario y acción
-  $(document).on('click', '.ascender', function() {
+  // Preparar modal para ascender usuario
+  $(document).on('click', '.ascender', (e) => {
     const elemento = $(this).closest('[usuarioId]');
     const id = $(elemento).attr('usuarioId');
-    const nombre = $(elemento).attr('usuarioNombre');
     funcion = 'ascender';
-    $('#id_user_rol').val(id);
+    $('#id_user').val(id);
     $('#funcion').val(funcion);
-    $('#check-accion-msg').removeClass('alert-danger alert-warning').addClass('alert-primary')
-      .html(`¿Desea promover a <strong>${nombre}</strong> al rol de <strong>Administrador</strong>?`);
+    $('#pass-conf').val('');
   });
 
-  $(document).on('click', '.descender', function() {
+  // Preparar modal para descender usuario
+  $(document).on('click', '.descender', (e) => {
     const elemento = $(this).closest('[usuarioId]');
     const id = $(elemento).attr('usuarioId');
-    const nombre = $(elemento).attr('usuarioNombre');
     funcion = 'descender';
-    $('#id_user_rol').val(id);
+    $('#id_user').val(id);
     $('#funcion').val(funcion);
-    $('#check-accion-msg').removeClass('alert-primary alert-danger').addClass('alert-warning')
-      .html(`¿Desea degradar a <strong>${nombre}</strong> al rol de <strong>Secretario</strong>?`);
+    $('#pass-conf').val('');
   });
 
-  $(document).on('click', '.delete-user', function() {
+  // Preparar modal para eliminar usuario
+  $(document).on('click', '.delete-user', (e) => {
     const elemento = $(this).closest('[usuarioId]');
     const id = $(elemento).attr('usuarioId');
-    const nombre = $(elemento).attr('usuarioNombre');
-    funcion = 'delete_user';
-    $('#id_user_rol').val(id);
-    $('#funcion').val(funcion);
-    $('#check-accion-msg').removeClass('alert-primary alert-warning').addClass('alert-danger')
-      .html(`¿Está seguro de eliminar definitivamente a <strong>${nombre}</strong> de SIMAP?`);
+    funcion = 'borrar_usuario';
+    $('#id_user_del').val(id);
+    $('#funcion_del').val(funcion);
+    $('#pass-check').val('');
   });
 
-  // Confirmar acción con clave de administrador
-  $('#form-check').submit(function(e) {
+  // Procesar ascenso o descenso de rol
+  $('#form-confirmar').submit(e => {
     e.preventDefault();
-    const pass = $('#oldpass').val();
-    const id_usuario = $('#id_user_rol').val();
+    let pass = $('#pass-conf').val();
+    let id_usuario = $('#id_user').val();
     funcion = $('#funcion').val();
-    
-    $.post('../controller/UserController.php', { pass, id_usuario, funcion }, (response) => {
-      $('#oldpass').val('');
-      const modalEl = document.getElementById('check');
-      const modalInstance = bootstrap.Modal.getInstance(modalEl);
-      if (modalInstance) modalInstance.hide();
 
-      if (response == 'up' || response == 'donw' || response == 'delete') {
-        const accionTexto = (response == 'up') ? 'Usuario ascendido a Administrador.' :
-                            (response == 'donw') ? 'Usuario descendido a Secretario.' : 'Usuario eliminado correctamente.';
+    $.post('../controller/UserController.php', { pass, id_usuario, funcion }, (Response) => {
+      const modalObj = bootstrap.Modal.getInstance(document.getElementById('confirmar'));
+      if (modalObj) modalObj.hide();
+      $('#form-confirmar').trigger('reset');
+
+      if (Response == 'ascendido' || Response == 'descendido') {
         Swal.fire({
+          position: 'center',
           icon: 'success',
-          title: 'Operación Exitosa',
-          text: accionTexto,
+          title: (funcion == 'ascender') ? 'Usuario Ascendido a Administrador' : 'Usuario Descendido a Secretario',
           showConfirmButton: false,
-          timer: 1500
+          timer: 1000
         });
-      } else if (response == 'self-downgrade' || response == 'self-delete') {
+        buscar_datos();
+      } else if (Response == 'self-downgrade') {
         Swal.fire({
+          position: 'center',
           icon: 'warning',
-          title: 'Acción No Permitida',
-          text: 'Por seguridad, no puedes alterar el rol ni eliminar tu propia cuenta en sesión activa.'
+          title: 'Acción Bloqueada',
+          text: 'No puedes degradar tu propia cuenta de Administrador.',
+          showConfirmButton: true
         });
-      } else if (response == 'last-admin') {
+      } else if (Response == 'last-admin') {
         Swal.fire({
+          position: 'center',
           icon: 'error',
-          title: 'Protección de Seguridad',
-          text: 'No es posible degradar ni eliminar al único Administrador existente en el sistema.'
+          title: 'Acción No Permitida',
+          text: 'Debe existir al menos un Administrador activo en el sistema.',
+          showConfirmButton: true
         });
       } else {
         Swal.fire({
+          position: 'center',
           icon: 'error',
-          title: 'Error de Seguridad',
-          text: 'Contraseña de administrador incorrecta o permisos insuficientes.'
+          title: 'Contraseña Incorrecta',
+          showConfirmButton: false,
+          timer: 1500
         });
       }
-      buscar_datos();
+    });
+  });
+
+  // Procesar eliminación de cuenta
+  $('#form-check').submit(e => {
+    e.preventDefault();
+    let pass = $('#pass-check').val();
+    let id_usuario = $('#id_user_del').val();
+    funcion = $('#funcion_del').val();
+
+    $.post('../controller/UserController.php', { pass, id_usuario, funcion }, (Response) => {
+      const modalObj = bootstrap.Modal.getInstance(document.getElementById('check'));
+      if (modalObj) modalObj.hide();
+      $('#form-check').trigger('reset');
+
+      if (Response == 'borrado') {
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: 'Usuario Eliminado',
+          showConfirmButton: false,
+          timer: 1000
+        });
+        buscar_datos();
+      } else if (Response == 'self-delete') {
+        Swal.fire({
+          position: 'center',
+          icon: 'warning',
+          title: 'Acción Bloqueada',
+          text: 'No puedes eliminar tu propia cuenta en sesión.',
+          showConfirmButton: true
+        });
+      } else if (Response == 'last-admin') {
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          title: 'Acción No Permitida',
+          text: 'No puedes eliminar al único Administrador activo del sistema.',
+          showConfirmButton: true
+        });
+      } else {
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          title: 'Contraseña Incorrecta',
+          showConfirmButton: false,
+          timer: 1500
+        });
+      }
     });
   });
 });

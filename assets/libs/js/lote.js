@@ -1,7 +1,25 @@
+/**
+ * SIMAP - Gestión de Lotes y Control de Caducidad de Insumos
+ *
+ * Administra el panel de lotes en almacén: visualización de existencias, estados de caducidad
+ * (en regla, por vencer, vencido), ajuste manual de stock y borrado transaccional de lotes.
+ *
+ * Flujo de Integración Extremo a Extremo:
+ * 1. UI: Tarjetas de lotes en `adm_lote.php`, modales `#editarlote`.
+ * 2. AJAX: POST hacia `assets/controller/LoteController.php`.
+ * 3. Backend: Métodos en modelo `Lote` (`buscar`, `editar`, `borrar_lote`).
+ * 4. Respuesta: Renderizado de tarjetas con codificación semántica de color.
+ *
+ * @package SIMAP\Frontend\JS
+ * @author Grupo de Proyecto
+ * @version 1.0.0
+ */
+
 $(document).ready(function() {
     var funcion;
     buscar_lotes();
 
+    // Consultar el catálogo de lotes registrados
     function buscar_lotes(consulta) {
         funcion = "buscar_lote";
         $.post('../controller/LoteController.php', { consulta, funcion }, (response) => {
@@ -14,6 +32,7 @@ $(document).ready(function() {
         });
     }
 
+    // Renderizar tarjetas de lotes con estados de advertencia y caducidad
     function mostrarlotes(lotes) {
         const loteContainer = $('#lotes');
         if (!lotes || lotes.length === 0) {
@@ -84,6 +103,7 @@ $(document).ready(function() {
         loteContainer.empty().append(template);
     }
 
+    // Filtrado reactivo en barra de búsqueda
     $(document).on('keyup', '#buscar_lotes', function () {
         let valor = $(this).val();
         if (valor !== "") {
@@ -93,6 +113,7 @@ $(document).ready(function() {
         }
     });
 
+    // Abrir modal de ajuste de existencias
     $(document).on('click', '.editar', function() {
         const elemento = $(this).closest('.d-flex.align-items-stretch');
         const id = $(elemento).attr('loteID');
@@ -102,6 +123,7 @@ $(document).ready(function() {
         $('#stock').val(stock);
     });
 
+    // Procesar actualización de stock
     $('#form-editar-lote').submit(e => {
         e.preventDefault();
         let id = $('#id_lote_prod').val();
@@ -134,6 +156,7 @@ $(document).ready(function() {
         });
     });
 
+    // Eliminar lote de inventario
     $(document).on('click', '.borrar_lote', function() {
         const elemento = $(this).closest('.d-flex.align-items-stretch');
         const id = $(elemento).attr('loteID');

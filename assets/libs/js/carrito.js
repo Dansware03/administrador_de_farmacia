@@ -1,3 +1,21 @@
+/**
+ * SIMAP - Carrito de Solicitud y Despacho Institucional
+ *
+ * Administra el almacenamiento local (`localStorage`), validación de existencias en tiempo real,
+ * conteo dinámico en barra superior, renderizado de la tabla de retiro y procesamiento
+ * transaccional de actas de entrega en `adm_retiro.php` y `tec_retiro.php`.
+ *
+ * Flujo de Integración Extremo a Extremo:
+ * 1. UI: Botones `.agg_compra` en catálogo añaden insumos al `localStorage`.
+ * 2. Validación: Chequeo asíncrono con `ProductoController.php` para purgar IDs huérfanos.
+ * 3. Proceso: Emisión de solicitud POST hacia `DespachoController.php [funcion=registrar_despacho]`.
+ * 4. Salida: Generación de Acta de Entrega imprimible y redirección.
+ *
+ * @package SIMAP\Frontend\JS
+ * @author Grupo de Proyecto
+ * @version 1.0.0
+ */
+
 $(document).ready(function () {
   // Sincronizar y validar que los insumos en localStorage realmente existan en la base de datos
   validarYLimpiarCarrito();
@@ -26,7 +44,7 @@ $(document).ready(function () {
             localStorage.setItem("productos", JSON.stringify(productosFiltrados));
           }
         } catch (e) {
-          // Si ocurre error de parseo o DB vacía sin conexión, no bloquear interfaz
+          // Si ocurre error de parseo o DB vacía, continuar sin interrumpir interfaz
         }
         RecuperarLS_carrito();
         Contar_productos();
@@ -45,6 +63,7 @@ $(document).ready(function () {
     }
   }
 
+  // Agregar insumo al carrito de solicitud
   $(document).on("click", ".agg_compra", function () {
     const elemento = $(this).closest("[proId]");
     const id = elemento.attr("proId");
@@ -76,10 +95,7 @@ $(document).ready(function () {
       cantidad: 1,
     };
 
-    // Verifica si el producto ya está en el carrito
-    const productoExistente = $("#lista_carrito").find(
-      `[data_id="${producto.id}"]`
-    );
+    const productoExistente = $("#lista_carrito").find(`[data_id="${producto.id}"]`);
     if (productoExistente.length) {
       mostrarNotificacion("Este insumo ya se encuentra en la solicitud", "info");
     } else {
@@ -99,24 +115,24 @@ $(document).ready(function () {
       AgregarLS(producto);
       Contar_productos();
       mostrarNotificacion("Insumo agregado a la solicitud", "success");
-      actualizarTotalCarrito();
     }
   });
 
+  // Remover insumo individual del carrito
   $(document).on("click", ".borrar_de_carrito", function () {
     const elemento = $(this).closest("tr");
-    const id = $(elemento).attr("data_id");
+    const id = elemento.attr("data_id");
     $(elemento).fadeOut(200, function () {
       $(this).remove();
       Eliminar_producto_LS(id);
       Contar_productos();
-      actualizarTotalCarrito();
       if (typeof calcularTotal === "function") {
         calcularTotal();
       }
     });
   });
 
+  // Vaciar completamente el carrito
   $(document).on("click", "#vaciar_carrito", (e) => {
     e.preventDefault();
     $("#lista_carrito").empty();
@@ -181,6 +197,7 @@ $(document).ready(function () {
     $("#contador, #fab-contador, .contador").text(contador);
   }
 
+  // Renderizar tabla desglosada en adm_retiro
   function RecuperarLS_carrito_Pedido() {
     let productos = RecuperarLS();
     $("#lista-compra").empty();
@@ -229,6 +246,7 @@ $(document).ready(function () {
     });
   }
 
+  // Actualizar cantidad de unidades a retirar
   $("#cp").on("keyup change", ".cantidad_producto", function (e) {
     const fila = $(this).closest("tr");
     const id = fila.attr("data_id");
@@ -247,6 +265,7 @@ $(document).ready(function () {
     }
   });
 
+  // Funcionalidades exclusivas para la vista de retiro
   if (window.location.pathname.includes("adm_retiro.php")) {
     cargar_areas_servicio();
     calcularTotal();
@@ -266,11 +285,10 @@ $(document).ready(function () {
         });
     }
 
-    // Registro rápido de área hospitalaria desde adm_retiro
+    // Modal rápido para registrar nueva área desde la misma pantalla
     $('#form_nueva_area_rapida').on('submit', function(e) {
       e.preventDefault();
       const nombre_area = $('#modal_nombre_area').val().trim();
-
       if (!nombre_area) return;
 
       $.post('../controller/AreaController.php', {
@@ -324,6 +342,7 @@ $(document).ready(function () {
     window.calcularTotal = calcularTotal;
   }
 
+  // Procesar entrega y registrar despacho oficial
   $(document).on("click", "#procesar_compra", function (e) {
     e.preventDefault();
     procesar_compra();
@@ -373,8 +392,8 @@ $(document).ready(function () {
       (response) => {
         let isSuccess = false;
         let errorMsg = "";
-
         let idDespachoCreado = null;
+
         try {
           let res = JSON.parse(response);
           if (res.status === "success") {
@@ -392,7 +411,6 @@ $(document).ready(function () {
         }
 
         if (isSuccess) {
-          // Guardar receptor en historial local para autocompletar futuros despachos
           guardarReceptorHabitual({ nombre, ci, cargo: cargo_receptor });
 
           Swal.fire({
@@ -427,7 +445,7 @@ $(document).ready(function () {
     );
   }
 
-  // Manejo de receptores habituales (autocompletado rápido sin fricción)
+  // Autocompletado de receptores frecuentes
   function cargarReceptoresHabituales() {
     try {
       const historial = JSON.parse(localStorage.getItem("simap_receptores_habituales") || "[]");

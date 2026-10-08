@@ -1,7 +1,26 @@
+/**
+ * SIMAP - Gestión de Fabricantes y Laboratorios Farmacéuticos
+ *
+ * Administra el catálogo de marcas y laboratorios farmacéuticos productores.
+ * Implementa renderizado dinámico de filas, búsqueda en vivo, soporte modal para
+ * alta y edición, y confirmaciones de eliminación protegidas contra dependencias.
+ *
+ * Flujo de Integración Extremo a Extremo:
+ * 1. UI: Formulario modal `#form-crear-laboratorio` o tabla `#laboratorios`.
+ * 2. AJAX: POST hacia `assets/controller/LaboratoryController.php`.
+ * 3. Backend: Procesamiento de operaciones en `Laboratorio` (`crear`, `editar`, `borrar_lab`).
+ * 4. Salida: Notificaciones visuales y actualización sin recarga del DOM.
+ *
+ * @package SIMAP\Frontend\JS
+ * @author Grupo de Proyecto
+ * @version 1.0.0
+ */
+
 $(document).ready(function() {
     buscar_lab();
     var edit = false;
 
+    // Registrar o actualizar un laboratorio
     $('#form-crear-laboratorio').submit(e => {
         e.preventDefault();
         let nombre_laboratory = $('#nombre-laboratorio').val();
@@ -24,12 +43,13 @@ $(document).ready(function() {
                     if (modalObj) modalObj.hide();
                 });
             } catch (error) {
-                console.error('Error al analizar JSON:', error);
+                console.error('Error al analizar respuesta JSON:', error);
             }
             edit = false;
         });
     });
 
+    // Listar laboratorios con búsqueda reactiva
     function buscar_lab(consulta = '') {
         $.post('../controller/LaboratoryController.php', { consulta, funcion: 'buscar' }, (Response) => {
             const laboratorios = JSON.parse(Response);
@@ -58,12 +78,14 @@ $(document).ready(function() {
         });
     }
 
+    // Evento de búsqueda por teclado
     $(document).on('keyup', '#buscar-laboratory', function () {
         let valor = $(this).val();
         buscar_lab(valor !== "" ? valor : undefined);
     });
 
-    $(document).on('click', '.borrar_lab', function (e) {
+    // Eliminación con diálogo de confirmación y chequeo de insumos vinculados
+    $(document).on('click', '.borrar_lab', function () {
         const funcion = "borrar_lab";
         const elemento = $(this).closest('tr');
         const id = elemento.attr('labId');
@@ -104,6 +126,7 @@ $(document).ready(function() {
         });
     });
 
+    // Cargar datos en el formulario para edición
     $(document).on('click', '.editar', function () {
         const elemento = $(this).closest('tr');
         const id = elemento.attr('labId');

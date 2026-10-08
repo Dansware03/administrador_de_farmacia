@@ -1,14 +1,34 @@
+/**
+ * SIMAP - Gestión de Proveedores y Entidades Donantes
+ *
+ * Administra el directorio de proveedores comerciales y organismos humanitarios.
+ * Maneja el ciclo completo: altas, listado en tarjetas, edición de contactos,
+ * subida asíncrona de logos/avatares y eliminación física segura de registros.
+ *
+ * Flujo de Integración Extremo a Extremo:
+ * 1. UI: Tarjetas en `#proveedores` y modal `#newproveedor` en `adm_proveedor.php`.
+ * 2. AJAX: POST hacia `assets/controller/ProveedorController.php`.
+ * 3. Backend: Procesamiento en modelo `Proveedor` (`crear`, `buscar`, `editar`, `borrar_prove`, `cambiar_avatar`).
+ * 4. Respuesta: Feedback SweetAlert2 y actualización de cards y selectores en memoria.
+ *
+ * @package SIMAP\Frontend\JS
+ * @author Grupo de Proyecto
+ * @version 1.0.0
+ */
+
 $(document).ready(function () {
     buscar_prov();
     var funcion;
     var edit = false;
 
+    // Abrir modal de creación y limpiar campos
     $(document).on('click', '.crearprov', function() {
         $('#form-crear-proveedor').trigger('reset');
         $('#crearProveedorLabel').html('<i class="bi bi-truck me-2"></i>Nuevo Proveedor');
         edit = false;
     });
 
+    // Registrar o actualizar datos del proveedor
     $('#form-crear-proveedor').submit(e => {
         e.preventDefault();
         let nombre = $('#nombre').val();
@@ -76,6 +96,7 @@ $(document).ready(function () {
         });
     });
 
+    // Consultar lista de proveedores
     function buscar_prov(consulta) {
         funcion = "buscar_prov";
         $.post('../controller/ProveedorController.php', { consulta, funcion }, (response) => {
@@ -88,6 +109,7 @@ $(document).ready(function () {
         });
     }
 
+    // Renderizar tarjetas de proveedores
     function mostrarProveedores(proveedores) {
         const proveedorContainer = $('#proveedores');
         if (!proveedores || proveedores.length === 0) {
@@ -100,53 +122,55 @@ $(document).ready(function () {
             return;
         }
 
-        const template = proveedores.map(proveedor => {
-            const avatarSrc = proveedor.avatar && proveedor.avatar.trim() !== '' ? proveedor.avatar : '../libs/img/proveedors/ProveedorDefault.png';
-
-            return `
-                <div provId="${proveedor.id}" provNombre="${proveedor.nombre}" provTelefono="${proveedor.telefono}" provCorreo="${proveedor.correo}" provDireccion="${proveedor.direccion}" provAvatar="${avatarSrc}" class="col-12 col-sm-6 col-md-4 col-xl-3 d-flex align-items-stretch">
-                    <div class="card product-card w-100 shadow-sm border-0 d-flex flex-column justify-content-between">
-                        <div class="card-body p-4">
-                            <div class="text-center mb-3">
-                                <img src="${avatarSrc}" alt="${proveedor.nombre}" class="product-avatar mb-2 shadow-sm" onerror="this.src='../libs/img/proveedors/ProveedorDefault.png'">
-                                <h5 class="fw-bold text-primary mb-1 text-truncate" title="${proveedor.nombre}">${proveedor.nombre}</h5>
-                                <span class="badge bg-light text-secondary border small">#${proveedor.id}</span>
-                            </div>
-
-                            <ul class="list-unstyled small text-muted border-top pt-3 mb-0">
-                                <li class="mb-2 text-truncate">
-                                    <i class="bi bi-telephone text-primary me-2"></i>
-                                    <a href="tel:${proveedor.telefono}" class="text-decoration-none text-dark fw-semibold">${proveedor.telefono}</a>
-                                </li>
-                                <li class="mb-2 text-truncate">
-                                    <i class="bi bi-envelope text-primary me-2"></i>
-                                    <a href="mailto:${proveedor.correo}" class="text-decoration-none text-secondary">${proveedor.correo || 'Sin correo'}</a>
-                                </li>
-                                <li class="text-truncate">
-                                    <i class="bi bi-geo-alt text-primary me-2"></i>
-                                    <span>${proveedor.direccion || 'Sin dirección'}</span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div class="card-footer bg-light border-0 p-2 d-flex justify-content-center gap-2">
-                            <button class="avatar btn btn-sm btn-outline-info" title="Cambiar Logotipo" type="button" data-bs-toggle="modal" data-bs-target="#cambioavatar">
-                                <i class="bi bi-image"></i>
-                            </button>
-                            <button class="editar btn btn-sm btn-outline-success" title="Editar Proveedor" type="button" data-bs-toggle="modal" data-bs-target="#newproveedor">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <button class="borrar_prov btn btn-sm btn-outline-danger" title="Eliminar Proveedor" type="button">
-                                <i class="bi bi-trash"></i>
+        const template = proveedores.map(proveedor => `
+            <div provId="${proveedor.id_proveedor}" provNombre="${proveedor.nombre}" provTelefono="${proveedor.telefono}" provCorreo="${proveedor.correo}" provDireccion="${proveedor.direccion}" provAvatar="${proveedor.avatar}" class="col-12 col-sm-6 col-md-4 col-xl-3 d-flex align-items-stretch">
+                <div class="card product-card w-100 shadow-sm border-0 border-top border-primary border-3 d-flex flex-column justify-content-between">
+                    <div class="card-body p-4 text-center">
+                        <div class="mb-3 position-relative d-inline-block">
+                            <img src="${proveedor.avatar ? '../libs/img/proveedors/' + proveedor.avatar : '../libs/img/proveedors/ProveedorDefault.png'}" 
+                                 alt="${proveedor.nombre}" 
+                                 class="product-avatar shadow-sm"
+                                 onerror="this.src='../libs/img/proveedors/ProveedorDefault.png'">
+                            <button class="cambiar_logo btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0 p-1" 
+                                    style="width: 28px; height: 28px;" 
+                                    title="Cambiar Logo" 
+                                    type="button" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#cambiologo">
+                                <i class="bi bi-camera-fill" style="font-size: 0.75rem;"></i>
                             </button>
                         </div>
+                        <h5 class="fw-bold text-primary mb-2 text-truncate" title="${proveedor.nombre}">${proveedor.nombre}</h5>
+                        
+                        <ul class="list-unstyled small text-muted text-start border-top pt-3 mb-0">
+                            <li class="mb-2 text-truncate">
+                                <i class="bi bi-telephone text-secondary me-2"></i><b>Teléfono:</b> ${proveedor.telefono || 'N/A'}
+                            </li>
+                            <li class="mb-2 text-truncate">
+                                <i class="bi bi-envelope text-secondary me-2"></i><b>Correo:</b> ${proveedor.correo || 'N/A'}
+                            </li>
+                            <li class="text-truncate">
+                                <i class="bi bi-geo-alt text-secondary me-2"></i><b>Dirección:</b> ${proveedor.direccion || 'N/A'}
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="card-footer bg-light border-0 p-2 d-flex justify-content-center gap-2">
+                        <button class="editar btn btn-sm btn-outline-success px-3" title="Editar" type="button" data-bs-toggle="modal" data-bs-target="#newproveedor">
+                            <i class="bi bi-pencil me-1"></i>Editar
+                        </button>
+                        <button class="borrar_prove btn btn-sm btn-outline-danger px-3" title="Eliminar" type="button">
+                            <i class="bi bi-trash me-1"></i>Eliminar
+                        </button>
                     </div>
                 </div>
-            `;
-        }).join('');
+            </div>
+        `).join('');
+
         proveedorContainer.empty().append(template);
     }
 
+    // Búsqueda en vivo
     $(document).on('keyup', '#buscar_proveedor', function () {
         let valor = $(this).val();
         if (valor !== "") {
@@ -156,61 +180,19 @@ $(document).ready(function () {
         }
     });
 
-    $(document).on('click', '.avatar', function(e) {
-        funcion = "cambiar_avatar";
+    // Cargar proveedor en el modal de cambio de logo
+    $(document).on('click', '.cambiar_logo', function () {
         const elemento = $(this).closest('.d-flex.align-items-stretch');
         const id = $(elemento).attr('provId');
         const nombre = $(elemento).attr('provNombre');
         const avatar = $(elemento).attr('provAvatar');
-        $('#funcion').val(funcion);
-        $('#id_logo_prod').val(id);
-        $('#avatar').val(avatar);
-        $('#logoactual1').attr('src', avatar);
+        $('#logoactual').attr('src', avatar ? '../libs/img/proveedors/' + avatar : '../libs/img/proveedors/ProveedorDefault.png');
         $('#nombre_logo').html(nombre);
+        $('#id_logo_prov').val(id);
     });
 
-    $('#form-logo').submit((e) => {
-        e.preventDefault();
-        const fileInput = $('#foto')[0];
-        if (!fileInput.files || fileInput.files.length === 0) return;
-
-        let formData = new FormData($('#form-logo')[0]);
-        $.ajax({
-            url: '../controller/ProveedorController.php',
-            type: 'POST',
-            data: formData,
-            cache: false,
-            processData: false,
-            contentType: false
-        }).done(function(response) {
-            const json = JSON.parse(response);
-            if (json.alert == 'edit') {
-                $('#logoactual1').attr('src', json.ruta);
-                $('#form-logo').trigger('reset');
-                buscar_prov();
-                Swal.fire({
-                    position: 'center',
-                    icon: 'success',
-                    title: 'Logotipo Actualizado',
-                    showConfirmButton: false,
-                    timer: 1000
-                }).then(() => {
-                    const modalObj = bootstrap.Modal.getInstance(document.getElementById('cambioavatar'));
-                    if (modalObj) modalObj.hide();
-                });
-            } else {
-                Swal.fire({
-                    position: 'center',
-                    icon: 'error',
-                    title: 'No se pudo actualizar el logotipo',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            }
-        });
-    });
-
-    $(document).on('click', '.editar', function() {
+    // Cargar datos en el formulario de edición
+    $(document).on('click', '.editar', function () {
         const elemento = $(this).closest('.d-flex.align-items-stretch');
         const id = $(elemento).attr('provId');
         const nombre = $(elemento).attr('provNombre');
@@ -227,11 +209,12 @@ $(document).ready(function () {
         edit = true;
     });
 
-    $(document).on('click', '.borrar_prov', function() {
+    // Eliminar proveedor
+    $(document).on('click', '.borrar_prove', function () {
         const elemento = $(this).closest('.d-flex.align-items-stretch');
         const id = $(elemento).attr('provId');
         const nombre = $(elemento).attr('provNombre');
-        funcion = 'borrar_prove';
+        funcion = 'borrar';
 
         Swal.fire({
             title: `¿Eliminar Proveedor "${nombre}"?`,
@@ -245,7 +228,7 @@ $(document).ready(function () {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.post('../controller/ProveedorController.php', { id, funcion }, (response) => {
-                    if (response === 'borrado') {
+                    if (response == 'borrado') {
                         Swal.fire({
                             position: 'center',
                             icon: 'success',
@@ -258,11 +241,50 @@ $(document).ready(function () {
                         Swal.fire({
                             position: 'center',
                             icon: 'error',
-                            title: 'No se puede eliminar (lotes asociados)',
+                            title: 'Error al eliminar el proveedor',
                             showConfirmButton: false,
                             timer: 1500
                         });
                     }
+                });
+            }
+        });
+    });
+
+    // Subir y actualizar nuevo logo institucional
+    $('#form-logo').submit(e => {
+        e.preventDefault();
+        let formData = new FormData($('#form-logo')[0]);
+        $.ajax({
+            url: '../controller/ProveedorController.php',
+            type: 'POST',
+            data: formData,
+            cache: false,
+            processData: false,
+            contentType: false
+        }).done(function (response) {
+            const json = JSON.parse(response);
+            if (json.alert == 'edit') {
+                $('#logoactual').attr('src', json.ruta);
+                $('#form-logo').trigger('reset');
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Logo Actualizado',
+                    showConfirmButton: false,
+                    timer: 1000
+                }).then(() => {
+                    const modalObj = bootstrap.Modal.getInstance(document.getElementById('cambiologo'));
+                    if (modalObj) modalObj.hide();
+                    buscar_prov();
+                });
+            } else {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Error al actualizar el logo',
+                    showConfirmButton: false,
+                    timer: 1500
                 });
             }
         });

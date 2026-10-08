@@ -1,9 +1,18 @@
 /**
- * SIMAP - Logica de Interfaz para Pantalla de Login
+ * SIMAP - Lógica de Interfaz para Pantalla de Autenticación
+ *
+ * Administra el comportamiento interactivo del formulario de acceso:
+ * - Alternar visibilidad de contraseña con icono reactivo.
+ * - Feedback visual y deshabilitación del botón al procesar envío para evitar envíos múltiples.
+ * - Detección y despliegue del mensaje de error tras redirección con parámetro `?login_error=1`.
+ *
+ * @package SIMAP\Frontend\JS
+ * @author Grupo de Proyecto
+ * @version 1.0.0
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Alternar visibilidad de contrasena
+    // Alternar visibilidad de contraseña
     const togglePassBtn = document.getElementById('toggle-password');
     const passInput = document.getElementById('login-pass');
     const toggleIcon = document.getElementById('toggle-icon');
@@ -17,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Feedback visual al enviar formulario
+    // Bloqueo y animación del botón durante el envío de credenciales
     const loginForm = document.getElementById('login-form');
     const submitBtn = document.getElementById('btn-submit');
 
@@ -31,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Deteccion de error de autenticacion por URL (?login_error=1)
+    // Alerta de credenciales inválidas si la URL incluye parámetro de error
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('login_error') === '1') {
         const errorAlert = document.getElementById('login-alert-error');

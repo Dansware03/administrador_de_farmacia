@@ -1,4 +1,23 @@
-// SIMAP - Modificar Registro de Despacho y Entrega
+/**
+ * SIMAP - Modificación y Recálculo de Despachos y Actas de Entrega
+ *
+ * Administra la edición reactiva de actas de entrega emitidas en `adm_editar_despacho.php`:
+ * - Carga de datos maestros del acta (receptor, cédula, cargo, área, observaciones).
+ * - Modificación de cantidades de insumos con validación de existencias en lote.
+ * - Remoción de ítems y re-cálculo de unidades totales despachadas.
+ * - Guardado atómico con reversión y re-deducción transparente de stock en base de datos.
+ *
+ * Flujo de Integración Extremo a Extremo:
+ * 1. UI: Tabla `#tabla_detalle_despacho` y modal `#modal_editar_cantidad`.
+ * 2. AJAX: POST hacia `assets/controller/DespachoController.php`.
+ * 3. Backend: Transacción ACID en `Despacho::actualizar_despacho`.
+ * 4. Salida: Notificación SweetAlert2 y redirección al historial de despachos.
+ *
+ * @package SIMAP\Frontend\JS
+ * @author Grupo de Proyecto
+ * @version 1.0.0
+ */
+
 $(document).ready(function() {
     let id_despacho = new URLSearchParams(window.location.search).get('id');
     let productos_despacho = [];
@@ -18,7 +37,7 @@ $(document).ready(function() {
         });
     }
 
-    // Cargar datos del despacho
+    // Cargar datos de la cabecera del despacho
     function cargar_despacho() {
         $.post('../controller/DespachoController.php', {
             funcion: 'obtener_despacho',
@@ -46,7 +65,7 @@ $(document).ready(function() {
         });
     }
 
-    // Cargar detalles de productos despachados
+    // Cargar líneas e insumos del acta
     function cargar_detalles_despacho() {
         $.post('../controller/DespachoController.php', {
             funcion: 'ver_detalle_despacho',
@@ -58,7 +77,7 @@ $(document).ready(function() {
         });
     }
 
-    // Mostrar productos en la tabla
+    // Renderizar tabla de insumos
     function mostrar_productos_tabla() {
         let template = '';
         productos_despacho.forEach(producto => {
@@ -89,14 +108,13 @@ $(document).ready(function() {
                 </tr>
             `;
             
-            // Guardar stock original para referencia
             stock_original[idItem] = producto.cantidad;
         });
         
         $('#tabla_detalle_despacho tbody').html(template);
     }
 
-    // Calcular el total de unidades físicas despachadas
+    // Calcular suma total de unidades físicas
     function calcular_total() {
         total_despacho = 0;
         productos_despacho.forEach(producto => {
@@ -105,7 +123,7 @@ $(document).ready(function() {
         $('#total_despacho').text(`${total_despacho} unidades`);
     }
 
-    // Obtener stock disponible para un lote de producto
+    // Consultar existencias de un lote específico
     function obtener_stock_disponible(id_producto, id_lote, callback) {
         $.post('../controller/DespachoController.php', {
             funcion: 'obtener_stock_lote',
@@ -117,7 +135,7 @@ $(document).ready(function() {
         });
     }
 
-    // Evento para editar cantidad
+    // Modificar cantidad entregada
     $(document).on('click', '.editar-cantidad', function() {
         let id_detalle = $(this).data('id');
         let producto_nombre = $(this).data('producto');
@@ -139,7 +157,7 @@ $(document).ready(function() {
         });
     });
 
-    // Guardar nueva cantidad
+    // Validar y confirmar nueva cantidad
     $('#btn_guardar_cantidad').click(function() {
         let id_detalle = $('#id_detalle_editar').val();
         let nueva_cantidad = parseInt($('#nueva_cantidad').val());
@@ -166,7 +184,7 @@ $(document).ready(function() {
         }
     });
 
-    // Eliminar producto del despacho
+    // Remover insumo del despacho
     $(document).on('click', '.eliminar-producto', function() {
         let id_detalle = $(this).data('id');
         
@@ -188,7 +206,7 @@ $(document).ready(function() {
         });
     });
 
-    // Guardar cambios en el despacho
+    // Guardar actualización general del acta
     $('#btn_actualizar_despacho').click(function() {
         let receptor = $('#receptor').val();
         let ci_receptor = $('#ci_receptor').val();
@@ -250,7 +268,6 @@ $(document).ready(function() {
         });
     });
 
-    // Inicializar
     cargar_despacho();
     cargar_detalles_despacho();
 });

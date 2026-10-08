@@ -1,9 +1,24 @@
-// SIMAP - Perfil y Datos Personales
+/**
+ * SIMAP - Perfil y Configuración de Datos Personales
+ *
+ * Administra la vista de perfil del usuario en sesión (`adm_mas_datos.php`):
+ * - Carga asíncrona de datos personales y roles.
+ * - Edición de teléfonos, correos y biografía con confirmación y restauración.
+ * - Cambio de contraseña con validación de clave actual y encriptación Bcrypt.
+ * - Actualización de fotografía / avatar de perfil.
+ * - Alternador interactivo para visualizar contraseñas.
+ *
+ * @package SIMAP\Frontend\JS
+ * @author Grupo de Proyecto
+ * @version 1.0.0
+ */
+
 $(document).ready(function() {
     let funcion = '';
     const id_usuario = $('#id_usuario').val();
     let datosOriginales = {};
 
+    // Obtener información del usuario en sesión
     function buscarUsuario(dato) {
         funcion = 'buscar_usuario';
         $.post('../controller/UserController.php', { dato, funcion }, (Response) => {
@@ -17,7 +32,7 @@ $(document).ready(function() {
                 let tipoBadge = (usuario.tipo == 'Administrador') ? 'bg-primary' : 'bg-success';
                 $('#tipo_us').html(`<span class="badge ${tipoBadge} px-3 py-2 fs-6 shadow-sm">${usuario.tipo || 'Usuario'}</span>`);
                 
-                // Guardar datos originales para restaurar si cancela edición
+                // Respaldar datos originales por si el usuario cancela la edición
                 datosOriginales = {
                     telefono: usuario.telefono || '',
                     correo: usuario.correo || '',
@@ -25,7 +40,6 @@ $(document).ready(function() {
                     info: usuario.info || ''
                 };
 
-                // Asignar a inputs
                 $('#telefono').val(datosOriginales.telefono);
                 $('#email').val(datosOriginales.correo);
                 $('#genero').val(datosOriginales.genero);
@@ -39,7 +53,7 @@ $(document).ready(function() {
         });
     }
 
-    // Toggle para habilitar edición de datos de contacto
+    // Habilitar campos de contacto para edición
     $(document).on('click', '#btn-toggle-edit', function() {
         $('#telefono, #email, #genero, #info-adicional').prop('disabled', false);
         $('#btn-toggle-edit').hide();
@@ -47,7 +61,7 @@ $(document).ready(function() {
         $('#telefono').focus();
     });
 
-    // Cancelar edición y restaurar valores
+    // Cancelar edición y restablecer valores originales
     $(document).on('click', '#btn-cancelar-edit', function() {
         $('#telefono').val(datosOriginales.telefono);
         $('#email').val(datosOriginales.correo);
@@ -59,7 +73,7 @@ $(document).ready(function() {
         $('#btn-toggle-edit').show();
     });
 
-    // Guardar cambios del perfil
+    // Guardar cambios en el perfil
     $('#form-usuario').submit(function(e) {
         e.preventDefault();
         const telefono = $('#telefono').val().trim();
@@ -94,7 +108,7 @@ $(document).ready(function() {
         });
     });
 
-    // Toggle visibilidad de contraseñas (ojo)
+    // Alternar visibilidad de contraseña en inputs
     $(document).on('click', '.btn-toggle-pass', function() {
         const targetId = $(this).data('target');
         const input = $('#' + targetId);
@@ -109,99 +123,42 @@ $(document).ready(function() {
         }
     });
 
-    // Validación de coincidencia en tiempo real
-    $('#newpass, #confirmpass').on('input keyup', function() {
-        const newpass = $('#newpass').val();
-        const confirmpass = $('#confirmpass').val();
-        const feedback = $('#pass-match-feedback');
-
-        if (confirmpass.length === 0) {
-            feedback.addClass('d-none').html('');
-            return;
-        }
-
-        feedback.removeClass('d-none');
-        if (newpass === confirmpass) {
-            feedback.html('<span class="text-success fw-semibold"><i class="bi bi-check-circle me-1"></i>Las contraseñas coinciden</span>');
-        } else {
-            feedback.html('<span class="text-danger fw-semibold"><i class="bi bi-x-circle me-1"></i>Las contraseñas no coinciden</span>');
-        }
-    });
-
-    // Actualizar contraseña con Bcrypt
-    $('#form-pass').submit(function(e) {
+    // Modificar contraseña personal
+    $('#form-pass').submit(e => {
         e.preventDefault();
-        const oldpass = $('#oldpass').val();
-        const newpass = $('#newpass').val();
-        const confirmpass = $('#confirmpass').val();
-
-        if (newpass.length < 6) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Contraseña muy corta',
-                text: 'La nueva contraseña debe tener al menos 6 caracteres.',
-                confirmButtonColor: '#1a3a5c'
-            });
-            return;
-        }
-
-        if (newpass !== confirmpass) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Las contraseñas no coinciden',
-                text: 'Por favor verifique que la confirmación sea exactamente igual a la nueva contraseña.',
-                confirmButtonColor: '#1a3a5c'
-            });
-            return;
-        }
-
+        let oldpass = $('#oldpass').val();
+        let newpass = $('#newpass').val();
         funcion = 'cambiar_contra';
-        $.post('../controller/UserController.php', { funcion, oldpass, newpass }, (Response) => {
-            $('#form-pass').trigger('reset');
-            $('#pass-match-feedback').addClass('d-none').html('');
-            
-            const modalEl = document.getElementById('cambiarcontrasena');
-            const modalInstance = bootstrap.Modal.getInstance(modalEl);
-            if (modalInstance) modalInstance.hide();
 
-            if (Response.trim() === 'update') {
+        $.post('../controller/UserController.php', { funcion, oldpass, newpass }, (Response) => {
+            if (Response == 'update') {
+                $('#form-pass').trigger('reset');
                 Swal.fire({
                     position: 'center',
                     icon: 'success',
-                    title: 'Contraseña actualizada con éxito',
-                    text: 'Su nueva contraseña cifrada se encuentra activa.',
+                    title: 'Contraseña Actualizada con Éxito',
                     showConfirmButton: false,
-                    timer: 1600
+                    timer: 1200
+                }).then(() => {
+                    const modalObj = bootstrap.Modal.getInstance(document.getElementById('cambiarcontrasena'));
+                    if (modalObj) modalObj.hide();
                 });
             } else {
                 Swal.fire({
                     position: 'center',
                     icon: 'error',
-                    title: 'Error al cambiar contraseña',
-                    text: 'Verifique su contraseña actual ingresada.',
-                    showConfirmButton: true,
-                    confirmButtonColor: '#1a3a5c'
+                    title: 'La contraseña actual no es correcta',
+                    showConfirmButton: false,
+                    timer: 1500
                 });
             }
         });
     });
 
-    // Preview dinámico al seleccionar archivo de foto
-    $('#foto_user').on('change', function() {
-        const file = this.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                $('#avatar1').attr('src', e.target.result);
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Subida de foto de perfil
-    $('#form-foto').submit(function(e) {
+    // Actualizar foto de perfil
+    $('#form-photo').submit(e => {
         e.preventDefault();
-        const formData = new FormData($('#form-foto')[0]);
+        let formData = new FormData($('#form-photo')[0]);
         $.ajax({
             url: '../controller/UserController.php',
             type: 'POST',
@@ -210,35 +167,28 @@ $(document).ready(function() {
             processData: false,
             contentType: false
         }).done(function(Response) {
-            const modalEl = document.getElementById('cambiofoto');
-            const modalInstance = bootstrap.Modal.getInstance(modalEl);
-            if (modalInstance) modalInstance.hide();
-            $('#form-foto').trigger('reset');
-
-            try {
-                const json = typeof Response === 'object' ? Response : JSON.parse(Response);
-                if (json.alert == 'edit') {
-                    $('#avatar1, #avatar2, #avatar3').attr('src', json.ruta);
-                    buscarUsuario(id_usuario);
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'success',
-                        title: 'Foto de perfil actualizada',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                } else {
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'error',
-                        title: 'Formato o imagen inválida',
-                        text: 'Asegúrese de subir una imagen JPG, PNG o WEBP de hasta 5 MB.',
-                        showConfirmButton: true,
-                        confirmButtonColor: '#1a3a5c'
-                    });
-                }
-            } catch (err) {
-                console.error("Error al procesar respuesta:", err);
+            const json = JSON.parse(Response);
+            if (json.alert == 'edit') {
+                $('#avatar1, #avatar2, #avatar3').attr('src', json.ruta);
+                $('#form-photo').trigger('reset');
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Foto Actualizada con Éxito',
+                    showConfirmButton: false,
+                    timer: 1200
+                }).then(() => {
+                    const modalObj = bootstrap.Modal.getInstance(document.getElementById('cambiarfoto'));
+                    if (modalObj) modalObj.hide();
+                });
+            } else {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Formato o imagen no válida',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
             }
         });
     });

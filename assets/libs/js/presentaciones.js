@@ -1,7 +1,26 @@
+/**
+ * SIMAP - Gestión de Presentaciones Farmacéuticas y Formas de Empaque
+ *
+ * Administra el catálogo de empaques y presentaciones (Ampolla, Caja, Frasco, Blíster, etc.).
+ * Implementa el flujo asíncrono para registro, búsqueda interactiva, modificación modal
+ * y borrado protegido por verificación de productos vinculados.
+ *
+ * Flujo de Integración Extremo a Extremo:
+ * 1. UI: Formulario modal `#form-crear-presentacion` en `adm_presentacion.php`.
+ * 2. AJAX: POST hacia `assets/controller/PresentacionesController.php`.
+ * 3. Backend: Métodos en modelo `Presentacion` (`crear`, `buscar`, `editar`, `borrar_pre`).
+ * 4. Respuesta: Alertas modales y actualización de filas en el contenedor `#presentaciones`.
+ *
+ * @package SIMAP\Frontend\JS
+ * @author Grupo de Proyecto
+ * @version 1.0.0
+ */
+
 $(document).ready(function() {
   buscar_pre();
   var edit = false;
 
+  // Registrar o actualizar una presentación
   $('#form-crear-presentacion').submit(function (e) {
       e.preventDefault();
       let nombre_pre = $('#nombre-presentacion').val();
@@ -40,6 +59,7 @@ $(document).ready(function() {
         });
   });
 
+  // Consultar presentaciones y construir filas de tabla
   function buscar_pre(consulta) {
       let funcion = "buscar";
       $.post('../controller/PresentacionesController.php', { consulta, funcion }, (Response) => {
@@ -69,11 +89,13 @@ $(document).ready(function() {
       });
   }
 
+  // Filtrado al teclear en el campo de búsqueda
   $(document).on('keyup', '#buscar-presentacion', function () {
       let valor = $(this).val();
       buscar_pre(valor !== "" ? valor : undefined);
   });
 
+  // Eliminación con confirmación y control de dependencias
   $(document).on('click', '.borrar_pre', function () {
       const funcion = "borrar";
       const elemento = $(this).closest('tr');
@@ -115,6 +137,7 @@ $(document).ready(function() {
       });
   });
 
+  // Preparar formulario para edición de presentación
   $(document).on('click', '.editar_pre', function () {
       const elemento = $(this).closest('tr');
       const id = elemento.attr('preId');

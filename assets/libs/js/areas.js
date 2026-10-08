@@ -1,6 +1,25 @@
+/**
+ * SIMAP - Gestión de Áreas Hospitalarias
+ *
+ * Administra la interfaz de usuario para el catálogo de áreas y servicios receptores
+ * de insumos (Emergencia, Quirófano, Hospitalización, etc.). Orquesta la búsqueda
+ * asíncrona en tiempo real, registro, edición modal y eliminación con confirmación.
+ *
+ * Flujo de Integración Extremo a Extremo:
+ * 1. Evento UI: Envío de formulario o click en botones de acción en `adm_area.php`.
+ * 2. Petición HTTP: AJAX POST hacia `assets/controller/AreaController.php`.
+ * 3. Procesamiento Backend: Verificación de dependencias y consultas preparadas PDO.
+ * 4. Respuesta: Alertas modales con SweetAlert2 y refresco dinámico de la tabla.
+ *
+ * @package SIMAP\Frontend\JS
+ * @author Grupo de Proyecto
+ * @version 1.0.0
+ */
+
 $(document).ready(function() {
     buscar_areas();
 
+    // Registrar o actualizar un área hospitalaria
     $('#form-crear-area').submit(function (e) {
         e.preventDefault();
         let id_area = $('#id_editar_area').val();
@@ -38,6 +57,7 @@ $(document).ready(function() {
         });
     });
 
+    // Consultar áreas con filtro opcional de búsqueda
     function buscar_areas(consulta = '') {
         $.post('../controller/AreaController.php', { consulta, funcion: 'buscar_areas' }, function(response) {
             let areas = [];
@@ -74,10 +94,12 @@ $(document).ready(function() {
         });
     }
 
+    // Filtrado en vivo al tipear en el buscador
     $(document).on('keyup', '#buscar-area', function () {
         buscar_areas($(this).val());
     });
 
+    // Preparar modal para edición de área existente
     $(document).on('click', '.editar_area', function () {
         const elemento = $(this).closest('tr');
         const id = elemento.attr('areaId');
@@ -88,6 +110,7 @@ $(document).ready(function() {
         $('#crearAreaLabel').html('<i class="bi bi-pencil me-2"></i>Editar Área Hospitalaria');
     });
 
+    // Reiniciar modal para registro de nueva área
     $(document).on('click', '[data-bs-target="#crear-area"]', function () {
         if (!$(this).hasClass('editar_area')) {
             $('#form-crear-area').trigger('reset');
@@ -96,6 +119,7 @@ $(document).ready(function() {
         }
     });
 
+    // Eliminación protegida con verificación de integridad referencial
     $(document).on('click', '.borrar_area', function () {
         const elemento = $(this).closest('tr');
         const id = elemento.attr('areaId');
