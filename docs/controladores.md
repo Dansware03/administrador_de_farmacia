@@ -1,178 +1,182 @@
 # Controladores del Sistema (Capa de Orquestación)
 
-> **Ubicación:** `assets/controller/`  
-> **Rol:** Orquestadores de peticiones HTTP/AJAX. Reciben entradas desde el cliente (JavaScript), sanean datos, validan reglas de negocio, delegan operaciones a los Modelos PDO y emiten respuestas JSON o estados en texto plano.
+> **Generado automáticamente a partir del código fuente PHP (`assets/controller/`).**
+> La única fuente de verdad son los comentarios DocBlocks en los archivos del sistema.
 
 ---
 
-## 1. AreaController.php
-- **Archivo:** `assets/controller/AreaController.php`
-- **Descripción:** Administra las áreas de servicio hospitalario receptoras de insumos (Quirófano, Emergencia, Nutrición, etc.) y el catálogo de unidades métricas.
-- **Dependencias:** `assets/db/conexion.php`
+## AreaController.php
 
-### Casos de Uso Registrados
-| Acción (`funcion`) | Método HTTP | Descripción | Parámetros |
-| :--- | :--- | :--- | :--- |
-| `cargar_areas` | POST | Obtiene el listado alfabético de todas las áreas hospitalarias. | *Ninguno* |
-| `cargar_unidades` | POST | Retorna el catálogo métrico de unidades de medida (`und`, `L`, `gal`, etc.). | *Ninguno* |
-| `buscar_areas` | POST | Búsqueda textual y filtrado seguro de áreas con PDO. | `consulta` (opcional) |
-| `crear_area` | POST | Registra una nueva área hospitalaria (Exige rol Administrador). | `nombre_area` |
-| `editar_area` | POST | Actualiza la denominación de un área hospitalaria existente. | `id_area`, `nombre_area` |
-| `borrar_area` | POST | Elimina un área verificando que no tenga actas de despacho históricas asociadas. | `id_area` |
+**Descripción:** Administra las áreas de servicio hospitalario receptoras de insumos
 
----
+### Casos de Uso Documentados en Código
 
-## 2. DespachoController.php
-- **Archivo:** `assets/controller/DespachoController.php`
-- **Descripción:** Orquesta las salidas institucionales de insumos hacia las áreas de la clínica, actas de entrega, reintegros de stock y soporte para actas oficiales en PDF.
-- **Dependencias:** `assets/db/despacho.php`
-
-### Casos de Uso Registrados
-| Acción (`funcion`) | Método HTTP | Descripción | Parámetros |
-| :--- | :--- | :--- | :--- |
-| `registrar_despacho` | POST | Registra entrega institucional descontando stock por lotes (criterio FEFO). | `nombre`, `ci`, `id_area`, `cargo_receptor`, `observacion`, `productos` (JSON) |
-| `listar_despachos` | GET/POST | Consulta el historial de despachos emitidos con filtro opcional de fechas. | `fecha_inicio`, `fecha_fin` (opcionales) |
-| `ver_detalle_despacho` | GET/POST | Retorna los renglones de insumos y lotes entregados en un acta. | `id_despacho` |
-| `revertir_despacho` | POST | Anula una entrega y restituye atómicamente el stock a los lotes originales. | `id_despacho` |
-| `obtener_despacho` | GET/POST | Retorna los metadatos de cabecera de un despacho. | `id_despacho` |
-| `obtener_stock_lote` | POST | Consulta puntual de existencia disponible en un lote específico. | `id_producto`, `id_lote` |
-| `actualizar_despacho` | POST | Modifica los datos de receptor o renglones de un acta. | `id_despacho`, `receptor`, `ci_receptor`, `productos`, `id_area`, `cargo_receptor`, `observacion` |
-| `obtener_despacho_pdf` | GET (`accion`) | Endpoint consolidado para compilar cabecera y detalle para la vista de acta PDF. | `id` |
+| Acción (`funcion`) | Ruta / Endpoint | Parámetros |
+| :--- | :--- | :--- |
+| `cargar_areas` | `POST assets/controller/AreaController.php [funcion=cargar_areas]` | *Ninguno* |
+| `cargar_unidades` | `POST assets/controller/AreaController.php [funcion=cargar_unidades]` | *Ninguno* |
+| `buscar_areas` | `POST assets/controller/AreaController.php [funcion=buscar_areas]` | `$_POST['consulta']` |
+| `crear_area` | `POST assets/controller/AreaController.php [funcion=crear_area]` | `$_POST['nombre_area']` |
+| `editar_area` | `POST assets/controller/AreaController.php [funcion=editar_area]` | `$_POST['id_area']`, `$_POST['nombre_area']` |
+| `borrar_area` | `POST assets/controller/AreaController.php [funcion=borrar_area]` | `$_POST['id_area']` |
 
 ---
 
-## 3. LaboratoryController.php
-- **Archivo:** `assets/controller/LaboratoryController.php`
-- **Descripción:** Administra las entidades de fabricantes farmacéuticos y organizaciones donantes de insumos (INTERSOS, UNICEF, 3M, MPPS, etc.).
-- **Dependencias:** `assets/db/laboratory.php`
+## DespachoController.php
 
-### Casos de Uso Registrados
-| Acción (`funcion`) | Método HTTP | Descripción | Parámetros |
-| :--- | :--- | :--- | :--- |
-| `crear` | POST | Registra un nuevo laboratorio o fabricante con validación de no duplicidad. | `nombre_laboratory` |
-| `editar` | POST | Modifica la denominación comercial de un fabricante. | `nombre_laboratory`, `id_editado` |
-| `buscar` | POST | Filtrado asíncrono y mapeo a JSON de laboratorios. | `consulta` (opcional) |
-| `borrar_lab` | POST | Da de baja una entidad de laboratorio. | `id` |
-| `rellenar_laboratorio` | POST | Provee la colección de fabricantes para alimentar dropdowns en formularios. | *Ninguno* |
+**Descripción:** Administra las transacciones institucionales de salida y despacho
 
----
+### Casos de Uso Documentados en Código
 
-## 4. LoginController.php
-- **Archivo:** `assets/controller/LoginController.php`
-- **Descripción:** Control de autenticación y sesiones. Valida contraseñas con `password_verify` (Bcrypt) y redirige según rol institucional (`1: Administrador` $\rightarrow$ `adm_catalogo.php`, `2: Secretario` $\rightarrow$ `tec_catalogo.php`).
-- **Dependencias:** `assets/db/usuario.php`
-
-### Flujo de Autenticación
-- **Entrada:** `$_POST['user']` (Cédula de Identidad), `$_POST['pass']` (Contraseña).
-- **Control Preventivo:** Si el usuario ya cuenta con sesión activa en memoria, redirige inmediatamente sin reprocesar.
-- **Validación:** Invoca `Usuario::Loguearse()`. Si las credenciales coinciden, inicializa `$_SESSION['usuario']`, `us_tipo` y `nombre_us`.
-- **Fallo:** Redirige a `index.php?login_error=1` disparando alerta SweetAlert2 en el cliente.
+| Acción (`funcion`) | Ruta / Endpoint | Parámetros |
+| :--- | :--- | :--- |
+| `registrar_despacho` | `POST assets/controller/DespachoController.php [funcion=registrar_despacho]` | `$nombre`, `$ci`, `$id_area`, `$cargo_receptor`, `$observacion`, `$productos` |
+| `listar_despachos` | `GET/POST assets/controller/DespachoController.php [funcion=listar_despachos]` | `$_GET['fecha_inicio']`, `$_GET['fecha_fin']` |
+| `ver_detalle_despacho` | `POST/GET assets/controller/DespachoController.php [funcion=ver_detalle_despacho]` | `$id_despacho` |
+| `revertir_despacho` | `POST assets/controller/DespachoController.php [funcion=revertir_despacho]` | `$_POST['id_despacho']` |
+| `obtener_despacho` | `POST/GET assets/controller/DespachoController.php [funcion=obtener_despacho]` | `$id_despacho` |
+| `obtener_stock_lote` | `POST assets/controller/DespachoController.php [funcion=obtener_stock_lote]` | `$_POST['id_producto']`, `$_POST['id_lote']` |
+| `actualizar_despacho` | `POST assets/controller/DespachoController.php [funcion=actualizar_despacho]` | `$_POST['id_despacho']`, `$_POST['receptor']`, `$_POST['ci_receptor']`, `$_POST['productos']` |
+| `accion` | `GET assets/controller/DespachoController.php?accion=obtener_despacho_pdf&id=X` | *Ninguno* |
 
 ---
 
-## 5. Logout.php
-- **Archivo:** `assets/controller/Logout.php`
-- **Descripción:** Controlador de terminación segura de sesión. Destruye todas las variables registradas en el servidor con `session_destroy()` y redirige al portal de acceso principal `index.php`.
+## LaboratoryController.php
+
+**Descripción:** Administra las entidades de fabricantes y laboratorios farmacéuticos
+
+### Casos de Uso Documentados en Código
+
+| Acción (`funcion`) | Ruta / Endpoint | Parámetros |
+| :--- | :--- | :--- |
+| `crear` | `POST assets/controller/LaboratoryController.php [funcion=crear]` | `$_POST['nombre_laboratory']` |
+| `editar` | `POST assets/controller/LaboratoryController.php [funcion=editar]` | `$_POST['nombre_laboratory']`, `$_POST['id_editado']` |
+| `buscar` | `POST assets/controller/LaboratoryController.php [funcion=buscar]` | `$_POST['consulta']` |
+| `borrar_lab` | `POST assets/controller/LaboratoryController.php [funcion=borrar_lab]` | `$_POST['id']` |
+| `rellenar_laboratorio` | `POST assets/controller/LaboratoryController.php [funcion=rellenar_laboratorio]` | *Ninguno* |
 
 ---
 
-## 6. LoteController.php
-- **Archivo:** `assets/controller/LoteController.php`
-- **Descripción:** Administra los lotes de inventario físico, control de fechas de vencimiento, clasificación de perecederos vs no perecederos y semaforización de caducidad.
-- **Dependencias:** `assets/db/lote.php`
+## LoginController.php
 
-### Casos de Uso Registrados
-| Acción (`funcion`) | Método HTTP | Descripción | Parámetros |
-| :--- | :--- | :--- | :--- |
-| `crear` | POST | Registra un nuevo lote de existencias físicas con su fecha de caducidad. | `id_producto`, `proveedor`, `cod_lote`, `stock`, `vencimiento` |
-| `buscar_lote` | POST | Consulta inventario y calcula semaforización en tiempo real (`no_perecedero`, `light`, `warning`, `danger`). | *Ninguno* |
-| `editar` | POST | Actualiza la cantidad de stock de un lote por inventario físico. | `id`, `stock` |
-| `borrar_lote` | POST | Da de baja un lote del almacén. | `id` |
+**Descripción:** Procesa el inicio de sesión de usuarios, valida credenciales
+
+### Casos de Uso Documentados en Código
+
+| Acción (`funcion`) | Ruta / Endpoint | Parámetros |
+| :--- | :--- | :--- |
+| `user` | `POST assets/controller/LoginController.php` | `$_POST['user']`, `$_POST['pass']` |
 
 ---
 
-## 7. PresentacionesController.php
-- **Archivo:** `assets/controller/PresentacionesController.php`
-- **Descripción:** Administra el catálogo de formas farmacéuticas y tipos de empaque de insumos médicos (Unidad, Litro, Galón, Caja x 50, etc.).
-- **Dependencias:** `assets/db/presentaciones.php`
+## Logout.php
 
-### Casos de Uso Registrados
-| Acción (`funcion`) | Método HTTP | Descripción | Parámetros |
-| :--- | :--- | :--- | :--- |
-| `crear` | POST | Registra una nueva presentación con validación de no duplicidad. | `nombre_pre` |
-| `editar` | POST | Modifica una presentación existente. | `nombre_pre`, `id_editado` |
-| `buscar` | POST | Búsqueda asíncrona de presentaciones en formato JSON. | `consulta` (opcional) |
-| `borrar_pre` | POST | Elimina una presentación de empaque del catálogo. | `id` |
-| `rellenar_presentacion` | POST | Provee datos para dropdowns en el alta y edición de insumos. | *Ninguno* |
+**Descripción:** Destruye de forma segura la sesión activa del usuario actual
+
+_Controlador de acción directa o redirección de sesión._
 
 ---
 
-## 8. ProductoController.php
-- **Archivo:** `assets/controller/ProductoController.php`
-- **Descripción:** Orquestador central del catálogo maestro de insumos, materiales y equipos de protección individual (EPI).
-- **Dependencias:** `assets/db/producto.php`
+## LoteController.php
 
-### Casos de Uso Registrados
-| Acción (`funcion`) | Método HTTP | Descripción | Parámetros |
-| :--- | :--- | :--- | :--- |
-| `crear` | POST | Crea nuevo insumo con soporte atómico opcional para lote y stock inicial. | `nombre`, `concentracion`, `adicional`, `prod_lab`, `prod_tip_prod`, `prod_present`, `id_unidad`, `especificacion_talla`, `cod_lote`, `stock_inicial`, `proveedor_lote`, `vencimiento_lote` |
-| `cambiar_avatar` | POST | Valida y actualiza la fotografía o avatar del insumo. | `id_logo_prod`, `avatar`, `foto` (FILE) |
-| `buscar_product` | POST | Consulta agregada que totaliza el stock disponible de lotes por insumo. | `consulta` (opcional) |
-| `editar` | POST | Actualiza especificaciones técnicas y unidades métricas de un producto. | `id_edit_prod`, `nombre`, `concentracion`, `adicional`, `prod_lab`, `prod_tip_prod`, `prod_present`, `id_unidad`, `especificacion_talla` |
-| `borrar_produts` | POST | Da de baja un insumo y elimina su archivo de imagen físico. | `id` |
-| `validar_existencia` | POST | Valida IDs contra la base de datos para depurar insumos huérfanos del carrito en `localStorage`. | `ids` (JSON array) |
-| `verificarStock` | POST | Valida existencias disponibles en almacén antes de consolidar una solicitud. | `productos` (JSON array) |
+**Descripción:** Administra los lotes de existencias, fechas de vencimiento,
+
+### Casos de Uso Documentados en Código
+
+| Acción (`funcion`) | Ruta / Endpoint | Parámetros |
+| :--- | :--- | :--- |
+| `crear` | `POST assets/controller/LoteController.php [funcion=crear]` | `$_POST['id_producto']`, `$_POST['proveedor']`, `$_POST['cod_lote']`, `$_POST['stock']`, `$_POST['vencimiento']` |
+| `buscar_lote` | `POST assets/controller/LoteController.php [funcion=buscar_lote]` | *Ninguno* |
+| `editar` | `POST assets/controller/LoteController.php [funcion=editar]` | `$_POST['id']`, `$_POST['stock']` |
+| `borrar_lote` | `POST assets/controller/LoteController.php [funcion=borrar_lote]` | `$_POST['id']` |
 
 ---
 
-## 9. ProveedorController.php
-- **Archivo:** `assets/controller/ProveedorController.php`
-- **Descripción:** Gestiona entidades de proveedores comerciales, organismos humanitarios y donantes institucionales (INTERSOS, UNICEF, FUNREAHV, etc.).
-- **Dependencias:** `assets/db/Proveedor.php`
+## PresentacionesController.php
 
-### Casos de Uso Registrados
-| Acción (`funcion`) | Método HTTP | Descripción | Parámetros |
-| :--- | :--- | :--- | :--- |
-| `crear` | POST | Registra proveedor o donante con validación de nombre y teléfono. | `nombre`, `telefono`, `correo`, `direccion` |
-| `cambiar_avatar` | POST | Actualiza el logotipo institucional del proveedor. | `id_logo_prod`, `avatar`, `foto` (FILE) |
-| `buscar_prov` | POST | Lista proveedores para la tabla de gestión comercial. | `consulta` (opcional) |
-| `editar` | POST | Modifica datos de contacto y dirección operativa. | `id_editado`, `nombre`, `telefono`, `correo`, `direccion` |
-| `borrar_prove` | POST | Da de baja un proveedor del sistema. | `id` |
-| `rellenar_proveedor` | POST | Alimenta dropdowns de proveedores en el ingreso de lotes de inventario. | *Ninguno* |
+**Descripción:** Administra el catálogo de formas farmacéuticas y tipos de empaque
 
----
+### Casos de Uso Documentados en Código
 
-## 10. TypeController.php
-- **Archivo:** `assets/controller/TypeController.php`
-- **Descripción:** Administra el catálogo de categorías o tipos de producto (Químicos, Equipos, EPI, Papel, Repuestos).
-- **Dependencias:** `assets/db/type.php`
-
-### Casos de Uso Registrados
-| Acción (`funcion`) | Método HTTP | Descripción | Parámetros |
-| :--- | :--- | :--- | :--- |
-| `crear` | POST | Registra una nueva categoría de insumo con control de duplicados. | `nombre_type` |
-| `editar_type` | POST | Modifica una categoría existente. | `nombre_type`, `id_editado` |
-| `buscar` | POST | Búsqueda asíncrona de categorías en formato JSON. | `consulta` (opcional) |
-| `borrar_type` | POST | Elimina una categoría del catálogo. | `id` |
-| `rellenar_type` | POST | Alimenta menús desplegables para categorizar insumos médicos. | *Ninguno* |
+| Acción (`funcion`) | Ruta / Endpoint | Parámetros |
+| :--- | :--- | :--- |
+| `crear` | `POST assets/controller/PresentacionesController.php [funcion=crear]` | `$_POST['nombre_pre']` |
+| `editar` | `POST assets/controller/PresentacionesController.php [funcion=editar]` | `$_POST['nombre_pre']`, `$_POST['id_editado']` |
+| `buscar` | `POST assets/controller/PresentacionesController.php [funcion=buscar]` | `$_POST['consulta']` |
+| `borrar_pre` | `POST assets/controller/PresentacionesController.php [funcion=borrar_pre]` | `$_POST['id']` |
+| `rellenar_presentacion` | `POST assets/controller/PresentacionesController.php [funcion=rellenar_presentacion]` | *Ninguno* |
 
 ---
 
-## 11. UserController.php
-- **Archivo:** `assets/controller/UserController.php`
-- **Descripción:** Administra el ciclo de vida de los operadores, perfil personal, contraseñas Bcrypt y control de acceso con protecciones Anti-IDOR.
-- **Dependencias:** `assets/db/usuario.php`
+## ProductoController.php
 
-### Casos de Uso Registrados
-| Acción (`funcion`) | Método HTTP | Descripción | Parámetros |
-| :--- | :--- | :--- | :--- |
-| `buscar_usuario` | POST | Consulta datos de un usuario por ID con cálculo dinámico de edad. | `dato` (ID) |
-| `capturar_datos` | POST | Obtiene datos del perfil del usuario autenticado (Anti-IDOR: usa `$_SESSION['usuario']`). | *Ninguno* |
-| `editar_usuario` | POST | Modifica datos de contacto (teléfono, correo, género, info) en sesión. | `telefono`, `correo`, `genero`, `info` |
-| `cambiar_contra` | POST | Cambio seguro de clave con verificación y hash Bcrypt. | `oldpass`, `newpass` |
-| `cambiar_foto` | POST | Valida y actualiza foto de perfil preservando `user-default.png`. | `foto` (FILE) |
-| `buscar_usuario_adm` | POST | Lista todos los usuarios para la tabla de gestión administrativa. | *Ninguno* |
-| `crear_usuario` | POST | Registra nuevo operador asignando rol Secretario (`tipo = 2`). Exige rol Administrador. | `nombre`, `apellido`, `edad`, `ci`, `genero`, `pass` |
-| `ascender` | POST | Promueve a un Secretario a Administrador previa clave de confirmación. | `pass`, `id_usuario` |
-| `descender` | POST | Degrada a un Administrador a Secretario. | `pass`, `id_usuario` |
-| `delete_user` | POST | Da de baja a un operador del sistema previa confirmación de clave. | `pass`, `id_usuario` |
+**Descripción:** Administra el catálogo maestro de insumos médicos, materiales
+
+### Casos de Uso Documentados en Código
+
+| Acción (`funcion`) | Ruta / Endpoint | Parámetros |
+| :--- | :--- | :--- |
+| `crear` | `POST assets/controller/ProductoController.php [funcion=crear]` | `$_POST['nombre']`, `$_POST['concentracion']`, `$_POST['adicional']`, `$_POST['prod_lab']`, `$_POST['prod_tip_prod']`, `$_POST['prod_present']`, `$_POST['id_unidad']`, `$_POST['especificacion_talla']`, `$_POST['cod_lote']`, `$_POST['stock_inicial']`, `$_POST['proveedor_lote']`, `$_POST['vencimiento_lote']` |
+| `cambiar_avatar` | `POST assets/controller/ProductoController.php [funcion=cambiar_avatar]` | `$_POST['id_logo_prod']`, `$_FILES['foto']` |
+| `buscar_product` | `POST assets/controller/ProductoController.php [funcion=buscar_product]` | `$_POST['consulta']` |
+| `editar` | `POST assets/controller/ProductoController.php [funcion=editar]` | `$_POST['id_edit_prod']` |
+| `borrar_produts` | `POST assets/controller/ProductoController.php [funcion=borrar_produts]` | `$_POST['id']` |
+| `validar_existencia` | `POST assets/controller/ProductoController.php [funcion=validar_existencia]` | `$_POST['ids']` |
+| `verificarStock` | `POST assets/controller/ProductoController.php [funcion=verificarStock]` | `$_POST['productos']` |
+
+---
+
+## ProveedorController.php
+
+**Descripción:** Gestiona las entidades de proveedores comerciales, organismos
+
+### Casos de Uso Documentados en Código
+
+| Acción (`funcion`) | Ruta / Endpoint | Parámetros |
+| :--- | :--- | :--- |
+| `crear` | `POST assets/controller/ProveedorController.php [funcion=crear]` | `$_POST['nombre']`, `$_POST['telefono']`, `$_POST['correo']`, `$_POST['direccion']` |
+| `cambiar_avatar` | `POST assets/controller/ProveedorController.php [funcion=cambiar_avatar]` | `$_POST['id_logo_prod']`, `$_FILES['foto']` |
+| `buscar_prov` | `POST assets/controller/ProveedorController.php [funcion=buscar_prov]` | `$_POST['consulta']` |
+| `editar` | `POST assets/controller/ProveedorController.php [funcion=editar]` | `$_POST['id_editado']`, `$_POST['nombre']`, `$_POST['telefono']`, `$_POST['correo']`, `$_POST['direccion']` |
+| `borrar_prove` | `POST assets/controller/ProveedorController.php [funcion=borrar_prove]` | `$_POST['id']` |
+| `rellenar_proveedor` | `POST assets/controller/ProveedorController.php [funcion=rellenar_proveedor]` | *Ninguno* |
+
+---
+
+## TypeController.php
+
+**Descripción:** Administra el catálogo de tipos o categorías de insumos médicos
+
+### Casos de Uso Documentados en Código
+
+| Acción (`funcion`) | Ruta / Endpoint | Parámetros |
+| :--- | :--- | :--- |
+| `crear` | `POST assets/controller/TypeController.php [funcion=crear]` | `$_POST['nombre_type']` |
+| `editar_type` | `POST assets/controller/TypeController.php [funcion=editar_type]` | `$_POST['nombre_type']`, `$_POST['id_editado']` |
+| `buscar` | `POST assets/controller/TypeController.php [funcion=buscar]` | `$_POST['consulta']` |
+| `borrar_type` | `POST assets/controller/TypeController.php [funcion=borrar_type]` | `$_POST['id']` |
+| `rellenar_type` | `POST assets/controller/TypeController.php [funcion=rellenar_type]` | *Ninguno* |
+
+---
+
+## UserController.php
+
+**Descripción:** Administra el ciclo de vida de los usuarios del sistema SIMAP,
+
+### Casos de Uso Documentados en Código
+
+| Acción (`funcion`) | Ruta / Endpoint | Parámetros |
+| :--- | :--- | :--- |
+| `buscar_usuario` | `POST assets/controller/UserController.php [funcion=buscar_usuario]` | `$_POST['dato']` |
+| `capturar_datos` | `POST assets/controller/UserController.php [funcion=capturar_datos]` | *Ninguno* |
+| `editar_usuario` | `POST assets/controller/UserController.php [funcion=editar_usuario]` | `$_POST['telefono']`, `$_POST['correo']`, `$_POST['genero']`, `$_POST['info']` |
+| `cambiar_contra` | `POST assets/controller/UserController.php [funcion=cambiar_contra]` | `$_POST['oldpass']`, `$_POST['newpass']` |
+| `cambiar_foto` | `POST assets/controller/UserController.php [funcion=cambiar_foto]` | `$_FILES['foto']` |
+| `buscar_usuario_adm` | `POST assets/controller/UserController.php [funcion=buscar_usuario_adm]` | *Ninguno* |
+| `crear_usuario` | `POST assets/controller/UserController.php [funcion=crear_usuario]` | `$_POST['nombre']`, `$_POST['apellido']`, `$_POST['edad']`, `$_POST['ci']`, `$_POST['genero']`, `$_POST['pass']` |
+| `ascender` | `POST assets/controller/UserController.php [funcion=ascender]` | `$_POST['pass']`, `$_POST['id_usuario']` |
+| `descender` | `POST assets/controller/UserController.php [funcion=descender]` | `$_POST['pass']`, `$_POST['id_usuario']` |
+| `delete_user` | `POST assets/controller/UserController.php [funcion=delete_user]` | `$_POST['pass']`, `$_POST['id_usuario']` |
+
+---
+

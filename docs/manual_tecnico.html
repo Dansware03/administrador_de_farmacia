@@ -4,347 +4,461 @@
     <meta charset="UTF-8">
     <title>SIMAP - Manual Técnico y Arquitectura de Software</title>
     <style>
-        @page {
-            size: A4;
-            margin: 1.8cm 1.5cm;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: #1e293b;
-            line-height: 1.5;
-            font-size: 10pt;
-            background: #fff;
-            margin: 0;
-            padding: 20px;
-        }
-        .header-cover {
-            text-align: center;
-            padding: 40px 0 30px;
-            border-bottom: 3px solid #0284c7;
-            margin-bottom: 30px;
-        }
-        .header-cover img {
-            width: 75px;
-            height: 75px;
-            margin-bottom: 10px;
-        }
-        .header-cover h1 {
-            color: #0f172a;
-            font-size: 22pt;
-            margin: 0 0 8px;
-            font-weight: 800;
-        }
-        .header-cover .subtitle {
-            color: #64748b;
-            font-size: 11pt;
-            margin: 0;
-        }
-        h2 {
-            color: #0f172a;
-            font-size: 15pt;
-            border-bottom: 1.5px solid #e2e8f0;
-            padding-bottom: 6px;
-            margin-top: 25px;
-            page-break-after: avoid;
-        }
-        h3 {
-            color: #0369a1;
-            font-size: 12pt;
-            margin-top: 18px;
-            page-break-after: avoid;
-        }
-        .doc-card {
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 12px 16px;
-            margin-bottom: 14px;
-            background: #f8fafc;
-            page-break-inside: avoid;
-        }
-        .doc-card h4 {
-            margin: 0 0 6px;
-            color: #0284c7;
-            font-size: 11pt;
-        }
-        .badge {
-            background: #e0f2fe;
-            color: #0369a1;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 8pt;
-            font-weight: 600;
-        }
-        pre {
-            background: #0f172a;
-            color: #f8fafc;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 8pt;
-            overflow-x: auto;
-            white-space: pre-wrap;
-        }
-        .print-btn-bar {
-            text-align: right;
-            margin-bottom: 20px;
-        }
-        .btn-print {
-            background: #0284c7;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-block;
-            cursor: pointer;
-            border: none;
-        }
-        @media print {
-            .print-btn-bar { display: none !important; }
-            body { padding: 0; }
-            .page-break { page-break-before: always; }
-        }
+        @page { size: A4; margin: 1.8cm 1.5cm; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1e293b; line-height: 1.5; font-size: 10pt; background: #fff; margin: 0; padding: 20px; }
+        .header-cover { text-align: center; padding: 30px 0; border-bottom: 3px solid #0284c7; margin-bottom: 25px; }
+        .header-cover img { width: 70px; height: 70px; }
+        .header-cover h1 { color: #0f172a; font-size: 20pt; margin: 8px 0; }
+        h2 { color: #0f172a; font-size: 14pt; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; margin-top: 25px; }
+        .doc-card { border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; margin-bottom: 12px; background: #f8fafc; page-break-inside: avoid; }
+        .doc-card h4 { margin: 0 0 6px; color: #0284c7; }
+        table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 9pt; }
+        th, td { border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; }
+        th { background: #f1f5f9; }
+        .btn-print { background: #0284c7; color: white; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; border: none; float: right; }
+        @media print { .btn-print { display: none !important; } body { padding: 0; } }
     </style>
 </head>
 <body>
-    <div class="print-btn-bar">
-        <button class="btn-print" onclick="window.print()">🖨️ Imprimir / Guardar en PDF</button>
-    </div>
-
+    <button class="btn-print" onclick="window.print()">🖨️ Imprimir / Guardar en PDF</button>
     <div class="header-cover">
-        <img src="../assets/libs/img/logo.png" alt="Logo SIMAP">
-        <h1>SIMAP &bull; Manual Técnico de Arquitectura</h1>
-        <p class="subtitle">Clínica Popular Especializada La Fría &bull; Generado automáticamente el 08/10/2026 19:53</p>
+        <img src="../assets/libs/img/logo.png" alt="Logo">
+        <h1>SIMAP &bull; Manual Técnico y Arquitectura</h1>
+        <p style="color: #64748b; margin: 0;">Clínica Popular Especializada La Fría &bull; Generado automáticamente el 08/10/2026 19:55</p>
     </div>
 
-    <h2>1. Resumen de Arquitectura</h2>
-    <p>
-        El sistema implementa una arquitectura modular MVC nativa en PHP 8 y SQLite 3. Los datos fluyen de forma continua:
-        <strong>Formulario HTML &rarr; Script AJAX (JS) &rarr; Controlador (PHP) &rarr; Modelo de Persistencia (PDO) &rarr; Almacén SQLite (Modo WAL)</strong>.
-    </p>
-
-    <h2>2. Controladores del Sistema (Capa de Orquestación)</h2>
+    <h2>1. Controladores del Sistema (Backend)</h2>
             <div class="doc-card">
-            <h4>AreaController.php <span class="badge">Controlador</span></h4>
-            <p><strong>Ubicación:</strong> <code>assets/controller/AreaController.php</code></p>
-            <p><strong>Acciones / Casos de uso registrados:</strong></p>
-            <ul>
-                                    <li><em>Acción única o controlador de flujo directo.</em></li>
-                            </ul>
-        </div>
+            <h4>AreaController.php</h4>
+            <p>Administra las áreas de servicio hospitalario receptoras de insumos</p>
+                            <table>
+                    <thead><tr><th>Acción</th><th>Ruta / Endpoint</th><th>Parámetros</th></tr></thead>
+                    <tbody>
+                                                    <tr>
+                                <td><code>cargar_areas</code></td>
+                                <td><code>POST assets/controller/AreaController.php [funcion=cargar_areas]</code></td>
+                                <td><em>Ninguno</em></td>
+                            </tr>
+                                                    <tr>
+                                <td><code>cargar_unidades</code></td>
+                                <td><code>POST assets/controller/AreaController.php [funcion=cargar_unidades]</code></td>
+                                <td><em>Ninguno</em></td>
+                            </tr>
+                                                    <tr>
+                                <td><code>buscar_areas</code></td>
+                                <td><code>POST assets/controller/AreaController.php [funcion=buscar_areas]</code></td>
+                                <td>$_POST[&#039;consulta&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>crear_area</code></td>
+                                <td><code>POST assets/controller/AreaController.php [funcion=crear_area]</code></td>
+                                <td>$_POST[&#039;nombre_area&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>editar_area</code></td>
+                                <td><code>POST assets/controller/AreaController.php [funcion=editar_area]</code></td>
+                                <td>$_POST[&#039;id_area&#039;], $_POST[&#039;nombre_area&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>borrar_area</code></td>
+                                <td><code>POST assets/controller/AreaController.php [funcion=borrar_area]</code></td>
+                                <td>$_POST[&#039;id_area&#039;]</td>
+                            </tr>
+                                            </tbody>
+                </table>
+                    </div>
             <div class="doc-card">
-            <h4>DespachoController.php <span class="badge">Controlador</span></h4>
-            <p><strong>Ubicación:</strong> <code>assets/controller/DespachoController.php</code></p>
-            <p><strong>Acciones / Casos de uso registrados:</strong></p>
-            <ul>
-                                                            <li><code>registrar_despacho</code></li>
-                                            <li><code>listar_despachos</code></li>
-                                            <li><code>ver_detalle_despacho</code></li>
-                                            <li><code>revertir_despacho</code></li>
-                                            <li><code>obtener_despacho</code></li>
-                                            <li><code>obtener_stock_lote</code></li>
-                                            <li><code>actualizar_despacho</code></li>
-                                                </ul>
-        </div>
+            <h4>DespachoController.php</h4>
+            <p>Administra las transacciones institucionales de salida y despacho</p>
+                            <table>
+                    <thead><tr><th>Acción</th><th>Ruta / Endpoint</th><th>Parámetros</th></tr></thead>
+                    <tbody>
+                                                    <tr>
+                                <td><code>registrar_despacho</code></td>
+                                <td><code>POST assets/controller/DespachoController.php [funcion=registrar_despacho]</code></td>
+                                <td>$nombre, $ci, $id_area, $cargo_receptor, $observacion, $productos</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>listar_despachos</code></td>
+                                <td><code>GET/POST assets/controller/DespachoController.php [funcion=listar_despachos]</code></td>
+                                <td>$_GET[&#039;fecha_inicio&#039;], $_GET[&#039;fecha_fin&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>ver_detalle_despacho</code></td>
+                                <td><code>POST/GET assets/controller/DespachoController.php [funcion=ver_detalle_despacho]</code></td>
+                                <td>$id_despacho</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>revertir_despacho</code></td>
+                                <td><code>POST assets/controller/DespachoController.php [funcion=revertir_despacho]</code></td>
+                                <td>$_POST[&#039;id_despacho&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>obtener_despacho</code></td>
+                                <td><code>POST/GET assets/controller/DespachoController.php [funcion=obtener_despacho]</code></td>
+                                <td>$id_despacho</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>obtener_stock_lote</code></td>
+                                <td><code>POST assets/controller/DespachoController.php [funcion=obtener_stock_lote]</code></td>
+                                <td>$_POST[&#039;id_producto&#039;], $_POST[&#039;id_lote&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>actualizar_despacho</code></td>
+                                <td><code>POST assets/controller/DespachoController.php [funcion=actualizar_despacho]</code></td>
+                                <td>$_POST[&#039;id_despacho&#039;], $_POST[&#039;receptor&#039;], $_POST[&#039;ci_receptor&#039;], $_POST[&#039;productos&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>accion</code></td>
+                                <td><code>GET assets/controller/DespachoController.php?accion=obtener_despacho_pdf&amp;id=X</code></td>
+                                <td><em>Ninguno</em></td>
+                            </tr>
+                                            </tbody>
+                </table>
+                    </div>
             <div class="doc-card">
-            <h4>LaboratoryController.php <span class="badge">Controlador</span></h4>
-            <p><strong>Ubicación:</strong> <code>assets/controller/LaboratoryController.php</code></p>
-            <p><strong>Acciones / Casos de uso registrados:</strong></p>
-            <ul>
-                                                            <li><code>crear</code></li>
-                                            <li><code>editar</code></li>
-                                            <li><code>buscar</code></li>
-                                            <li><code>borrar_lab</code></li>
-                                            <li><code>rellenar_laboratorio</code></li>
-                                                </ul>
-        </div>
+            <h4>LaboratoryController.php</h4>
+            <p>Administra las entidades de fabricantes y laboratorios farmacéuticos</p>
+                            <table>
+                    <thead><tr><th>Acción</th><th>Ruta / Endpoint</th><th>Parámetros</th></tr></thead>
+                    <tbody>
+                                                    <tr>
+                                <td><code>crear</code></td>
+                                <td><code>POST assets/controller/LaboratoryController.php [funcion=crear]</code></td>
+                                <td>$_POST[&#039;nombre_laboratory&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>editar</code></td>
+                                <td><code>POST assets/controller/LaboratoryController.php [funcion=editar]</code></td>
+                                <td>$_POST[&#039;nombre_laboratory&#039;], $_POST[&#039;id_editado&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>buscar</code></td>
+                                <td><code>POST assets/controller/LaboratoryController.php [funcion=buscar]</code></td>
+                                <td>$_POST[&#039;consulta&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>borrar_lab</code></td>
+                                <td><code>POST assets/controller/LaboratoryController.php [funcion=borrar_lab]</code></td>
+                                <td>$_POST[&#039;id&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>rellenar_laboratorio</code></td>
+                                <td><code>POST assets/controller/LaboratoryController.php [funcion=rellenar_laboratorio]</code></td>
+                                <td><em>Ninguno</em></td>
+                            </tr>
+                                            </tbody>
+                </table>
+                    </div>
             <div class="doc-card">
-            <h4>LoginController.php <span class="badge">Controlador</span></h4>
-            <p><strong>Ubicación:</strong> <code>assets/controller/LoginController.php</code></p>
-            <p><strong>Acciones / Casos de uso registrados:</strong></p>
-            <ul>
-                                    <li><em>Acción única o controlador de flujo directo.</em></li>
-                            </ul>
-        </div>
+            <h4>LoginController.php</h4>
+            <p>Procesa el inicio de sesión de usuarios, valida credenciales</p>
+                            <table>
+                    <thead><tr><th>Acción</th><th>Ruta / Endpoint</th><th>Parámetros</th></tr></thead>
+                    <tbody>
+                                                    <tr>
+                                <td><code>user</code></td>
+                                <td><code>POST assets/controller/LoginController.php</code></td>
+                                <td>$_POST[&#039;user&#039;], $_POST[&#039;pass&#039;]</td>
+                            </tr>
+                                            </tbody>
+                </table>
+                    </div>
             <div class="doc-card">
-            <h4>Logout.php <span class="badge">Controlador</span></h4>
-            <p><strong>Ubicación:</strong> <code>assets/controller/Logout.php</code></p>
-            <p><strong>Acciones / Casos de uso registrados:</strong></p>
-            <ul>
-                                    <li><em>Acción única o controlador de flujo directo.</em></li>
-                            </ul>
-        </div>
+            <h4>Logout.php</h4>
+            <p>Destruye de forma segura la sesión activa del usuario actual</p>
+                    </div>
             <div class="doc-card">
-            <h4>LoteController.php <span class="badge">Controlador</span></h4>
-            <p><strong>Ubicación:</strong> <code>assets/controller/LoteController.php</code></p>
-            <p><strong>Acciones / Casos de uso registrados:</strong></p>
-            <ul>
-                                                            <li><code>crear</code></li>
-                                            <li><code>buscar_lote</code></li>
-                                            <li><code>editar</code></li>
-                                            <li><code>borrar_lote</code></li>
-                                                </ul>
-        </div>
+            <h4>LoteController.php</h4>
+            <p>Administra los lotes de existencias, fechas de vencimiento,</p>
+                            <table>
+                    <thead><tr><th>Acción</th><th>Ruta / Endpoint</th><th>Parámetros</th></tr></thead>
+                    <tbody>
+                                                    <tr>
+                                <td><code>crear</code></td>
+                                <td><code>POST assets/controller/LoteController.php [funcion=crear]</code></td>
+                                <td>$_POST[&#039;id_producto&#039;], $_POST[&#039;proveedor&#039;], $_POST[&#039;cod_lote&#039;], $_POST[&#039;stock&#039;], $_POST[&#039;vencimiento&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>buscar_lote</code></td>
+                                <td><code>POST assets/controller/LoteController.php [funcion=buscar_lote]</code></td>
+                                <td><em>Ninguno</em></td>
+                            </tr>
+                                                    <tr>
+                                <td><code>editar</code></td>
+                                <td><code>POST assets/controller/LoteController.php [funcion=editar]</code></td>
+                                <td>$_POST[&#039;id&#039;], $_POST[&#039;stock&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>borrar_lote</code></td>
+                                <td><code>POST assets/controller/LoteController.php [funcion=borrar_lote]</code></td>
+                                <td>$_POST[&#039;id&#039;]</td>
+                            </tr>
+                                            </tbody>
+                </table>
+                    </div>
             <div class="doc-card">
-            <h4>PresentacionesController.php <span class="badge">Controlador</span></h4>
-            <p><strong>Ubicación:</strong> <code>assets/controller/PresentacionesController.php</code></p>
-            <p><strong>Acciones / Casos de uso registrados:</strong></p>
-            <ul>
-                                                            <li><code>crear</code></li>
-                                            <li><code>editar</code></li>
-                                            <li><code>buscar</code></li>
-                                            <li><code>borrar_pre</code></li>
-                                            <li><code>rellenar_presentacion</code></li>
-                                                </ul>
-        </div>
+            <h4>PresentacionesController.php</h4>
+            <p>Administra el catálogo de formas farmacéuticas y tipos de empaque</p>
+                            <table>
+                    <thead><tr><th>Acción</th><th>Ruta / Endpoint</th><th>Parámetros</th></tr></thead>
+                    <tbody>
+                                                    <tr>
+                                <td><code>crear</code></td>
+                                <td><code>POST assets/controller/PresentacionesController.php [funcion=crear]</code></td>
+                                <td>$_POST[&#039;nombre_pre&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>editar</code></td>
+                                <td><code>POST assets/controller/PresentacionesController.php [funcion=editar]</code></td>
+                                <td>$_POST[&#039;nombre_pre&#039;], $_POST[&#039;id_editado&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>buscar</code></td>
+                                <td><code>POST assets/controller/PresentacionesController.php [funcion=buscar]</code></td>
+                                <td>$_POST[&#039;consulta&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>borrar_pre</code></td>
+                                <td><code>POST assets/controller/PresentacionesController.php [funcion=borrar_pre]</code></td>
+                                <td>$_POST[&#039;id&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>rellenar_presentacion</code></td>
+                                <td><code>POST assets/controller/PresentacionesController.php [funcion=rellenar_presentacion]</code></td>
+                                <td><em>Ninguno</em></td>
+                            </tr>
+                                            </tbody>
+                </table>
+                    </div>
             <div class="doc-card">
-            <h4>ProductoController.php <span class="badge">Controlador</span></h4>
-            <p><strong>Ubicación:</strong> <code>assets/controller/ProductoController.php</code></p>
-            <p><strong>Acciones / Casos de uso registrados:</strong></p>
-            <ul>
-                                                            <li><code>crear</code></li>
-                                            <li><code>cambiar_avatar</code></li>
-                                            <li><code>buscar_product</code></li>
-                                            <li><code>editar</code></li>
-                                            <li><code>borrar_produts</code></li>
-                                            <li><code>validar_existencia</code></li>
-                                            <li><code>verificarStock</code></li>
-                                                </ul>
-        </div>
+            <h4>ProductoController.php</h4>
+            <p>Administra el catálogo maestro de insumos médicos, materiales</p>
+                            <table>
+                    <thead><tr><th>Acción</th><th>Ruta / Endpoint</th><th>Parámetros</th></tr></thead>
+                    <tbody>
+                                                    <tr>
+                                <td><code>crear</code></td>
+                                <td><code>POST assets/controller/ProductoController.php [funcion=crear]</code></td>
+                                <td>$_POST[&#039;nombre&#039;], $_POST[&#039;concentracion&#039;], $_POST[&#039;adicional&#039;], $_POST[&#039;prod_lab&#039;], $_POST[&#039;prod_tip_prod&#039;], $_POST[&#039;prod_present&#039;], $_POST[&#039;id_unidad&#039;], $_POST[&#039;especificacion_talla&#039;], $_POST[&#039;cod_lote&#039;], $_POST[&#039;stock_inicial&#039;], $_POST[&#039;proveedor_lote&#039;], $_POST[&#039;vencimiento_lote&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>cambiar_avatar</code></td>
+                                <td><code>POST assets/controller/ProductoController.php [funcion=cambiar_avatar]</code></td>
+                                <td>$_POST[&#039;id_logo_prod&#039;], $_FILES[&#039;foto&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>buscar_product</code></td>
+                                <td><code>POST assets/controller/ProductoController.php [funcion=buscar_product]</code></td>
+                                <td>$_POST[&#039;consulta&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>editar</code></td>
+                                <td><code>POST assets/controller/ProductoController.php [funcion=editar]</code></td>
+                                <td>$_POST[&#039;id_edit_prod&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>borrar_produts</code></td>
+                                <td><code>POST assets/controller/ProductoController.php [funcion=borrar_produts]</code></td>
+                                <td>$_POST[&#039;id&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>validar_existencia</code></td>
+                                <td><code>POST assets/controller/ProductoController.php [funcion=validar_existencia]</code></td>
+                                <td>$_POST[&#039;ids&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>verificarStock</code></td>
+                                <td><code>POST assets/controller/ProductoController.php [funcion=verificarStock]</code></td>
+                                <td>$_POST[&#039;productos&#039;]</td>
+                            </tr>
+                                            </tbody>
+                </table>
+                    </div>
             <div class="doc-card">
-            <h4>ProveedorController.php <span class="badge">Controlador</span></h4>
-            <p><strong>Ubicación:</strong> <code>assets/controller/ProveedorController.php</code></p>
-            <p><strong>Acciones / Casos de uso registrados:</strong></p>
-            <ul>
-                                                            <li><code>crear</code></li>
-                                            <li><code>cambiar_avatar</code></li>
-                                            <li><code>buscar_prov</code></li>
-                                            <li><code>editar</code></li>
-                                            <li><code>borrar_prove</code></li>
-                                            <li><code>rellenar_proveedor</code></li>
-                                                </ul>
-        </div>
+            <h4>ProveedorController.php</h4>
+            <p>Gestiona las entidades de proveedores comerciales, organismos</p>
+                            <table>
+                    <thead><tr><th>Acción</th><th>Ruta / Endpoint</th><th>Parámetros</th></tr></thead>
+                    <tbody>
+                                                    <tr>
+                                <td><code>crear</code></td>
+                                <td><code>POST assets/controller/ProveedorController.php [funcion=crear]</code></td>
+                                <td>$_POST[&#039;nombre&#039;], $_POST[&#039;telefono&#039;], $_POST[&#039;correo&#039;], $_POST[&#039;direccion&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>cambiar_avatar</code></td>
+                                <td><code>POST assets/controller/ProveedorController.php [funcion=cambiar_avatar]</code></td>
+                                <td>$_POST[&#039;id_logo_prod&#039;], $_FILES[&#039;foto&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>buscar_prov</code></td>
+                                <td><code>POST assets/controller/ProveedorController.php [funcion=buscar_prov]</code></td>
+                                <td>$_POST[&#039;consulta&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>editar</code></td>
+                                <td><code>POST assets/controller/ProveedorController.php [funcion=editar]</code></td>
+                                <td>$_POST[&#039;id_editado&#039;], $_POST[&#039;nombre&#039;], $_POST[&#039;telefono&#039;], $_POST[&#039;correo&#039;], $_POST[&#039;direccion&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>borrar_prove</code></td>
+                                <td><code>POST assets/controller/ProveedorController.php [funcion=borrar_prove]</code></td>
+                                <td>$_POST[&#039;id&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>rellenar_proveedor</code></td>
+                                <td><code>POST assets/controller/ProveedorController.php [funcion=rellenar_proveedor]</code></td>
+                                <td><em>Ninguno</em></td>
+                            </tr>
+                                            </tbody>
+                </table>
+                    </div>
             <div class="doc-card">
-            <h4>TypeController.php <span class="badge">Controlador</span></h4>
-            <p><strong>Ubicación:</strong> <code>assets/controller/TypeController.php</code></p>
-            <p><strong>Acciones / Casos de uso registrados:</strong></p>
-            <ul>
-                                                            <li><code>crear</code></li>
-                                            <li><code>editar_type</code></li>
-                                            <li><code>buscar</code></li>
-                                            <li><code>borrar_type</code></li>
-                                            <li><code>rellenar_type</code></li>
-                                                </ul>
-        </div>
+            <h4>TypeController.php</h4>
+            <p>Administra el catálogo de tipos o categorías de insumos médicos</p>
+                            <table>
+                    <thead><tr><th>Acción</th><th>Ruta / Endpoint</th><th>Parámetros</th></tr></thead>
+                    <tbody>
+                                                    <tr>
+                                <td><code>crear</code></td>
+                                <td><code>POST assets/controller/TypeController.php [funcion=crear]</code></td>
+                                <td>$_POST[&#039;nombre_type&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>editar_type</code></td>
+                                <td><code>POST assets/controller/TypeController.php [funcion=editar_type]</code></td>
+                                <td>$_POST[&#039;nombre_type&#039;], $_POST[&#039;id_editado&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>buscar</code></td>
+                                <td><code>POST assets/controller/TypeController.php [funcion=buscar]</code></td>
+                                <td>$_POST[&#039;consulta&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>borrar_type</code></td>
+                                <td><code>POST assets/controller/TypeController.php [funcion=borrar_type]</code></td>
+                                <td>$_POST[&#039;id&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>rellenar_type</code></td>
+                                <td><code>POST assets/controller/TypeController.php [funcion=rellenar_type]</code></td>
+                                <td><em>Ninguno</em></td>
+                            </tr>
+                                            </tbody>
+                </table>
+                    </div>
             <div class="doc-card">
-            <h4>UserController.php <span class="badge">Controlador</span></h4>
-            <p><strong>Ubicación:</strong> <code>assets/controller/UserController.php</code></p>
-            <p><strong>Acciones / Casos de uso registrados:</strong></p>
-            <ul>
-                                    <li><em>Acción única o controlador de flujo directo.</em></li>
-                            </ul>
-        </div>
+            <h4>UserController.php</h4>
+            <p>Administra el ciclo de vida de los usuarios del sistema SIMAP,</p>
+                            <table>
+                    <thead><tr><th>Acción</th><th>Ruta / Endpoint</th><th>Parámetros</th></tr></thead>
+                    <tbody>
+                                                    <tr>
+                                <td><code>buscar_usuario</code></td>
+                                <td><code>POST assets/controller/UserController.php [funcion=buscar_usuario]</code></td>
+                                <td>$_POST[&#039;dato&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>capturar_datos</code></td>
+                                <td><code>POST assets/controller/UserController.php [funcion=capturar_datos]</code></td>
+                                <td><em>Ninguno</em></td>
+                            </tr>
+                                                    <tr>
+                                <td><code>editar_usuario</code></td>
+                                <td><code>POST assets/controller/UserController.php [funcion=editar_usuario]</code></td>
+                                <td>$_POST[&#039;telefono&#039;], $_POST[&#039;correo&#039;], $_POST[&#039;genero&#039;], $_POST[&#039;info&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>cambiar_contra</code></td>
+                                <td><code>POST assets/controller/UserController.php [funcion=cambiar_contra]</code></td>
+                                <td>$_POST[&#039;oldpass&#039;], $_POST[&#039;newpass&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>cambiar_foto</code></td>
+                                <td><code>POST assets/controller/UserController.php [funcion=cambiar_foto]</code></td>
+                                <td>$_FILES[&#039;foto&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>buscar_usuario_adm</code></td>
+                                <td><code>POST assets/controller/UserController.php [funcion=buscar_usuario_adm]</code></td>
+                                <td><em>Ninguno</em></td>
+                            </tr>
+                                                    <tr>
+                                <td><code>crear_usuario</code></td>
+                                <td><code>POST assets/controller/UserController.php [funcion=crear_usuario]</code></td>
+                                <td>$_POST[&#039;nombre&#039;], $_POST[&#039;apellido&#039;], $_POST[&#039;edad&#039;], $_POST[&#039;ci&#039;], $_POST[&#039;genero&#039;], $_POST[&#039;pass&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>ascender</code></td>
+                                <td><code>POST assets/controller/UserController.php [funcion=ascender]</code></td>
+                                <td>$_POST[&#039;pass&#039;], $_POST[&#039;id_usuario&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>descender</code></td>
+                                <td><code>POST assets/controller/UserController.php [funcion=descender]</code></td>
+                                <td>$_POST[&#039;pass&#039;], $_POST[&#039;id_usuario&#039;]</td>
+                            </tr>
+                                                    <tr>
+                                <td><code>delete_user</code></td>
+                                <td><code>POST assets/controller/UserController.php [funcion=delete_user]</code></td>
+                                <td>$_POST[&#039;pass&#039;], $_POST[&#039;id_usuario&#039;]</td>
+                            </tr>
+                                            </tbody>
+                </table>
+                    </div>
     
-    <div class="page-break"></div>
-
-    <h2>3. Modelos de Base de Datos y Persistencia PDO</h2>
+    <h2>2. Modelos de Persistencia (SQLite / PDO)</h2>
             <div class="doc-card">
-            <h4>Proveedor.php <span class="badge">Modelo PDO</span></h4>
-            <p><strong>Ubicación:</strong> <code>assets/db/Proveedor.php</code></p>
-            <p><strong>Métodos disponibles:</strong></p>
+            <h4>Proveedor.php</h4>
             <ul>
-                                    <li>
-                        <strong>crear</strong>(<em>$nombre, $telefono, $correo, $direccion, $avatar</em>)
-                    </li>
+                                    <li><strong>crear</strong>(<em>$nombre, $telefono, $correo, $direccion, $avatar</em>)</li>
                             </ul>
         </div>
             <div class="doc-card">
-            <h4>despacho.php <span class="badge">Modelo PDO</span></h4>
-            <p><strong>Ubicación:</strong> <code>assets/db/despacho.php</code></p>
-            <p><strong>Métodos disponibles:</strong></p>
+            <h4>despacho.php</h4>
             <ul>
-                                    <li>
-                        <strong>registrar_despacho</strong>(<em>$receptor, $ci_receptor, $responsable, $productos, $id_area = null, $cargo_receptor = &#039;&#039;, $observacion = &#039;&#039;</em>)
-                    </li>
-                                    <li>
-                        <strong>actualizar_stock_por_lotes</strong>(<em>$id_producto, $cantidad_requerida, $id_despacho</em>)
-                    </li>
-                                    <li>
-                        <strong>listar_despachos</strong>(<em></em>)
-                    </li>
-                                    <li>
-                        <strong>listar_despachos_por_fechas</strong>(<em>$fecha_inicio, $fecha_fin</em>)
-                    </li>
-                                    <li>
-                        <strong>ver_detalle_despacho</strong>(<em>$id_despacho</em>)
-                    </li>
-                                    <li>
-                        <strong>obtener_despacho</strong>(<em>$id_despacho</em>)
-                    </li>
-                                    <li>
-                        <strong>revertir_despacho</strong>(<em>$id_despacho</em>)
-                    </li>
-                                    <li>
-                        <strong>obtener_stock_lote</strong>(<em>$id_producto, $id_lote</em>)
-                    </li>
-                                    <li>
-                        <strong>actualizar_despacho</strong>(<em>$id_despacho, $receptor, $ci_receptor, $productos, $id_area = null, $cargo_receptor = &#039;&#039;, $observacion = &#039;&#039;</em>)
-                    </li>
+                                    <li><strong>registrar_despacho</strong>(<em>$receptor, $ci_receptor, $responsable, $productos, $id_area = null, $cargo_receptor = &#039;&#039;, $observacion = &#039;&#039;</em>)</li>
+                                    <li><strong>actualizar_stock_por_lotes</strong>(<em>$id_producto, $cantidad_requerida, $id_despacho</em>)</li>
+                                    <li><strong>listar_despachos</strong>(<em></em>)</li>
+                                    <li><strong>listar_despachos_por_fechas</strong>(<em>$fecha_inicio, $fecha_fin</em>)</li>
+                                    <li><strong>ver_detalle_despacho</strong>(<em>$id_despacho</em>)</li>
+                                    <li><strong>obtener_despacho</strong>(<em>$id_despacho</em>)</li>
+                                    <li><strong>revertir_despacho</strong>(<em>$id_despacho</em>)</li>
+                                    <li><strong>obtener_stock_lote</strong>(<em>$id_producto, $id_lote</em>)</li>
+                                    <li><strong>actualizar_despacho</strong>(<em>$id_despacho, $receptor, $ci_receptor, $productos, $id_area = null, $cargo_receptor = &#039;&#039;, $observacion = &#039;&#039;</em>)</li>
                             </ul>
         </div>
             <div class="doc-card">
-            <h4>laboratory.php <span class="badge">Modelo PDO</span></h4>
-            <p><strong>Ubicación:</strong> <code>assets/db/laboratory.php</code></p>
-            <p><strong>Métodos disponibles:</strong></p>
+            <h4>laboratory.php</h4>
             <ul>
                             </ul>
         </div>
             <div class="doc-card">
-            <h4>lote.php <span class="badge">Modelo PDO</span></h4>
-            <p><strong>Ubicación:</strong> <code>assets/db/lote.php</code></p>
-            <p><strong>Métodos disponibles:</strong></p>
+            <h4>lote.php</h4>
             <ul>
                             </ul>
         </div>
             <div class="doc-card">
-            <h4>presentaciones.php <span class="badge">Modelo PDO</span></h4>
-            <p><strong>Ubicación:</strong> <code>assets/db/presentaciones.php</code></p>
-            <p><strong>Métodos disponibles:</strong></p>
+            <h4>presentaciones.php</h4>
             <ul>
                             </ul>
         </div>
             <div class="doc-card">
-            <h4>producto.php <span class="badge">Modelo PDO</span></h4>
-            <p><strong>Ubicación:</strong> <code>assets/db/producto.php</code></p>
-            <p><strong>Métodos disponibles:</strong></p>
+            <h4>producto.php</h4>
             <ul>
                             </ul>
         </div>
             <div class="doc-card">
-            <h4>type.php <span class="badge">Modelo PDO</span></h4>
-            <p><strong>Ubicación:</strong> <code>assets/db/type.php</code></p>
-            <p><strong>Métodos disponibles:</strong></p>
+            <h4>type.php</h4>
             <ul>
                             </ul>
         </div>
             <div class="doc-card">
-            <h4>usuario.php <span class="badge">Modelo PDO</span></h4>
-            <p><strong>Ubicación:</strong> <code>assets/db/usuario.php</code></p>
-            <p><strong>Métodos disponibles:</strong></p>
+            <h4>usuario.php</h4>
             <ul>
-                                    <li>
-                        <strong>Loguearse</strong>(<em>$ci, $pass</em>)
-                    </li>
+                                    <li><strong>Loguearse</strong>(<em>$ci, $pass</em>)</li>
                             </ul>
         </div>
-    
-    <h2>4. Instrucciones para Exportación a PDF</h2>
-    <p>
-        Para generar el documento físico o digital oficial:
-        <ol>
-            <li>Presione <strong>Ctrl + P</strong> (o el botón Imprimir arriba a la derecha).</li>
-            <li>En Destino, seleccione <strong>Guardar como PDF</strong>.</li>
-            <li>En Configuración de página, asegúrese de seleccionar tamaño <strong>A4</strong> o <strong>Carta</strong> con gráficos de fondo activados.</li>
-        </ol>
-    </p>
-</body>
+    </body>
 </html>
