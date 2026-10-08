@@ -1,9 +1,11 @@
 <?php
 /**
- * SIMAP - Página Unificada de Error y Manejo de Respuestas HTTP
+ * SIMAP - Vista Unificada de Error y Manejo de Respuestas HTTP
  *
  * Presenta una interfaz visual intuitiva, accesible y corporativa para códigos
  * de estado HTTP de error (400, 401, 403, 404, 500, 503).
+ *
+ * Ubicación MVC: Capa de Vista (assets/pages/error.php).
  *
  * Características:
  * - Detección automática del código de estado (vía parámetro GET `code` o código nativo del servidor).
@@ -12,7 +14,7 @@
  * - Integración con diseño SIMAP (Bootstrap 5, Bootstrap Icons, tokens cromáticos).
  * - Botón de diagnóstico seguro y detalles técnicos controlados.
  *
- * @package SIMAP\Errors
+ * @package SIMAP\Views
  * @author Grupo de Proyecto
  * @version 1.0.0
  */
@@ -117,13 +119,13 @@ $user_type = $_SESSION['us_tipo'] ?? 0;
 $user_name = $_SESSION['nombre_us'] ?? '';
 
 if ($user_type == 1) {
-    $btn_home_url = 'assets/pages/adm_catalogo.php';
+    $btn_home_url = 'adm_catalogo.php';
     $btn_home_label = 'Ir al Panel de Administrador';
 } elseif ($user_type == 2) {
-    $btn_home_url = 'assets/pages/tec_catalogo.php';
+    $btn_home_url = 'tec_catalogo.php';
     $btn_home_label = 'Ir al Catálogo de Secretaría';
 } else {
-    $btn_home_url = 'index.php';
+    $btn_home_url = '../../index.php';
     $btn_home_label = 'Iniciar Sesión en SIMAP';
 }
 
@@ -135,11 +137,11 @@ $page_title = "Error {$code} - {$info['badge']} | SIMAP";
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?php echo htmlspecialchars($page_title); ?></title>
-  <link rel="icon" type="image/png" href="assets/libs/img/logo.png">
+  <link rel="icon" type="image/png" href="../libs/img/logo.png">
 
   <!-- Estilos Base y Tipografía Institucional (100% Offline) -->
-  <link rel="stylesheet" href="assets/libs/css/bootstrap.min.css">
-  <link rel="stylesheet" href="assets/libs/css/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="../libs/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../libs/css/bootstrap-icons.min.css">
 
   <style>
     :root {
@@ -274,7 +276,7 @@ $page_title = "Error {$code} - {$info['badge']} | SIMAP";
   <!-- Encabezado Institucional -->
   <header class="error-header d-flex justify-content-between align-items-center">
     <a href="<?php echo htmlspecialchars($btn_home_url); ?>" class="error-brand">
-      <img src="assets/libs/img/logo.png" alt="Logo C.P.E. La Fría">
+      <img src="../libs/img/logo.png" alt="Logo C.P.E. La Fría">
       <div>
         <div class="fw-bold fs-5 lh-1">SIMAP</div>
         <small class="text-muted" style="font-size: 0.75rem;">Clínica Popular Especializada La Fría</small>
@@ -286,12 +288,12 @@ $page_title = "Error {$code} - {$info['badge']} | SIMAP";
         <span class="badge bg-light text-dark border px-2 py-1 small">
           <i class="bi bi-person-circle me-1"></i><?php echo htmlspecialchars($user_name); ?>
         </span>
-        <a href="assets/controller/Logout.php" class="btn btn-sm btn-outline-danger" title="Cerrar sesión">
+        <a href="../controller/Logout.php" class="btn btn-sm btn-outline-danger" title="Cerrar sesión">
           <i class="bi bi-box-arrow-right"></i>
         </a>
       </div>
     <?php else: ?>
-      <a href="index.php" class="btn btn-sm btn-outline-primary fw-semibold">
+      <a href="../../index.php" class="btn btn-sm btn-outline-primary fw-semibold">
         <i class="bi bi-box-arrow-in-right me-1"></i>Acceso
       </a>
     <?php endif; ?>

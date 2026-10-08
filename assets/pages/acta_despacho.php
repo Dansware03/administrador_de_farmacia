@@ -8,7 +8,7 @@ if (empty($_SESSION['us_tipo']) || ($_SESSION['us_tipo'] != 1 && $_SESSION['us_t
 }
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
-    header('Location: ../../error.php?code=400');
+    header('Location: error.php?code=400');
     exit();
 }
 
@@ -19,7 +19,7 @@ $id_despacho = intval($_GET['id']);
 
 $despacho = $despacho_model->obtener_despacho($id_despacho);
 if (!$despacho) {
-    header('Location: ../../error.php?code=404');
+    header('Location: error.php?code=404');
     exit();
 }
 

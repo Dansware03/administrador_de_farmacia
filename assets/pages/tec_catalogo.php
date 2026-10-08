@@ -1,10 +1,10 @@
 <?php session_start();
 if (empty($_SESSION['us_tipo'])) {
-    header('Location: ../../error.php?code=401');
+    header('Location: error.php?code=401');
     exit();
 }
 if ($_SESSION['us_tipo'] != 2) {
-    header('Location: ../../error.php?code=403');
+    header('Location: error.php?code=403');
     exit();
 }
 include_once 'layouts/header.php'; ?>

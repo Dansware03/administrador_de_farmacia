@@ -15,11 +15,11 @@ Options -Indexes
     </IfModule>
 </FilesMatch>
 
-# Configuración de Páginas de Error Personalizadas
-ErrorDocument 400 /administrador_de_farmacia/error.php?code=400
-ErrorDocument 401 /administrador_de_farmacia/error.php?code=401
-ErrorDocument 403 /administrador_de_farmacia/error.php?code=403
-ErrorDocument 404 /administrador_de_farmacia/error.php?code=404
-ErrorDocument 405 /administrador_de_farmacia/error.php?code=405
-ErrorDocument 500 /administrador_de_farmacia/error.php?code=500
-ErrorDocument 503 /administrador_de_farmacia/error.php?code=503
+# Configuración de Páginas de Error Personalizadas (Capa de Vista MVC)
+ErrorDocument 400 /administrador_de_farmacia/assets/pages/error.php?code=400
+ErrorDocument 401 /administrador_de_farmacia/assets/pages/error.php?code=401
+ErrorDocument 403 /administrador_de_farmacia/assets/pages/error.php?code=403
+ErrorDocument 404 /administrador_de_farmacia/assets/pages/error.php?code=404
+ErrorDocument 405 /administrador_de_farmacia/assets/pages/error.php?code=405
+ErrorDocument 500 /administrador_de_farmacia/assets/pages/error.php?code=500
+ErrorDocument 503 /administrador_de_farmacia/assets/pages/error.php?code=503

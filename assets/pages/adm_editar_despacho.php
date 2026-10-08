@@ -1,15 +1,15 @@
 <?php session_start(); 
 if (empty($_SESSION['us_tipo'])) {
-    header('Location: ../../error.php?code=401');
+    header('Location: error.php?code=401');
     exit();
 }
 if ($_SESSION['us_tipo'] != 1) {
-    header('Location: ../../error.php?code=403');
+    header('Location: error.php?code=403');
     exit();
 }
 $id_despacho = $_GET['id'] ?? '';
 if (empty($id_despacho)) {
-    header('Location: ../../error.php?code=400');
+    header('Location: error.php?code=400');
     exit();
 }
 include_once 'layouts/header.php'; ?>
