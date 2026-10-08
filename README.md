@@ -46,10 +46,10 @@ El sistema implementa estrictamente **2 roles de usuario**:
 │   ├── db/              # Modelos PDO y base de datos local SQLite (simap.db, simap_completa.sql)
 │   ├── libs/            # Librerías estáticas offline (Bootstrap 5, CSS, JS, imágenes e iconos)
 │   └── pages/           # Vistas y formularios del sistema (Catálogo, Lotes, Retiros, Usuarios)
-├── docs/                # Requerimientos institucionales y documentación funcional
 ├── LICENSE              # Licencia del proyecto
 ├── README.md            # Ficha técnica oficial
-└── index.php            # Portal de inicio de sesión y validación de seguridad
+├── index.php            # Portal de inicio de sesión y validación de seguridad
+└── install.php          # Asistente de instalación autónomo
 ```
 
 ---
