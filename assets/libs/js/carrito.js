@@ -148,6 +148,26 @@ $(document).ready(function () {
   function RecuperarLS_carrito_Pedido() {
     let productos = RecuperarLS();
     $("#lista-compra").empty();
+
+    if (productos.length === 0) {
+      const emptyState = `
+        <tr>
+          <td colspan="5" class="text-center py-5">
+            <div class="text-muted">
+              <i class="bi bi-cart-x display-4 d-block mb-3 text-secondary opacity-50"></i>
+              <h6 class="fw-semibold text-dark">No hay insumos seleccionados en la solicitud</h6>
+              <p class="small text-muted mb-3">Diríjase al catálogo de insumos para seleccionar los artículos a despachar.</p>
+              <a href="adm_catalogo.php" class="btn btn-primary btn-sm fw-semibold">
+                <i class="bi bi-grid me-1"></i>Ir al Catálogo de Insumos
+              </a>
+            </div>
+          </td>
+        </tr>
+      `;
+      $("#lista-compra").append(emptyState);
+      return;
+    }
+
     productos.forEach((producto) => {
       const unidadTexto = producto.uniMedida ? `${producto.uniMedida} (${producto.uniCodigo || 'und'})` : 'Unidad (und)';
       const especTexto = producto.espTalla || producto.concentracionCompleta || '-';
