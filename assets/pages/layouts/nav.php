@@ -1,18 +1,31 @@
 <?php
+/**
+ * SIMAP - Plantilla de Navegación, Barra Superior y Sidebar Institucional
+ *
+ * Renderiza los elementos estructurales de la aplicación:
+ * - Carga de hojas de estilo (Bootstrap 5, Animate.css, plugins locales y temas de SIMAP).
+ * - Preloader visual de carga de página.
+ * - Barra superior fija (Navbar) con dropdown de lotes en riesgo, menú del carrito y acceso de usuario.
+ * - Barra lateral flotante (Sidebar Desktop y Offcanvas Móvil) con segmentación de menús por rol.
+ *
+ * @package SIMAP\Layouts
+ * @author Grupo de Proyecto
+ * @version 1.0.0
+ */
+
 $current_page = basename($_SERVER['PHP_SELF']);
 $user_type = $_SESSION['us_tipo'] ?? 0;
 $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
 ?>
   <link rel="icon" type="image/png" href="../libs/img/logo.png">
-  <!-- Bootstrap 5, Bootstrap Icons y Animate.css (Offline) -->
+  <!-- Estilos Base y Plugins Locales (100% Offline) -->
   <link rel="stylesheet" href="../libs/css/bootstrap.min.css">
   <link rel="stylesheet" href="../libs/css/bootstrap-icons.min.css">
   <link rel="stylesheet" href="../libs/css/animate.min.css">
-  <!-- Plugins locales (Offline) -->
   <link rel="stylesheet" href="../libs/css/toastr.min.css">
   <link rel="stylesheet" href="../libs/css/select2.min.css">
   <link rel="stylesheet" href="../libs/css/datatables.min.css">
-  <!-- Estilos del Sistema SIMAP -->
+  <!-- Estilos del Sistema SIMAP con Versionado Dinámico -->
   <link rel="stylesheet" href="<?php echo asset_v('../libs/css/app.css'); ?>">
   <link rel="stylesheet" href="<?php echo asset_v('../libs/css/main.css'); ?>">
 </head>
@@ -32,26 +45,26 @@ $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
   <!-- Navbar Superior -->
   <header class="simap-navbar sticky-top d-flex align-items-center justify-content-between px-3 px-lg-4">
     <div class="d-flex align-items-center gap-3">
-      <!-- Toggle Sidebar Desktop -->
+      <!-- Alternador de Barra Lateral en Desktop -->
       <button class="btn btn-sm btn-outline-secondary d-none d-lg-inline-flex align-items-center justify-content-center" id="sidebar-toggle-desktop" title="Alternar menú lateral" aria-label="Alternar menú lateral">
         <i class="bi bi-list fs-5"></i>
       </button>
 
-      <!-- Toggle Sidebar Móvil (Offcanvas) -->
+      <!-- Alternador de Barra Lateral en Móvil -->
       <button class="btn btn-sm btn-outline-secondary d-lg-none d-inline-flex align-items-center justify-content-center" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas" title="Abrir menú" aria-label="Abrir menú de navegación">
         <i class="bi bi-list fs-5"></i>
       </button>
 
-      <!-- Título y Logo de Navbar Móvil -->
+      <!-- Logotipo Institucional para Móvil -->
       <a href="<?php echo $home_url; ?>" class="d-flex align-items-center gap-2 text-decoration-none d-lg-none">
         <img src="../libs/img/logo.png" alt="Logo SIMAP" class="rounded-circle bg-white p-1 shadow-sm" style="width: 36px; height: 36px; object-fit: contain;">
         <span class="fw-bold text-primary fs-5 mb-0">SIMAP</span>
       </a>
     </div>
 
-    <!-- Menú Derecho -->
+    <!-- Acciones y Menús en Barra Superior -->
     <div class="d-flex align-items-center gap-2 gap-md-3">
-      <!-- Centro de Alertas: Lotes en Riesgo (Dropdown Estilo Artículos Solicitados) -->
+      <!-- Centro de Alertas de Lotes en Riesgo -->
       <div id="cat-alertas-lotes" class="dropdown">
         <button class="btn btn-light position-relative border" type="button" id="lotesAlertaDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Lotes en riesgo o próximos a vencer" aria-label="Lotes en riesgo">
           <i class="bi bi-clock-history fs-5 text-secondary"></i>
@@ -80,7 +93,7 @@ $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
         </div>
       </div>
 
-      <!-- Carrito Dropdown (Preservando IDs para carrito.js) -->
+      <!-- Menú Desplegable del Carrito de Entrega -->
       <div id="cat-carrito" <?php echo in_array($current_page, ['adm_catalogo.php', 'tec_catalogo.php']) ? '' : 'style="display: none;"'; ?> class="dropdown">
         <button class="btn btn-light position-relative border" type="button" id="navbarDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Ver carrito" aria-label="Ver artículos en solicitud">
           <i class="bi bi-cart3 fs-5"></i>
@@ -112,7 +125,7 @@ $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
         </div>
       </div>
 
-      <!-- Usuario y Botón Cerrar Sesión -->
+      <!-- Identificación de Usuario y Salida -->
       <div class="d-flex align-items-center gap-2">
         <span class="d-none d-md-inline small fw-semibold text-secondary">
           <?php echo htmlspecialchars($_SESSION['nombre_us'] ?? 'Usuario'); ?>
@@ -125,9 +138,8 @@ $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
     </div>
   </header>
 
-  <!-- Sidebar Desktop (Fijo) -->
+  <!-- Barra Lateral Fija (Sidebar Desktop) -->
   <aside class="simap-sidebar simap-sidebar-desktop d-none d-lg-flex flex-column">
-    <!-- Brand Logo Showcase -->
     <a href="<?php echo $home_url; ?>" class="simap-brand">
       <div class="simap-brand-badge">
         <img src="../libs/img/logo.png" alt="Logo Clínica" class="rounded-circle img-fluid" style="width: 42px; height: 42px; object-fit: contain;">
@@ -138,7 +150,7 @@ $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
       </div>
     </a>
 
-    <!-- Info Usuario (User Card) -->
+    <!-- Panel de Perfil de Usuario -->
     <div class="simap-user-panel d-flex align-items-center gap-3">
       <div class="simap-user-avatar-wrap">
         <img id="avatar4" src="../libs/img/avatars/user-default.png" class="rounded-circle border border-2 border-white shadow-sm" alt="Avatar" style="width: 40px; height: 40px; object-fit: cover;">
@@ -156,10 +168,10 @@ $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
       </div>
     </div>
 
-    <!-- Menú de Navegación -->
+    <!-- Enlaces de Navegación según Rol Institucional -->
     <nav class="flex-grow-1 py-2">
       <?php if ($user_type == 2): ?>
-        <!-- Menú Exclusivo para Secretario -->
+        <!-- Menú para Secretario / Personal Asistencial -->
         <div class="nav-header">Catálogo</div>
         <a href="tec_catalogo.php" class="nav-link <?php echo ($current_page == 'tec_catalogo.php') ? 'active' : ''; ?>">
           <i class="bi bi-grid"></i>
@@ -172,7 +184,7 @@ $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
           <span>Mis Datos Personales</span>
         </a>
       <?php else: ?>
-        <!-- Menú Completo para Administrador y Root -->
+        <!-- Menú Completo para Administrador -->
         <div class="nav-header">Catálogo</div>
         <a href="adm_catalogo.php" class="nav-link <?php echo ($current_page == 'adm_catalogo.php') ? 'active' : ''; ?>">
           <i class="bi bi-grid"></i>
@@ -222,7 +234,7 @@ $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
     </nav>
   </aside>
 
-  <!-- Sidebar Móvil (Offcanvas de Bootstrap 5) -->
+  <!-- Barra Lateral Desplegable para Móvil (Offcanvas) -->
   <div class="offcanvas offcanvas-start simap-sidebar p-0 d-lg-none" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
     <div class="offcanvas-header simap-brand justify-content-between">
       <div class="d-flex align-items-center gap-2">
@@ -255,7 +267,6 @@ $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
       </div>
       <nav class="py-2">
         <?php if ($user_type == 2): ?>
-          <!-- Menú Exclusivo para Secretario (Móvil) -->
           <div class="nav-header">Catálogo</div>
           <a href="tec_catalogo.php" class="nav-link <?php echo ($current_page == 'tec_catalogo.php') ? 'active' : ''; ?>">
             <i class="bi bi-grid"></i>
@@ -268,7 +279,6 @@ $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
             <span>Mis Datos Personales</span>
           </a>
         <?php else: ?>
-          <!-- Menú Completo para Administrador y Root (Móvil) -->
           <div class="nav-header">Catálogo</div>
           <a href="adm_catalogo.php" class="nav-link <?php echo ($current_page == 'adm_catalogo.php') ? 'active' : ''; ?>">
             <i class="bi bi-grid"></i>
