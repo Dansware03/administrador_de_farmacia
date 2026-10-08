@@ -102,6 +102,15 @@ if ($_SESSION['us_tipo'] == 2) {
   </div>
   <!-- /.content-wrapper -->
 
+  <!-- Botón Flotante Rápido de Solicitud (FAB) -->
+  <div class="position-fixed bottom-0 end-0 p-4" style="z-index: 1040;">
+    <a href="adm_retiro.php" class="btn btn-primary rounded-pill shadow-lg d-flex align-items-center gap-2 px-3 py-2 border-2 border-white" title="Ir a Procesar Solicitud de Insumos">
+      <i class="bi bi-cart-check fs-5"></i>
+      <span class="fw-semibold d-none d-sm-inline">Ver Solicitud</span>
+      <span class="badge bg-danger rounded-pill contador" id="fab-contador">0</span>
+    </a>
+  </div>
+
   <?php
   $page_scripts = '
 <script src="' . asset_v('../libs/js/catalogo.js') . '"></script>

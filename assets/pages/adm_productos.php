@@ -37,19 +37,75 @@
             </div>
 
             <div class="col-md-4">
-              <label for="laboratorio" class="form-label fw-semibold small text-secondary">Laboratorio / Fabricante</label>
-              <select id="laboratorio" class="form-select select2" style="width: 100%;"></select>
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label for="laboratorio" class="form-label fw-semibold small text-secondary mb-0">Fabricante <span class="text-danger">*</span></label>
+                <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none small text-primary" data-bs-toggle="modal" data-bs-target="#modal_nuevo_lab_rapido">
+                  <i class="bi bi-plus-circle me-1"></i>Nuevo
+                </button>
+              </div>
+              <select id="laboratorio" class="form-select select2" style="width: 100%;" required></select>
             </div>
 
             <div class="col-md-4">
-              <label for="tipo" class="form-label fw-semibold small text-secondary">Tipo / Categoría</label>
-              <select name="tipo" id="tipo" class="form-select select2" style="width: 100%"></select>
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label for="tipo" class="form-label fw-semibold small text-secondary mb-0">Categoría <span class="text-danger">*</span></label>
+                <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none small text-primary" data-bs-toggle="modal" data-bs-target="#modal_nuevo_tipo_rapido">
+                  <i class="bi bi-plus-circle me-1"></i>Nueva
+                </button>
+              </div>
+              <select name="tipo" id="tipo" class="form-select select2" style="width: 100%" required></select>
             </div>
 
             <div class="col-md-4">
-              <label for="presentacion" class="form-label fw-semibold small text-secondary">Presentación</label>
-              <select name="presentacion" id="presentacion" class="form-select select2" style="width: 100%"></select>
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label for="presentacion" class="form-label fw-semibold small text-secondary mb-0">Presentación <span class="text-danger">*</span></label>
+                <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none small text-primary" data-bs-toggle="modal" data-bs-target="#modal_nueva_pres_rapida">
+                  <i class="bi bi-plus-circle me-1"></i>Nueva
+                </button>
+              </div>
+              <select name="presentacion" id="presentacion" class="form-select select2" style="width: 100%" required></select>
             </div>
+
+            <!-- Sección de Dotación Inicial / Lote In-Situ -->
+            <div class="col-12 mt-3" id="seccion_dotacion_inicial">
+              <div class="card border border-primary-subtle bg-light shadow-none">
+                <div class="card-body p-3">
+                  <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="check_dotacion_inicial">
+                    <label class="form-check-label fw-semibold text-primary" for="check_dotacion_inicial">
+                      <i class="bi bi-box-arrow-in-down me-1"></i>Registrar Dotación / Stock Inicial Inmediato
+                    </label>
+                  </div>
+                  <div id="campos_dotacion_inicial" class="d-none mt-3">
+                    <div class="row g-2">
+                      <div class="col-md-6">
+                        <label for="proveedor_inicial" class="form-label small fw-semibold text-secondary">Proveedor / Donante</label>
+                        <select id="proveedor_inicial" class="form-select select2" style="width: 100%;"></select>
+                      </div>
+                      <div class="col-md-6">
+                        <label for="cod_lote_inicial" class="form-label small fw-semibold text-secondary">Código de Lote</label>
+                        <input type="text" id="cod_lote_inicial" class="form-control form-control-sm" placeholder="Ej: LOT-2026-INI">
+                      </div>
+                      <div class="col-md-6">
+                        <label for="stock_inicial" class="form-label small fw-semibold text-secondary">Cantidad / Unidades</label>
+                        <input type="number" id="stock_inicial" min="1" class="form-control form-control-sm" placeholder="0">
+                      </div>
+                      <div class="col-md-6">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                          <label for="vencimiento_inicial" class="form-label small fw-semibold text-secondary mb-0">Vencimiento</label>
+                          <div class="form-check form-switch mb-0">
+                            <input class="form-check-input" type="checkbox" id="noPerecedero_inicial">
+                            <label class="form-check-label small text-muted" for="noPerecedero_inicial">No perecedero</label>
+                          </div>
+                        </div>
+                        <input type="date" id="vencimiento_inicial" class="form-control form-control-sm">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
           <input type="hidden" id="id_edit_prod">
         </div>
@@ -58,6 +114,72 @@
           <button type="submit" class="btn btn-primary fw-semibold">
             <i class="bi bi-check-lg me-1"></i>Guardar Insumo
           </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Rápido Laboratorio / Fabricante -->
+<div class="modal fade" id="modal_nuevo_lab_rapido" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-primary text-white py-2">
+        <h6 class="modal-title fw-bold"><i class="bi bi-building me-1"></i>Nuevo Fabricante / Laboratorio</h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <form id="form_lab_rapido">
+        <div class="modal-body p-3">
+          <label for="modal_nombre_lab" class="form-label small fw-semibold text-secondary">Nombre de la Empresa / Fabricante <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="modal_nombre_lab" placeholder="Ej: Laboratorios Behrens" required>
+        </div>
+        <div class="modal-footer bg-light py-2">
+          <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-sm btn-primary fw-semibold"><i class="bi bi-check-lg me-1"></i>Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Rápido Categoría / Tipo -->
+<div class="modal fade" id="modal_nuevo_tipo_rapido" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-primary text-white py-2">
+        <h6 class="modal-title fw-bold"><i class="bi bi-tags me-1"></i>Nueva Categoría</h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <form id="form_tipo_rapido">
+        <div class="modal-body p-3">
+          <label for="modal_nombre_tipo" class="form-label small fw-semibold text-secondary">Nombre de la Categoría <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="modal_nombre_tipo" placeholder="Ej: Material Descartable" required>
+        </div>
+        <div class="modal-footer bg-light py-2">
+          <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-sm btn-primary fw-semibold"><i class="bi bi-check-lg me-1"></i>Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Rápido Presentación -->
+<div class="modal fade" id="modal_nueva_pres_rapida" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-primary text-white py-2">
+        <h6 class="modal-title fw-bold"><i class="bi bi-box-seam me-1"></i>Nueva Presentación</h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <form id="form_pres_rapida">
+        <div class="modal-body p-3">
+          <label for="modal_nombre_pres" class="form-label small fw-semibold text-secondary">Nombre de la Presentación / Empaque <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="modal_nombre_pres" placeholder="Ej: Galón, Caja x 100" required>
+        </div>
+        <div class="modal-footer bg-light py-2">
+          <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-sm btn-primary fw-semibold"><i class="bi bi-check-lg me-1"></i>Guardar</button>
         </div>
       </form>
     </div>

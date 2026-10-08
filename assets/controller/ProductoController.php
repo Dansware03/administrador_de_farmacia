@@ -14,10 +14,22 @@ if (isset($_POST['funcion'])) {
             $id_unidad = isset($_POST['id_unidad']) ? $_POST['id_unidad'] : 1;
             $especificacion_talla = isset($_POST['especificacion_talla']) ? trim($_POST['especificacion_talla']) : '';
             $avatar = 'ProductDefault.png';
+
+            // ponytail: Soporte opcional para registrar lote y stock inicial en la misma llamada
+            $lote_data = null;
+            if (!empty($_POST['cod_lote']) && !empty($_POST['stock_inicial']) && !empty($_POST['proveedor_lote'])) {
+                $lote_data = [
+                    'cod_lote' => trim($_POST['cod_lote']),
+                    'stock' => intval($_POST['stock_inicial']),
+                    'proveedor' => intval($_POST['proveedor_lote']),
+                    'vencimiento' => !empty($_POST['vencimiento_lote']) ? trim($_POST['vencimiento_lote']) : '2035-12-31'
+                ];
+            }
+
             if (empty($nombre) || empty($prod_lab) || empty($prod_tip_prod) || empty($prod_present)) {
                 echo 'Faltan datos obligatorios para el registro del insumo.';
             } else {
-                $producto->crear($nombre, $concentracion, $adicional, $avatar, $prod_lab, $prod_tip_prod, $prod_present, $id_unidad, $especificacion_talla);
+                $producto->crear($nombre, $concentracion, $adicional, $avatar, $prod_lab, $prod_tip_prod, $prod_present, $id_unidad, $especificacion_talla, $lote_data);
             }
         break;
         case 'cambiar_avatar':

@@ -71,7 +71,8 @@
                     </label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="bi bi-person"></i></span>
-                      <input type="text" class="form-control" id="cliente" placeholder="Ej: Lic. Adriana López" required>
+                      <input type="text" class="form-control" id="cliente" placeholder="Ej: Lic. Adriana López" list="lista_receptores_habituales" required>
+                      <datalist id="lista_receptores_habituales"></datalist>
                     </div>
                   </div>
 

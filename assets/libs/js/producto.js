@@ -83,11 +83,97 @@ $(document).ready(function() {
             });
     }
 
+    rellenar_proveedor_inicial();
+
+    function rellenar_proveedor_inicial() {
+        $.post('../controller/ProveedorController.php', { funcion: 'rellenar_proveedor' })
+            .done(function (response) {
+                const proveedores = JSON.parse(response);
+                const opciones = proveedores.map(p => `<option value="${p.id}">${p.nombre}</option>`);
+                $('#proveedor_inicial').html(opciones.join(''));
+            });
+    }
+
+    // Toggle de dotación inicial en creación
+    $('#check_dotacion_inicial').on('change', function() {
+        if ($(this).is(':checked')) {
+            $('#campos_dotacion_inicial').removeClass('d-none');
+            $('#cod_lote_inicial, #stock_inicial').prop('required', true);
+        } else {
+            $('#campos_dotacion_inicial').addClass('d-none');
+            $('#cod_lote_inicial, #stock_inicial').prop('required', false);
+        }
+    });
+
+    $('#noPerecedero_inicial').on('change', function() {
+        if ($(this).is(':checked')) {
+            $('#vencimiento_inicial').val('').prop('disabled', true);
+        } else {
+            $('#vencimiento_inicial').prop('disabled', false);
+        }
+    });
+
+    // Sub-modal rápido Fabricante / Laboratorio
+    $('#form_lab_rapido').on('submit', function(e) {
+        e.preventDefault();
+        const nombre = $('#modal_nombre_lab').val().trim();
+        if (!nombre) return;
+        $.post('../controller/LaboratoryController.php', { funcion: 'crear', nombre }, function(response) {
+            if (response === 'add') {
+                const modalObj = bootstrap.Modal.getInstance(document.getElementById('modal_nuevo_lab_rapido'));
+                if (modalObj) modalObj.hide();
+                $('#form_lab_rapido').trigger('reset');
+                rellenar_laboratorio();
+                toastr.success('Fabricante registrado exitosamente');
+            } else {
+                toastr.error('No se pudo registrar el fabricante');
+            }
+        });
+    });
+
+    // Sub-modal rápido Categoría / Tipo
+    $('#form_tipo_rapido').on('submit', function(e) {
+        e.preventDefault();
+        const nombre = $('#modal_nombre_tipo').val().trim();
+        if (!nombre) return;
+        $.post('../controller/TypeController.php', { funcion: 'crear', nombre }, function(response) {
+            if (response === 'add') {
+                const modalObj = bootstrap.Modal.getInstance(document.getElementById('modal_nuevo_tipo_rapido'));
+                if (modalObj) modalObj.hide();
+                $('#form_tipo_rapido').trigger('reset');
+                rellenar_type();
+                toastr.success('Categoría registrada exitosamente');
+            } else {
+                toastr.error('No se pudo registrar la categoría');
+            }
+        });
+    });
+
+    // Sub-modal rápido Presentación
+    $('#form_pres_rapida').on('submit', function(e) {
+        e.preventDefault();
+        const nombre = $('#modal_nombre_pres').val().trim();
+        if (!nombre) return;
+        $.post('../controller/PresentacionesController.php', { funcion: 'crear', nombre }, function(response) {
+            if (response === 'add') {
+                const modalObj = bootstrap.Modal.getInstance(document.getElementById('modal_nueva_pres_rapida'));
+                if (modalObj) modalObj.hide();
+                $('#form_pres_rapida').trigger('reset');
+                rellenar_presentacion();
+                toastr.success('Presentación registrada exitosamente');
+            } else {
+                toastr.error('No se pudo registrar la presentación');
+            }
+        });
+    });
+
     $(document).on('click', '.crearpd', function() {
         $('#form-crear-producto').trigger('reset');
         $('#crearProductoLabel').html('<i class="bi bi-box-seam me-2"></i>Nuevo Insumo');
         $('#id_edit_prod').val('');
         $('#especificacion_talla').val('');
+        $('#seccion_dotacion_inicial').removeClass('d-none');
+        $('#check_dotacion_inicial').prop('checked', false).trigger('change');
         edit = false;
     });
 
@@ -103,24 +189,32 @@ $(document).ready(function() {
         let prod_tip_prod = $('#tipo').val();
         let prod_present = $('#presentacion').val();
 
+        let postData = {
+            id_edit_prod, nombre, concentracion, adicional, prod_lab, prod_tip_prod, prod_present, id_unidad, especificacion_talla
+        };
+
         if (edit === true) {
-            funcion = "editar";
+            postData.funcion = "editar";
         } else {
-            funcion = "crear";
+            postData.funcion = "crear";
+            if ($('#check_dotacion_inicial').is(':checked')) {
+                postData.proveedor_lote = $('#proveedor_inicial').val();
+                postData.cod_lote = $('#cod_lote_inicial').val();
+                postData.stock_inicial = $('#stock_inicial').val();
+                postData.vencimiento_lote = $('#noPerecedero_inicial').is(':checked') ? '2035-12-31' : $('#vencimiento_inicial').val();
+            }
         }
 
-        $.post(
-            '../controller/ProductoController.php',
-            { funcion, id_edit_prod, nombre, concentracion, adicional, prod_lab, prod_tip_prod, prod_present, id_unidad, especificacion_talla }
-        )
+        $.post('../controller/ProductoController.php', postData)
         .done(response => {
             if (response === 'add') {
                 Swal.fire({
                     position: 'center',
                     icon: 'success',
-                    title: 'Insumo Creado con Éxito',
+                    title: postData.stock_inicial ? 'Insumo y Dotación Registrados' : 'Insumo Creado con Éxito',
+                    text: postData.stock_inicial ? `Existencia inicial: ${postData.stock_inicial} unidades registradas en inventario.` : '',
                     showConfirmButton: false,
-                    timer: 1000
+                    timer: 1400
                 }).then(() => {
                     const modalObj = bootstrap.Modal.getInstance(document.getElementById('crearproducto'));
                     if (modalObj) modalObj.hide();
@@ -148,7 +242,7 @@ $(document).ready(function() {
                     icon: 'error',
                     title: response,
                     showConfirmButton: true,
-                    timer: 1500
+                    timer: 2000
                 });
                 edit = false;
             }
@@ -336,6 +430,8 @@ $(document).ready(function() {
         $('#presentacion').val(presentacion).trigger('change');
 
         $('#crearProductoLabel').html('<i class="bi bi-pencil-square me-2"></i>Editar Insumo');
+        $('#seccion_dotacion_inicial').addClass('d-none');
+        $('#check_dotacion_inicial').prop('checked', false).trigger('change');
         edit = true;
     });
 

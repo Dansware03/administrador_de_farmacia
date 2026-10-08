@@ -7,7 +7,7 @@ class Producto {
         $db = new Conexion();
         $this->acceso = $db->pdo;
     }
-    public function crear($nombre, $concentracion, $adicional, $avatar = 'ProductDefault.png', $prod_lab = '', $prod_tip_prod = '', $prod_present = '', $id_unidad = 1, $especificacion_talla = '') {
+    public function crear($nombre, $concentracion, $adicional, $avatar = 'ProductDefault.png', $prod_lab = '', $prod_tip_prod = '', $prod_present = '', $id_unidad = 1, $especificacion_talla = '', $lote_data = null) {
         try {
             $sql = "SELECT id_producto FROM producto WHERE nombre = :nombre and concentracion=:concentracion and adicional=:adicional and prod_lab=:laboratorio and prod_tip_prod=:tipo and prod_present=:presentacion";
             $query = $this->acceso->prepare($sql);
@@ -16,9 +16,12 @@ class Producto {
             if (!empty($result)) {
                 throw new Exception('El insumo o producto ya existe.');
             }
+
+            $this->acceso->beginTransaction();
+
             $sql = "INSERT INTO producto (nombre, concentracion, adicional, avatar, prod_lab, prod_tip_prod, prod_present, id_unidad, especificacion_talla) VALUES (:nombre, :concentracion, :adicional, :avatar, :laboratorio, :tipo, :presentacion, :id_unidad, :especificacion_talla)";
             $query = $this->acceso->prepare($sql);
-            if ($query->execute(array(
+            $query->execute(array(
                 ':nombre' => $nombre,
                 ':concentracion' => $concentracion,
                 ':adicional' => $adicional,
@@ -28,12 +31,29 @@ class Producto {
                 ':presentacion' => $prod_present,
                 ':id_unidad' => $id_unidad,
                 ':especificacion_talla' => $especificacion_talla
-            ))) {
-                echo 'add';
-            } else {
-                throw new Exception('Error al insertar el insumo.');
+            ));
+
+            $id_nuevo_producto = $this->acceso->lastInsertId();
+
+            // ponytail: Si se enviaron datos de lote inicial, insertar el lote de forma atómica
+            if ($lote_data && !empty($lote_data['cod_lote']) && !empty($lote_data['stock']) && !empty($lote_data['proveedor'])) {
+                $sql_lote = "INSERT INTO lote (cod_lote, stock, vencimiento, id_lote_prod, lote_id_prov) VALUES (:cod_lote, :stock, :vencimiento, :id_producto, :id_proveedor)";
+                $query_lote = $this->acceso->prepare($sql_lote);
+                $query_lote->execute(array(
+                    ':cod_lote' => $lote_data['cod_lote'],
+                    ':stock' => intval($lote_data['stock']),
+                    ':vencimiento' => !empty($lote_data['vencimiento']) ? $lote_data['vencimiento'] : '2035-12-31',
+                    ':id_producto' => $id_nuevo_producto,
+                    ':id_proveedor' => $lote_data['proveedor']
+                ));
             }
+
+            $this->acceso->commit();
+            echo 'add';
         } catch (Exception $e) {
+            if ($this->acceso->inTransaction()) {
+                $this->acceso->rollBack();
+            }
             echo $e->getMessage();
         }
     }

@@ -142,7 +142,7 @@ $(document).ready(function () {
   function Contar_productos() {
     let productos = RecuperarLS();
     let contador = productos.length;
-    $("#contador").text(contador);
+    $("#contador, #fab-contador, .contador").text(contador);
   }
 
   function RecuperarLS_carrito_Pedido() {
@@ -338,10 +338,12 @@ $(document).ready(function () {
         let isSuccess = false;
         let errorMsg = "";
 
+        let idDespachoCreado = null;
         try {
           let res = JSON.parse(response);
           if (res.status === "success") {
             isSuccess = true;
+            idDespachoCreado = res.id_despacho;
           } else {
             errorMsg = res.message || "Error al procesar el despacho.";
           }
@@ -354,14 +356,23 @@ $(document).ready(function () {
         }
 
         if (isSuccess) {
+          // Guardar receptor en historial local para autocompletar futuros despachos
+          guardarReceptorHabitual({ nombre, ci, cargo: cargo_receptor });
+
           Swal.fire({
             icon: "success",
-            title: "¡Acta de Entrega Registrada!",
-            text: "La salida de insumos del depósito ha sido procesada exitosamente.",
-            confirmButtonColor: "#1a3a5c"
-          }).then(() => {
+            title: "¡Despacho Procesado con Éxito!",
+            text: idDespachoCreado ? `Acta de Entrega #${idDespachoCreado} generada.` : "La salida de insumos del depósito ha sido registrada.",
+            showCancelButton: true,
+            confirmButtonText: '<i class="bi bi-printer me-1"></i> Imprimir Acta Oficial',
+            cancelButtonText: '<i class="bi bi-arrow-left me-1"></i> Volver al Catálogo',
+            confirmButtonColor: "#0284c7",
+            cancelButtonColor: "#64748b"
+          }).then((result) => {
             EliminarLS();
-            // Redirigir al catálogo correspondiente según URL previa o por defecto
+            if (idDespachoCreado && result.isConfirmed) {
+              window.open(`acta_despacho.php?id=${idDespachoCreado}`, '_blank');
+            }
             if (document.referrer && document.referrer.includes("tec_catalogo.php")) {
               window.location.href = "tec_catalogo.php";
             } else {
@@ -378,5 +389,43 @@ $(document).ready(function () {
         }
       }
     );
+  }
+
+  // Manejo de receptores habituales (autocompletado rápido sin fricción)
+  function cargarReceptoresHabituales() {
+    try {
+      const historial = JSON.parse(localStorage.getItem("simap_receptores_habituales") || "[]");
+      const datalist = $("#lista_receptores_habituales");
+      if (datalist.length && historial.length) {
+        datalist.empty();
+        historial.forEach(r => {
+          datalist.append(`<option value="${r.nombre}">${r.ci} - ${r.cargo || 'Funcionario'}</option>`);
+        });
+      }
+    } catch (e) {}
+  }
+
+  function guardarReceptorHabitual(rec) {
+    try {
+      let historial = JSON.parse(localStorage.getItem("simap_receptores_habituales") || "[]");
+      historial = historial.filter(r => r.ci !== rec.ci);
+      historial.unshift(rec);
+      if (historial.length > 8) historial.pop();
+      localStorage.setItem("simap_receptores_habituales", JSON.stringify(historial));
+    } catch (e) {}
+  }
+
+  if (window.location.pathname.includes("adm_retiro.php")) {
+    cargarReceptoresHabituales();
+
+    $("#cliente").on("input change", function() {
+      const val = $(this).val().trim();
+      const historial = JSON.parse(localStorage.getItem("simap_receptores_habituales") || "[]");
+      const encontrado = historial.find(r => r.nombre.toLowerCase() === val.toLowerCase());
+      if (encontrado) {
+        if (!$("#ci").val()) $("#ci").val(encontrado.ci);
+        if (!$("#cargo_receptor").val() && encontrado.cargo) $("#cargo_receptor").val(encontrado.cargo);
+      }
+    });
   }
 });
