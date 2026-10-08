@@ -1,17 +1,59 @@
 <?php
-// ponytail: Modelo unificado para la gestión institucional de despachos y actas de entrega de insumos.
+/**
+ * Modelo de Datos y Lógica de Negocio para Despachos y Actas de Entrega
+ *
+ * Administra el ciclo de vida completo de las actas de despacho institucional de insumos médicos.
+ * Implementa control transaccional estricto (ACID), deducción de inventario bajo algoritmo FEFO
+ * (First Expired, First Out - Primero en Vencer, Primero en Salir) a nivel de lotes,
+ * reversión íntegra de existencias al anular actas y recálculo automático en modificaciones.
+ *
+ * Flujo de Integración Extremo a Extremo:
+ * 1. UI/Cliente: Módulo de despachos / carrito (`assets/libs/js/despacho.js`, `carrito.js`).
+ * 2. Petición HTTP: AJAX POST hacia `assets/controller/DespachoController.php`.
+ * 3. Procesamiento Modelo: `Despacho::registrar_despacho`, `revertir_despacho`, `actualizar_despacho`.
+ * 4. Persistencia DB: Tablas `despacho`, `despacho_insumo`, `detalle_despacho` y actualización de `lote`.
+ * 5. Respuesta: Retorno de identificador o confirmación JSON al controlador.
+ *
+ * @package SIMAP\Models
+ * @author Grupo de Proyecto
+ * @version 1.0.0
+ */
+
 include_once 'conexion.php';
 
 class Despacho {
+    /**
+     * @var PDO Instancia de conexión a la base de datos SQLite.
+     */
     private $acceso;
 
+    /**
+     * Constructor del modelo Despacho.
+     *
+     * Inicializa la conexión PDO a través de la clase Conexion.
+     */
     public function __construct() {
         $db = new Conexion();
         $this->acceso = $db->pdo;
     }
 
     /**
-     * Registrar un nuevo despacho y deducir existencias según vencimiento (FEFO)
+     * Registrar un nuevo despacho y deducir existencias según vencimiento (FEFO).
+     *
+     * Ejecuta una transacción atómica que:
+     * 1. Inserta el registro maestro del despacho (cabecera).
+     * 2. Registra los insumos solicitados en `despacho_insumo`.
+     * 3. Descuenta las cantidades de los lotes correspondientes priorizando fecha de caducidad.
+     *
+     * @param string $receptor Nombre y apellido de quien recibe la entrega.
+     * @param string $ci_receptor Cédula de identidad del receptor.
+     * @param int $responsable Identificador de usuario del operador que emite el despacho.
+     * @param array $productos Arreglo de insumos con claves `id` y `cantidad`.
+     * @param int|null $id_area Identificador del área o servicio destino (opcional).
+     * @param string $cargo_receptor Cargo institucional o función del receptor.
+     * @param string $observacion Notas o consideraciones especiales del acta.
+     * @return int Identificador único del despacho recién creado (`id_despacho`).
+     * @throws Exception Si ocurre un fallo en la base de datos o el stock disponible es insuficiente.
      */
     public function registrar_despacho($receptor, $ci_receptor, $responsable, $productos, $id_area = null, $cargo_receptor = '', $observacion = '') {
         $this->acceso->beginTransaction();
@@ -45,7 +87,16 @@ class Despacho {
     }
 
     /**
-     * Deducir existencias por lote priorizando fechas de vencimiento próximas
+     * Deducir existencias de lotes priorizando fechas de caducidad próximas (Algoritmo FEFO).
+     *
+     * Consume el stock disponible lote por lote en orden ascendente de vencimiento,
+     * registrando el desglose correspondiente en la tabla `detalle_despacho`.
+     *
+     * @param int $id_producto Identificador único del producto o insumo médico.
+     * @param int $cantidad_requerida Cantidad total que se debe descontar.
+     * @param int $id_despacho Identificador del despacho al que se asigna el consumo.
+     * @return void
+     * @throws Exception Si el stock acumulado en los lotes activos no cubre la cantidad solicitada.
      */
     public function actualizar_stock_por_lotes($id_producto, $cantidad_requerida, $id_despacho) {
         $query = "SELECT * FROM lote 
@@ -91,7 +142,9 @@ class Despacho {
     }
 
     /**
-     * Listar todos los despachos con responsable y área asignada
+     * Listar todos los despachos con datos del responsable y área asignada.
+     *
+     * @return array Registros de despachos ordenados descendentemente por ID.
      */
     public function listar_despachos() {
         $sql = "SELECT d.*, (u.nombre_us || ' ' || u.apellidos_us) as responsable_nombre,
@@ -106,7 +159,11 @@ class Despacho {
     }
 
     /**
-     * Filtrar despachos por rango de fechas
+     * Filtrar despachos institucionales por rango de fechas.
+     *
+     * @param string $fecha_inicio Fecha inicial en formato YYYY-MM-DD.
+     * @param string $fecha_fin Fecha final en formato YYYY-MM-DD.
+     * @return array Registros filtrados de despachos.
      */
     public function listar_despachos_por_fechas($fecha_inicio, $fecha_fin) {
         $sql = "SELECT d.*, (u.nombre_us || ' ' || u.apellidos_us) as responsable_nombre,
@@ -124,7 +181,12 @@ class Despacho {
     }
 
     /**
-     * Obtener el detalle de insumos despachados por acta
+     * Obtener el detalle de insumos despachados por acta de entrega.
+     *
+     * Incluye datos de producto, presentación, lote específico asignado y vencimiento.
+     *
+     * @param int $id_despacho Identificador único del despacho.
+     * @return array Listado de líneas e insumos vinculados al acta.
      */
     public function ver_detalle_despacho($id_despacho) {
         $sql = "SELECT di.*, 
@@ -148,7 +210,10 @@ class Despacho {
     }
 
     /**
-     * Obtener cabecera de un despacho específico
+     * Obtener los datos de cabecera de un despacho específico.
+     *
+     * @param int $id_despacho Identificador único del despacho.
+     * @return array|false Datos del despacho o false si no existe.
      */
     public function obtener_despacho($id_despacho) {
         $sql = "SELECT d.*, (u.nombre_us || ' ' || u.apellidos_us) as responsable_nombre,
@@ -164,7 +229,16 @@ class Despacho {
     }
 
     /**
-     * Anular despacho y reponer existencias en lotes
+     * Anular un despacho y restituir íntegramente las existencias en sus respectivos lotes.
+     *
+     * Operación atómica:
+     * 1. Consulta los insumos y lotes descontados en `detalle_despacho`.
+     * 2. Suma las cantidades devueltas a la tabla `lote`.
+     * 3. Elimina los registros en `detalle_despacho`, `despacho_insumo` y `despacho`.
+     *
+     * @param int $id_despacho Identificador único del despacho a anular.
+     * @return bool True si la anulación y restitución se completó exitosamente.
+     * @throws Exception Si ocurre algún error durante la transacción reversora.
      */
     public function revertir_despacho($id_despacho) {
         $this->acceso->beginTransaction();
@@ -204,7 +278,11 @@ class Despacho {
     }
 
     /**
-     * Consultar stock disponible de un lote específico
+     * Consultar el stock disponible actual de un lote determinado.
+     *
+     * @param int $id_producto Identificador del producto.
+     * @param int $id_lote Identificador del lote a consultar.
+     * @return int Cantidad de unidades disponibles en el lote.
      */
     public function obtener_stock_lote($id_producto, $id_lote) {
         $sql = "SELECT stock FROM lote WHERE id_lote_prod = :id_producto AND id_lote = :id_lote";
@@ -217,13 +295,25 @@ class Despacho {
     }
 
     /**
-     * Actualizar datos del acta y recalcular inventario
+     * Actualizar datos del acta y recalcular inventario atómicamente.
+     *
+     * Revierte el stock previamente descontado por este despacho, actualiza
+     * la cabecera y aplica los nuevos consumos a los lotes especificados.
+     *
+     * @param int $id_despacho Identificador del despacho a modificar.
+     * @param string $receptor Nombre y apellido actualizado del receptor.
+     * @param string $ci_receptor Documento de identidad del receptor.
+     * @param array|string $productos Lista de insumos a despachar (array o JSON).
+     * @param int|null $id_area Identificador del área asignada.
+     * @param string $cargo_receptor Cargo institucional del receptor.
+     * @param string $observacion Observaciones actualizadas del acta.
+     * @return bool True si la actualización se ejecutó correctamente.
+     * @throws Exception Si ocurre un error durante el recálculo o actualización.
      */
     public function actualizar_despacho($id_despacho, $receptor, $ci_receptor, $productos, $id_area = null, $cargo_receptor = '', $observacion = '') {
         $this->acceso->beginTransaction();
 
         try {
-            // Reintegrar stock previo
             $stmtDetalles = $this->acceso->prepare("SELECT * FROM detalle_despacho WHERE id_det_despacho = :id_despacho");
             $stmtDetalles->bindParam(':id_despacho', $id_despacho);
             $stmtDetalles->execute();
@@ -234,14 +324,12 @@ class Despacho {
                 $stmtR->execute([':cantidad' => $dp['det_cantidad'], ':id_lote' => $dp['id_det_lote']]);
             }
 
-            // Limpiar líneas anteriores
             $stmtDelDet = $this->acceso->prepare("DELETE FROM detalle_despacho WHERE id_det_despacho = :id_despacho");
             $stmtDelDet->execute([':id_despacho' => $id_despacho]);
 
             $stmtDelIns = $this->acceso->prepare("DELETE FROM despacho_insumo WHERE despacho_id_despacho = :id_despacho");
             $stmtDelIns->execute([':id_despacho' => $id_despacho]);
 
-            // Actualizar cabecera
             $stmtUp = $this->acceso->prepare("UPDATE despacho SET 
                 receptor = :receptor, 
                 ci_receptor = :ci_receptor, 
@@ -258,7 +346,6 @@ class Despacho {
                 ':id_despacho' => $id_despacho
             ]);
 
-            // Insertar nuevas líneas
             $productos_array = is_array($productos) ? $productos : json_decode($productos, true);
 
             foreach ($productos_array as $p) {

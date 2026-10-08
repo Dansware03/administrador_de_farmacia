@@ -24,7 +24,7 @@
     <div class="header-cover">
         <img src="../assets/libs/img/logo.png" alt="Logo">
         <h1>SIMAP &bull; Manual Técnico y Arquitectura</h1>
-        <p style="color: #64748b; margin: 0;">Clínica Popular Especializada La Fría &bull; Generado automáticamente el 08/10/2026 19:55</p>
+        <p style="color: #64748b; margin: 0;">Clínica Popular Especializada La Fría &bull; Generado automáticamente el 08/10/2026 20:00</p>
     </div>
 
     <h2>1. Controladores del Sistema (Backend)</h2>
@@ -418,6 +418,7 @@
             <div class="doc-card">
             <h4>despacho.php</h4>
             <ul>
+                                    <li><strong>__construct</strong>(<em></em>)</li>
                                     <li><strong>registrar_despacho</strong>(<em>$receptor, $ci_receptor, $responsable, $productos, $id_area = null, $cargo_receptor = &#039;&#039;, $observacion = &#039;&#039;</em>)</li>
                                     <li><strong>actualizar_stock_por_lotes</strong>(<em>$id_producto, $cantidad_requerida, $id_despacho</em>)</li>
                                     <li><strong>listar_despachos</strong>(<em></em>)</li>
@@ -432,6 +433,12 @@
             <div class="doc-card">
             <h4>laboratory.php</h4>
             <ul>
+                                    <li><strong>__construct</strong>(<em></em>)</li>
+                                    <li><strong>crear</strong>(<em>$nombre</em>)</li>
+                                    <li><strong>buscar</strong>(<em></em>)</li>
+                                    <li><strong>borrar_lab</strong>(<em>$id</em>)</li>
+                                    <li><strong>editar</strong>(<em>$nombre, $id_editado</em>)</li>
+                                    <li><strong>rellenar_laboratorio</strong>(<em></em>)</li>
                             </ul>
         </div>
             <div class="doc-card">
