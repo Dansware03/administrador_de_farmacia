@@ -213,10 +213,10 @@ $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
           <span>Gestión de Lotes</span>
         </a>
 
-        <div class="nav-header">Proveedores</div>
+        <div class="nav-header">Proveedores y Dotación</div>
         <a href="adm_proveedor.php" class="nav-link <?php echo ($current_page == 'adm_proveedor.php') ? 'active' : ''; ?>">
           <i class="bi bi-truck"></i>
-          <span>Gestión de Proveedor</span>
+          <span>Directorio de Proveedores</span>
         </a>
       <?php endif; ?>
     </nav>
@@ -309,10 +309,10 @@ $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
             <span>Gestión de Lotes</span>
           </a>
 
-          <div class="nav-header">Proveedores</div>
+          <div class="nav-header">Proveedores y Dotación</div>
           <a href="adm_proveedor.php" class="nav-link <?php echo ($current_page == 'adm_proveedor.php') ? 'active' : ''; ?>">
             <i class="bi bi-truck"></i>
-            <span>Gestión de Proveedor</span>
+            <span>Directorio de Proveedores</span>
           </a>
         <?php endif; ?>
       </nav>

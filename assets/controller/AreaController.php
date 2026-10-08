@@ -139,7 +139,7 @@ if ($funcion == 'borrar_area') {
     $db = new Conexion();
     try {
         // Verificar si existen actas de entrega asociadas a esta área
-        $check = $db->pdo->prepare("SELECT COUNT(*) as total FROM venta WHERE id_area = :id");
+        $check = $db->pdo->prepare("SELECT COUNT(*) as total FROM despacho WHERE id_area = :id");
         $check->execute([':id' => $id]);
         if ($check->fetch()->total > 0) {
             echo json_encode(['status' => 'error', 'message' => 'No se puede eliminar: el área tiene despachos históricos asociados']);

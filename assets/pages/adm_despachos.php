@@ -82,9 +82,9 @@
       </div>
       <div class="modal-body p-4 text-center">
         <i class="bi bi-arrow-counterclockwise text-danger display-4 mb-3 d-block"></i>
-        <h5 class="fw-bold text-dark">¿Anular esta entrega de insumos?</h5>
+        <h5 class="fw-bold text-dark">¿Anular este despacho de insumos?</h5>
         <p class="text-muted small mb-0">
-          Esta acción cancelará el registro de salida y devolverá automáticamente los productos a las existencias físicas del inventario.
+          Esta acción cancelará el registro de salida y reintegrará automáticamente los insumos a las existencias físicas del inventario.
         </p>
       </div>
       <div class="modal-footer bg-light justify-content-between">
