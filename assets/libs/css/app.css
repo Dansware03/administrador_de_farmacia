@@ -1,7 +1,17 @@
 /**
- * SIMAP - Shell y Layout Base (Bootstrap 5)
- * Sistema de Inventario de Materiales e Insumos de Proteccion
- * Clinica Popular Especializada La Fria
+ * SIMAP - Shell, Layout Base y Sistema de Diseño UI
+ *
+ * Hoja de estilos central para la interfaz institucional de usuario:
+ * - Tokens de diseño CSS (paleta cromática corporativa, dimensiones y superficies).
+ * - Barra de navegación superior fija con efecto de desenfoque (Glassmorphism).
+ * - Barra lateral flotante (Sidebar) responsiva con colapso desktop y soporte móvil.
+ * - Tarjetas interactivas de KPIs e indicadores de alerta de insumos y existencias.
+ * - Chips de filtrado interactivo para navegación de catálogo y lotes.
+ * - Tarjetas modernas de insumos médicos y paginación institucional.
+ *
+ * @package SIMAP\Styles
+ * @author Grupo de Proyecto
+ * @version 1.0.0
  */
 
 :root {
@@ -27,14 +37,14 @@ body {
     overflow-x: hidden;
 }
 
-/* Transiciones de pagina nativas (View Transition API) */
+/* Transiciones suaves de navegación nativas */
 @media (prefers-reduced-motion: no-preference) {
     @view-transition {
         navigation: auto;
     }
 }
 
-/* Navbar Superior (Glassmorphism & Depth 2026) */
+/* Barra de Navegación Superior con Desenfoque Suave */
 .simap-navbar {
     height: var(--simap-navbar-height);
     background-color: rgba(255, 255, 255, 0.92);
@@ -46,7 +56,7 @@ body {
     transition: all 0.3s ease;
 }
 
-/* Sidebar General */
+/* Barra Lateral (Sidebar) */
 .simap-sidebar {
     width: var(--simap-sidebar-width);
     background: linear-gradient(180deg, #152e4a 0%, #0d1e31 100%);
@@ -56,7 +66,7 @@ body {
     border-right: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-/* Sidebar Desktop (Fixed) */
+/* Sidebar en Modo Pantalla Grande (Desktop Fijo) */
 @media (min-width: 992px) {
     .simap-sidebar-desktop {
         position: fixed;
@@ -89,7 +99,7 @@ body {
     }
 }
 
-/* En Movil el wrapper usa el ancho total */
+/* Disposición para Dispositivos Móviles */
 @media (max-width: 991.98px) {
     .content-wrapper {
         margin-left: 0;
@@ -102,7 +112,7 @@ body {
     }
 }
 
-/* Brand Showcase (Logo que Resalta) */
+/* Identidad y Logotipo Institucional en Sidebar */
 .simap-brand {
     min-height: 72px;
     display: flex;
@@ -153,7 +163,7 @@ body {
     font-weight: 500;
 }
 
-/* User Card Panel */
+/* Tarjeta de Información de Usuario en Sesión */
 .simap-user-panel {
     padding: 1rem 1.25rem;
     background: rgba(255, 255, 255, 0.03);
@@ -202,7 +212,7 @@ body {
     border: 1px solid rgba(16, 185, 129, 0.4);
 }
 
-/* Floating Pill Navigation */
+/* Enlaces de Navegación del Menú Lateral */
 .simap-sidebar .nav-header {
     font-size: 0.68rem;
     font-weight: 800;
@@ -255,7 +265,7 @@ body {
     color: #ffffff;
 }
 
-/* Footer */
+/* Pie de Página Principal */
 .simap-main-footer {
     background-color: var(--simap-surface);
     border-top: 1px solid var(--simap-border);
@@ -264,7 +274,7 @@ body {
     color: var(--simap-text-muted);
 }
 
-/* Adaptacion de componentes interiores existentes */
+/* Estructura de Contenido y Encabezados */
 .content-header {
     padding: 1.25rem 0.5rem;
 }
@@ -297,7 +307,7 @@ body {
     color: var(--simap-primary);
 }
 
-/* Compatibilidad con clases antiguas de botones y temas de tarjetas */
+/* Bordes Superiores Temáticos de Tarjetas */
 .card-primary .card-header {
     border-top: 3px solid var(--simap-primary);
 }
@@ -314,7 +324,7 @@ body {
     background-color: var(--simap-secondary) !important;
 }
 
-/* Estilos de Carrito en Nav */
+/* Menú Desplegable del Carrito de Entrega */
 #cat-carrito .dropdown-menu {
     min-width: 320px;
     max-width: 90vw;
@@ -323,7 +333,7 @@ body {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* Preloader / Splash de Carga Global */
+/* Pantalla de Carga y Preloader Global */
 .simap-loader-overlay {
     position: fixed;
     top: 0;
@@ -346,11 +356,7 @@ body {
     pointer-events: none;
 }
 
-/* ========================================================
-   ESTILOS CATÁLOGO E INVENTARIO HOSPITALARIO (SIMAP 2026)
-   ======================================================== */
-
-/* KPI Summary Cards */
+/* Tarjetas de Indicadores Clave (KPIs) */
 .simap-kpi-card {
     border: 1px solid var(--simap-border);
     border-radius: 0.85rem;
@@ -383,7 +389,7 @@ body {
 .simap-kpi-warning { background: rgba(245, 158, 11, 0.12); color: #d97706; }
 .simap-kpi-success { background: rgba(16, 185, 129, 0.12); color: #059669; }
 
-/* Filter Chips */
+/* Chips de Filtro Dinámico de Categorías */
 .simap-filter-chip {
     padding: 0.45rem 1rem;
     font-size: 0.82rem;
@@ -413,7 +419,7 @@ body {
     box-shadow: 0 2px 8px rgba(26, 58, 92, 0.25);
 }
 
-/* Modern Hospital Product Card */
+/* Tarjeta de Insumo Hospitalario */
 .product-card-modern {
     background: #ffffff;
     border: 1px solid var(--simap-border);
@@ -518,7 +524,7 @@ body {
     border-top: 1px solid var(--simap-border);
 }
 
-/* Lotes en Riesgo Row States */
+/* Indicadores de Fila para Lotes en Riesgo */
 .lote-row-danger {
     background-color: rgba(239, 68, 68, 0.06) !important;
 }
@@ -527,7 +533,7 @@ body {
     background-color: rgba(245, 158, 11, 0.06) !important;
 }
 
-/* Paginación Moderna SIMAP (2026) */
+/* Paginación de Registros */
 .pagination .page-link {
     border: 1px solid var(--simap-border);
     color: var(--simap-text);
@@ -563,7 +569,7 @@ body {
     cursor: not-allowed;
 }
 
-/* Dropdown Alertas Lotes */
+/* Desplegable de Notificaciones y Alertas de Lotes */
 #cat-alertas-lotes .dropdown-menu {
     border-radius: 0.75rem;
     animation: fadeInDown 0.2s ease-in-out;

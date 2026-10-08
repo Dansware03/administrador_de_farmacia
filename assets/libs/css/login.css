@@ -1,7 +1,12 @@
 /**
- * SIMAP - Estilos para Pantalla de Inicio de Sesion
- * Sistema de Inventario de Materiales y Insumos de Proteccion
- * Clinica Popular Especializada La Fria
+ * SIMAP - Hoja de Estilos de Login y Autenticación
+ *
+ * Define la identidad visual, tipografía institucional, layout de pantalla dividida,
+ * efectos de fondo degradados y controles de formulario del portal de acceso.
+ *
+ * @package SIMAP\Styles
+ * @author Grupo de Proyecto
+ * @version 1.0.0
  */
 
 :root {
@@ -23,7 +28,7 @@ body {
     min-height: 100vh;
 }
 
-/* Panel institucional izquierdo (Desktop) */
+/* Panel institucional decorativo (Desktop) */
 .login-banner {
     background: linear-gradient(145deg, var(--simap-primary) 0%, var(--simap-primary-dark) 100%);
     color: #ffffff;
@@ -54,7 +59,7 @@ body {
     letter-spacing: 0.5px;
 }
 
-/* Formulario e inputs */
+/* Tarjeta y formulario de inicio de sesión */
 .login-card {
     max-width: 440px;
     width: 100%;
@@ -83,7 +88,7 @@ body {
     color: var(--simap-secondary);
 }
 
-/* Boton principal */
+/* Botón principal de acceso */
 .btn-simap {
     background: linear-gradient(90deg, var(--simap-primary) 0%, var(--simap-secondary) 100%);
     border: none;
@@ -106,7 +111,7 @@ body {
     transform: translateY(0);
 }
 
-/* Alternador de contrasena */
+/* Botón visor para mostrar/ocultar contraseña */
 .btn-toggle-pass {
     border-color: var(--simap-border);
     background-color: var(--simap-surface);
