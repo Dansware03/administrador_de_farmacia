@@ -2,13 +2,17 @@
 /**
  * ============================================================================
  * ARCHIVO: ProveedorController.php
- * CAPA: Controlador (Orquestación Backend HTTP)
- * DESCRIPCIÓN: Gestiona las peticiones de proveedores y donantes institucionales.
- * ENTRADA: Peticiones AJAX POST desde assets/libs/js/proveedor.js.
- * SALIDA: Estados en texto plano ('add', 'edit', 'borrado') o JSON.
+ * CAPA: Controlador (Backend / Orquestación HTTP)
+ * DESCRIPCIÓN: Gestiona las entidades de proveedores comerciales, organismos
+ *              humanitarios y donantes institucionales (INTERSOS, FUNREAHV, etc.).
+ *              Orquesta altas, edición, subida de logos y consulta para poblar
+ *              selectores en la recepción de lotes de insumos.
+ * ENTRADA: Peticiones AJAX POST desde assets/libs/js/proveedor.js y lote.js.
+ * SALIDA: Estados en texto plano ('add', 'edit', 'borrado') o arreglos en formato JSON.
  * DEPENDENCIAS: assets/db/Proveedor.php (Modelo Proveedor).
  * ============================================================================
  */
+
 include_once '../db/Proveedor.php';
 $proveedor = new Proveedor();
 
@@ -19,15 +23,15 @@ if (isset($_POST['funcion'])) {
          * CASO DE USO: Registrar Proveedor o Donante
          * --------------------------------------------------------------------
          * @route POST assets/controller/ProveedorController.php [funcion=crear]
-         * @param string $_POST['nombre'] Nombre de la entidad proveedora.
-         * @param string $_POST['telefono'] Número de contacto.
-         * @param string $_POST['correo'] Correo electrónico (opcional).
-         * @param string $_POST['direccion'] Ubicación física o sede.
+         * @param string $_POST['nombre']    Nombre de la entidad proveedora o donante.
+         * @param string $_POST['telefono']  Número de contacto telefónico.
+         * @param string $_POST['correo']    Correo electrónico institucional (opcional).
+         * @param string $_POST['direccion'] Ubicación física o sede operativa.
          * 
          * FLUJO DE EJECUCIÓN:
          *   1. Recepción y saneamiento de variables de entrada.
          *   2. Validación de presencia de campos obligatorios (nombre y teléfono).
-         *   3. Delegación al Modelo: $proveedor->crear(...).
+         *   3. Delegación al Modelo: `Proveedor::crear(...)`.
          *   4. Respuesta: Imprime 'add' en éxito o mensaje de error.
          * --------------------------------------------------------------------
          */
@@ -51,6 +55,15 @@ if (isset($_POST['funcion'])) {
                 echo 'Error: ' . $e->getMessage();
             }
             break;
+
+        /**
+         * CASO DE USO: Actualizar Avatar o Logotipo del Proveedor
+         * --------------------------------------------------------------------
+         * @route POST assets/controller/ProveedorController.php [funcion=cambiar_avatar]
+         * @param int   $_POST['id_logo_prod'] ID del proveedor a actualizar.
+         * @param array $_FILES['foto']        Archivo de imagen subido (JPEG, PNG, BMP).
+         * --------------------------------------------------------------------
+         */
         case 'cambiar_avatar':
             $id = $_POST['id_logo_prod'];
             $avatar = $_POST['avatar'];
@@ -82,7 +95,20 @@ if (isset($_POST['funcion'])) {
                 $jsonstring = json_encode($json[0]);
                 echo $jsonstring;
             }
-        break;
+            break;
+
+        /**
+         * CASO DE USO: Buscar y Listar Proveedores
+         * --------------------------------------------------------------------
+         * @route POST assets/controller/ProveedorController.php [funcion=buscar_prov]
+         * @param string $_POST['consulta'] Filtro de búsqueda textual (opcional).
+         * 
+         * FLUJO DE EJECUCIÓN:
+         *   1. Invoca `Proveedor::buscar($consulta)`.
+         *   2. Mapea la colección a un arreglo asociativo en JSON.
+         *   3. Emite respuesta serializada para renderizar la tabla de proveedores.
+         * --------------------------------------------------------------------
+         */
         case 'buscar_prov':
             try {
                 $proveedor->buscar(isset($_POST['consulta']) ? $_POST['consulta'] : '');
@@ -101,10 +127,21 @@ if (isset($_POST['funcion'])) {
                 $jsonstring = json_encode($json);
                 echo $jsonstring;
             } catch (Exception $e) {
-                // If any error occurs, return an empty JSON array
                 echo json_encode([]);
             }
             break;
+
+        /**
+         * CASO DE USO: Editar Datos de un Proveedor
+         * --------------------------------------------------------------------
+         * @route POST assets/controller/ProveedorController.php [funcion=editar]
+         * @param int    $_POST['id_editado'] ID del proveedor a modificar.
+         * @param string $_POST['nombre']     Nombre comercial actualizado.
+         * @param string $_POST['telefono']   Teléfono actualizado.
+         * @param string $_POST['correo']     Correo actualizado.
+         * @param string $_POST['direccion']  Dirección actualizada.
+         * --------------------------------------------------------------------
+         */
         case 'editar':
             $id = isset($_POST['id_editado']) ? $_POST['id_editado'] : '';
             $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : '';
@@ -113,21 +150,38 @@ if (isset($_POST['funcion'])) {
             $direccion = isset($_POST['direccion']) ? $_POST['direccion'] : '';
 
             $proveedor->editar($id, $nombre, $telefono, $correo, $direccion);
-        break;
+            break;
+
+        /**
+         * CASO DE USO: Eliminar Proveedor del Sistema
+         * --------------------------------------------------------------------
+         * @route POST assets/controller/ProveedorController.php [funcion=borrar_prove]
+         * @param int $_POST['id'] ID del proveedor a dar de baja.
+         * --------------------------------------------------------------------
+         */
         case 'borrar_prove':
-            $id=$_POST['id'];
+            $id = $_POST['id'];
             $proveedor->borrar_prove($id);
-        break;
+            break;
+
+        /**
+         * CASO DE USO: Poblar Selectores de Proveedores (Dropdowns)
+         * --------------------------------------------------------------------
+         * @route POST assets/controller/ProveedorController.php [funcion=rellenar_proveedor]
+         * @description Obtiene los proveedores para poblar el menú desplegable
+         *              al registrar nuevos lotes en el inventario.
+         * --------------------------------------------------------------------
+         */
         case 'rellenar_proveedor':
             $proveedor->rellenar_proveedor();
             $json = array();
             foreach ($proveedor->objetos as $objeto) {
-                $json[]=array(
-                    'id'=>$objeto->id_proveedor,
-                    'nombre'=>$objeto->nombre
+                $json[] = array(
+                    'id' => $objeto->id_proveedor,
+                    'nombre' => $objeto->nombre
                 );
             }
-            $jsonstring=json_encode($json);
+            $jsonstring = json_encode($json);
             echo $jsonstring;
             break;
     }
