@@ -9,17 +9,6 @@ $(document).ready(function () {
     }
   }
 
-  function actualizarTotalCarrito() {
-    let total = 0;
-    $("#lista_carrito tr").each(function () {
-      const precio = parseFloat(
-        $(this).find("td:eq(4)").text().replace("$", "")
-      ) || 0;
-      total += precio;
-    });
-    $("#total_carrito").text(`Total: $${total.toFixed(2)}`);
-  }
-
   $(document).on("click", ".agg_compra", function () {
     const elemento = $(this).closest("[proId]");
     const id = elemento.attr("proId");
@@ -162,24 +151,21 @@ $(document).ready(function () {
     let productos = RecuperarLS();
     $("#lista-compra").empty();
     productos.forEach((producto) => {
-      const subtotal = (parseFloat(producto.precio || 0) * parseInt(producto.cantidad || 1)).toFixed(2);
       const unidadTexto = producto.uniMedida ? `${producto.uniMedida} (${producto.uniCodigo || 'und'})` : 'Unidad (und)';
       const especTexto = producto.espTalla || producto.concentracionCompleta || '-';
       const template = `
         <tr data_id="${producto.id}">
             <td class="fw-bold">${producto.nombre}</td>
             <td><span class="badge bg-secondary">${producto.stock}</span></td>
-            <td>$${parseFloat(producto.precio || 0).toFixed(2)}</td>
             <td>
               <div class="small fw-semibold text-dark">${unidadTexto}</div>
               <small class="text-muted">${especTexto}</small>
             </td>
-            <td style="width: 120px;">
+            <td style="width: 140px;">
               <input type="number" min="1" max="${producto.stock}" class="form-control form-control-sm cantidad_producto" value="${producto.cantidad}">
             </td>
-            <td class="subtotales fw-bold text-primary">$${subtotal}</td>
             <td class="text-center">
-              <button class="borrar_de_carrito btn btn-sm btn-danger" title="Eliminar ítem">
+              <button class="borrar_de_carrito btn btn-sm btn-outline-danger" title="Eliminar ítem">
                 <i class="bi bi-trash"></i>
               </button>
             </td>
@@ -198,7 +184,6 @@ $(document).ready(function () {
     productos.forEach(function (prod) {
       if (prod.id === id) {
         prod.cantidad = cantidad;
-        fila.find(".subtotales").text(`$${(cantidad * parseFloat(prod.precio || 0)).toFixed(2)}`);
       }
     });
 
@@ -212,31 +197,77 @@ $(document).ready(function () {
     cargar_areas_servicio();
     calcularTotal();
 
-    function cargar_areas_servicio() {
+    function cargar_areas_servicio(id_seleccionar = null) {
       $.post('../controller/AreaController.php', { funcion: 'cargar_areas' })
         .done(function(response) {
           const areas = JSON.parse(response);
           const opciones = areas.map(a => `<option value="${a.id_area}">${a.nombre_area} (Riesgo: ${a.nivel_riesgo})</option>`);
           $('#area_destino').html(opciones.join(''));
+          if (id_seleccionar) {
+            $('#area_destino').val(id_seleccionar).trigger('change');
+          }
         })
         .fail(function(error) {
           console.error("Error al cargar áreas de servicio:", error);
         });
     }
 
+    // Registro rápido de área hospitalaria desde adm_retiro
+    $('#form_nueva_area_rapida').on('submit', function(e) {
+      e.preventDefault();
+      const nombre_area = $('#modal_nombre_area').val().trim();
+      const nivel_riesgo = $('#modal_nivel_riesgo').val();
+
+      if (!nombre_area) return;
+
+      $.post('../controller/AreaController.php', {
+        funcion: 'crear_area',
+        nombre_area: nombre_area,
+        nivel_riesgo: nivel_riesgo
+      }, function(response) {
+        let res = {};
+        try {
+          res = JSON.parse(response);
+        } catch (err) {
+          res = { status: 'error', message: 'Respuesta inválida del servidor' };
+        }
+
+        if (res.status === 'success') {
+          $('#form_nueva_area_rapida').trigger('reset');
+          const modalEl = document.getElementById('modal_nueva_area');
+          const modalObj = bootstrap.Modal.getInstance(modalEl);
+          if (modalObj) modalObj.hide();
+
+          cargar_areas_servicio(res.id_area);
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Área Registrada',
+            text: `Se ha añadido "${res.nombre_area}" y seleccionado automáticamente.`,
+            showConfirmButton: false,
+            timer: 1600
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'No se pudo registrar',
+            text: res.message || 'Verifique si el área ya existe.'
+          });
+        }
+      });
+    });
+
     function calcularTotal() {
-      let total = 0;
       let totalCantidad = 0;
       let productos = RecuperarLS();
       productos.forEach((producto) => {
         let cant = parseInt(producto.cantidad) || 1;
         totalCantidad += cant;
-        let subtotalProducto = Number((producto.precio || 0) * cant) || 0;
-        total += subtotalProducto;
       });
 
+      $("#total_items_tipos").text(productos.length);
       $("#total_items").text(totalCantidad);
-      $("#total").text(`$${total.toFixed(2)}`);
+      $("#total").val("0");
     }
 
     window.calcularTotal = calcularTotal;
@@ -253,7 +284,7 @@ $(document).ready(function () {
     let id_area = $("#area_destino").val();
     let cargo_receptor = $("#cargo_receptor").val() || "";
     let observacion = $("#observacion_entrega").val() || "";
-    let total = $("#total").text().replace("$", "");
+    let total = $("#total").val() || "0";
 
     if (RecuperarLS().length === 0) {
       Swal.fire({

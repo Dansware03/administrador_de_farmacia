@@ -2,6 +2,43 @@
 <title><?php echo htmlspecialchars($_SESSION['nombre_us']); ?> | Procesar Entrega de Insumos</title>
 <?php include_once 'layouts/nav.php'; ?>
 
+<!-- Modal Registro Rápido de Área Hospitalaria -->
+<div class="modal fade" id="modal_nueva_area" tabindex="-1" aria-labelledby="modalNuevaAreaLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title fw-bold" id="modalNuevaAreaLabel">
+          <i class="bi bi-hospital me-2"></i>Registrar Nueva Área Hospitalaria
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <form id="form_nueva_area_rapida">
+        <div class="modal-body p-4">
+          <div class="mb-3">
+            <label for="modal_nombre_area" class="form-label fw-semibold small text-secondary">Nombre del Área / Departamento <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="modal_nombre_area" placeholder="Ej: Pediatría y Neonatología" required maxlength="100">
+          </div>
+          <div class="mb-3">
+            <label for="modal_nivel_riesgo" class="form-label fw-semibold small text-secondary">Nivel de Riesgo Biológico <span class="text-danger">*</span></label>
+            <select class="form-select" id="modal_nivel_riesgo" required>
+              <option value="Bajo">Bajo (Áreas administrativas, pasillos, almacén)</option>
+              <option value="Medio" selected>Medio (Hospitalización, cocina, nutrición)</option>
+              <option value="Alto">Alto (Quirófano, aislamiento, emergencia, partos, baños)</option>
+            </select>
+            <div class="form-text small">Clasificación según directriz de bioseguridad SIMAP para prevención de contaminación cruzada.</div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary fw-semibold" id="btn_guardar_area_rapida">
+            <i class="bi bi-check-lg me-1"></i>Guardar y Seleccionar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
   <!-- Content Wrapper -->
   <div class="content-wrapper">
     <!-- Content Header -->
@@ -58,9 +95,16 @@
                   </div>
 
                   <div class="col-md-6">
-                    <label for="area_destino" class="form-label fw-semibold small text-secondary">
-                      Área Hospitalaria de Destino <span class="text-danger">*</span>
-                    </label>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <label for="area_destino" class="form-label fw-semibold small text-secondary mb-0">
+                        Área Hospitalaria de Destino <span class="text-danger">*</span>
+                      </label>
+                      <?php if ($_SESSION['us_tipo'] == 1): ?>
+                      <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none small text-primary" data-bs-toggle="modal" data-bs-target="#modal_nueva_area">
+                        <i class="bi bi-plus-circle me-1"></i>Nueva Área
+                      </button>
+                      <?php endif; ?>
+                    </div>
                     <div class="input-group">
                       <span class="input-group-text"><i class="bi bi-hospital"></i></span>
                       <select class="form-select select2" id="area_destino" style="width: 85%;" required></select>
@@ -109,10 +153,8 @@
                     <tr>
                       <th class="ps-3">Insumo</th>
                       <th>Stock Disp.</th>
-                      <th>Costo Ref.</th>
                       <th>Unidad / Espec.</th>
-                      <th>Cantidad</th>
-                      <th>Subtotal</th>
+                      <th>Cantidad a Despachar</th>
                       <th class="text-center">Quitar</th>
                     </tr>
                   </thead>
@@ -139,8 +181,13 @@
               </div>
               <div class="card-body p-4">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                  <span class="text-muted">Cantidad de Insumos</span>
-                  <span class="fw-semibold text-dark" id="total_items">0</span>
+                  <span class="text-muted">Tipos de Insumos</span>
+                  <span class="fw-semibold text-dark" id="total_items_tipos">0</span>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="text-muted">Total Unidades Físicas</span>
+                  <span class="fw-bold fs-5 text-primary" id="total_items">0</span>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -150,10 +197,7 @@
 
                 <hr class="my-3">
 
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                  <span class="fs-6 fw-bold text-secondary">Costo Ref. Total:</span>
-                  <span class="fs-4 fw-bold text-primary" id="total">$0.00</span>
-                </div>
+                <input type="hidden" id="total" value="0">
 
                 <div class="d-grid gap-2">
                   <button type="button" class="btn btn-primary btn-lg shadow-sm fw-semibold" id="procesar_compra">
@@ -169,6 +213,13 @@
   </div>
   <!-- /.content-wrapper -->
 
-<?php include_once 'layouts/footer.php'; } else { header('Location: ../../index.php'); } ?>
-<script src="../libs/js/catalogo.js"></script>
-<script src="../libs/js/carrito.js"></script>
+<?php 
+$page_scripts = '
+<script src="' . asset_v('../libs/js/catalogo.js') . '"></script>
+<script src="' . asset_v('../libs/js/carrito.js') . '"></script>
+';
+include_once 'layouts/footer.php'; 
+} else { 
+  header('Location: ../../index.php'); 
+} 
+?>

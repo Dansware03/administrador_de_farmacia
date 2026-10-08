@@ -78,10 +78,36 @@
             <input type="hidden" id="id_editar_presentacion">
           </div>
         </div>
+<!-- Modal Área Hospitalaria -->
+<div class="modal fade" id="crear-area" tabindex="-1" aria-labelledby="crearAreaLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title fw-bold" id="crearAreaLabel">
+          <i class="bi bi-hospital me-2"></i>Área Hospitalaria
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <form id="form-crear-area">
+        <div class="modal-body p-4">
+          <div class="mb-3">
+            <label for="nombre-area" class="form-label fw-semibold small text-secondary">Nombre del Área / Departamento <span class="text-danger">*</span></label>
+            <input id="nombre-area" type="text" class="form-control" placeholder="Ej: Pediatría, Traumatología, Sala de Espera" required maxlength="100">
+            <input type="hidden" id="id_editar_area">
+          </div>
+          <div class="mb-3">
+            <label for="nivel-riesgo-area" class="form-label fw-semibold small text-secondary">Nivel de Riesgo Biológico <span class="text-danger">*</span></label>
+            <select id="nivel-riesgo-area" class="form-select" required>
+              <option value="Bajo">Bajo (Administración, pasillos, archivo)</option>
+              <option value="Medio" selected>Medio (Hospitalización, cocina, consulta externa)</option>
+              <option value="Alto">Alto (Quirófano, aislamiento, emergencia, partos, baños)</option>
+            </select>
+          </div>
+        </div>
         <div class="modal-footer bg-light">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
           <button type="submit" class="btn btn-primary fw-semibold">
-            <i class="bi bi-check-lg me-1"></i>Guardar Presentación
+            <i class="bi bi-check-lg me-1"></i>Guardar Área
           </button>
         </div>
       </form>
@@ -129,6 +155,11 @@
             <li class="nav-item" role="presentation">
               <button class="nav-link px-4 py-2 fw-semibold" id="pres-tab" data-bs-toggle="pill" data-bs-target="#presentacion" type="button" role="tab" aria-controls="presentacion" aria-selected="false">
                 <i class="bi bi-box-seam me-2"></i>Presentaciones
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link px-4 py-2 fw-semibold" id="area-tab" data-bs-toggle="pill" data-bs-target="#area_tab_pane" type="button" role="tab" aria-controls="area_tab_pane" aria-selected="false">
+                <i class="bi bi-hospital me-2"></i>Áreas Hospitalarias
               </button>
             </li>
           </ul>
@@ -207,6 +238,31 @@
                 </table>
               </div>
             </div>
+
+            <!-- TAB 4: ÁREAS HOSPITALARIAS -->
+            <div class="tab-pane fade" id="area_tab_pane" role="tabpanel" aria-labelledby="area-tab">
+              <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                <div class="input-group flex-grow-1" style="max-width: 450px;">
+                  <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                  <input id="buscar-area" type="text" class="form-control bg-light" placeholder="Buscar área hospitalaria...">
+                </div>
+                <button type="button" data-bs-toggle="modal" data-bs-target="#crear-area" class="btn btn-primary shadow-sm fw-semibold">
+                  <i class="bi bi-plus-circle me-1"></i>Nueva Área Hospitalaria
+                </button>
+              </div>
+              <div class="table-responsive rounded-3 border">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light small">
+                    <tr>
+                      <th class="ps-3">Área / Departamento Asistencial</th>
+                      <th style="width: 180px;">Riesgo Biológico</th>
+                      <th class="text-end pe-3" style="width: 150px;">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="areas_tabla"></tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -215,7 +271,15 @@
 </div>
 <!-- /.content-wrapper -->
 
-<?php include_once 'layouts/footer.php'; } else { header('Location: ../../index.php'); } ?>
-<script src="../libs/js/laboratory.js"></script>
-<script src="../libs/js/type.js"></script>
-<script src="../libs/js/presentaciones.js"></script>
+<?php 
+$page_scripts = '
+<script src="' . asset_v('../libs/js/laboratory.js') . '"></script>
+<script src="' . asset_v('../libs/js/type.js') . '"></script>
+<script src="' . asset_v('../libs/js/presentaciones.js') . '"></script>
+<script src="' . asset_v('../libs/js/areas.js') . '"></script>
+';
+include_once 'layouts/footer.php'; 
+} else { 
+  header('Location: ../../index.php'); 
+} 
+?>
