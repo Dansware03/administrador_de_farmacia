@@ -11,7 +11,6 @@ if (isset($_POST['funcion'])) {
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();
             }
-            $total = (isset($_POST['total']) && is_numeric($_POST['total'])) ? floatval($_POST['total']) : 0.0;
             $nombre = isset($_POST['nombre']) ? trim($_POST['nombre']) : '';
             $ci = isset($_POST['ci']) ? trim($_POST['ci']) : '';
             $id_area = !empty($_POST['id_area']) ? intval($_POST['id_area']) : null;
@@ -26,7 +25,7 @@ if (isset($_POST['funcion'])) {
                 if (empty($productos) || !is_array($productos)) {
                     throw new Exception("No hay insumos seleccionados para despachar.");
                 }
-                $compra->registrar_compra($nombre, $ci, $total, $vendedor, $productos, $id_area, $cargo_receptor, $observacion);
+                $compra->registrar_compra($nombre, $ci, $vendedor, $productos, $id_area, $cargo_receptor, $observacion);
                 $mensaje = array(
                     'status' => 'success',
                     'message' => 'Despacho y entrega de insumos registrado exitosamente.'

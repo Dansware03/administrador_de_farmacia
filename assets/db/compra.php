@@ -8,31 +8,29 @@ class Compra {
         $this->acceso = $db->pdo;
     }
     
-    public function registrar_compra($nombre, $ci, $total, $vendedor, $productos, $id_area = null, $cargo_receptor = '', $observacion = '') {
+    public function registrar_compra($nombre, $ci, $vendedor, $productos, $id_area = null, $cargo_receptor = '', $observacion = '') {
         // Iniciar una transacción para garantizar la integridad de los datos
         $this->acceso->beginTransaction();
         
         try {
             // 1. Insertar en la cabecera de despacho (tabla venta)
             $fecha = date('Y-m-d H:i:s');
-            $query = "INSERT INTO venta(fecha, cliente, ci, total, vendedor, id_area, cargo_receptor, observacion) VALUES (?,?,?,?,?,?,?,?)";
+            $query = "INSERT INTO venta(fecha, cliente, ci, vendedor, id_area, cargo_receptor, observacion) VALUES (?,?,?,?,?,?,?)";
             $stmtVenta = $this->acceso->prepare($query);
-            $stmtVenta->execute([$fecha, $nombre, $ci, $total, $vendedor, $id_area, $cargo_receptor, $observacion]);
+            $stmtVenta->execute([$fecha, $nombre, $ci, $vendedor, $id_area, $cargo_receptor, $observacion]);
             
             // Obtener el ID del despacho recién insertado
             $id_venta = $this->acceso->lastInsertId();
             
             // 2. Insertar cada producto en la tabla venta_producto
-            $query = "INSERT INTO venta_producto(cantidad, subtotal, producto_id_producto, venta_id_venta) VALUES (?,?,?,?)";
+            $query = "INSERT INTO venta_producto(cantidad, producto_id_producto, venta_id_venta) VALUES (?,?,?)";
             $stmtProducto = $this->acceso->prepare($query);
             
             foreach ($productos as $producto) {
-                $cantidad = $producto['cantidad'];
-                $precio = $producto['precio'];
+                $cantidad = (int)($producto['cantidad'] ?? 1);
                 $id_producto = $producto['id'];
-                $subtotal = $cantidad * $precio;
                 
-                $stmtProducto->execute([$cantidad, $subtotal, $id_producto, $id_venta]);
+                $stmtProducto->execute([$cantidad, $id_producto, $id_venta]);
                 
                 // 3. Actualizar el stock en lotes
                 $this->actualizar_stock_por_lotes($id_producto, $cantidad, $id_venta);
@@ -40,7 +38,7 @@ class Compra {
             
             // Confirmar la transacción
             $this->acceso->commit();
-            return true;
+            return $id_venta;
             
         } catch (Exception $error) {
             // Si hay algún error, revertir todas las operaciones

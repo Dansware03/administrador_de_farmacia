@@ -43,7 +43,6 @@ class Venta {
     public function ver_detalle_venta($id_venta) {
         $sql = "SELECT vp.*, 
                        p.nombre as producto, 
-                       p.precio as precio, 
                        p.especificacion_talla,
                        COALESCE(um.nombre, 'Unidad') as unidad_medida,
                        COALESCE(um.codigo, 'und') as unidad_codigo,
@@ -144,7 +143,7 @@ class Venta {
     }
     
     // Actualizar acta de entrega y recalcular existencias
-    public function actualizar_venta($id_venta, $cliente, $ci, $total, $productos, $id_area = null, $cargo_receptor = '', $observacion = '') {
+    public function actualizar_venta($id_venta, $cliente, $ci, $productos, $id_area = null, $cargo_receptor = '', $observacion = '') {
         // Iniciar transacción
         $this->acceso->beginTransaction();
         
@@ -194,7 +193,6 @@ class Venta {
             $sql = "UPDATE venta SET 
                     cliente = :cliente, 
                     ci = :ci, 
-                    total = :total,
                     id_area = :id_area,
                     cargo_receptor = :cargo_receptor,
                     observacion = :observacion
@@ -202,7 +200,6 @@ class Venta {
             $query = $this->acceso->prepare($sql);
             $query->bindParam(':cliente', $cliente);
             $query->bindParam(':ci', $ci);
-            $query->bindParam(':total', $total);
             $query->bindParam(':id_area', $id_area);
             $query->bindParam(':cargo_receptor', $cargo_receptor);
             $query->bindParam(':observacion', $observacion);
@@ -215,15 +212,13 @@ class Venta {
             foreach ($productos_array as $producto) {
                 $id_producto = $producto['producto_id_producto'];
                 $id_lote = $producto['id_det_lote'] ?? null;
-                $cantidad = $producto['cantidad'];
-                $subtotal = $producto['precio'] * $cantidad;
+                $cantidad = (int)($producto['cantidad'] ?? 1);
                 
                 // Insertar en venta_producto
-                $sql = "INSERT INTO venta_producto (cantidad, subtotal, producto_id_producto, venta_id_venta) 
-                        VALUES (:cantidad, :subtotal, :id_producto, :id_venta)";
+                $sql = "INSERT INTO venta_producto (cantidad, producto_id_producto, venta_id_venta) 
+                        VALUES (:cantidad, :id_producto, :id_venta)";
                 $query = $this->acceso->prepare($sql);
                 $query->bindParam(':cantidad', $cantidad);
-                $query->bindParam(':subtotal', $subtotal);
                 $query->bindParam(':id_producto', $id_producto);
                 $query->bindParam(':id_venta', $id_venta);
                 $query->execute();

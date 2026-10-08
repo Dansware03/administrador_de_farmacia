@@ -197,8 +197,6 @@
 
                 <hr class="my-3">
 
-                <input type="hidden" id="total" value="0">
-
                 <div class="d-grid gap-2">
                   <button type="button" class="btn btn-primary btn-lg shadow-sm fw-semibold" id="procesar_compra">
                     <i class="bi bi-check2-circle me-1"></i>Procesar Acta de Entrega

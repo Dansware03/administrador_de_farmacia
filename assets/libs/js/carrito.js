@@ -14,7 +14,6 @@ $(document).ready(function () {
     const id = elemento.attr("proId");
     const nombre = elemento.attr("proNombre");
     const adicional = elemento.attr("addNombre");
-    const precio = elemento.attr("preNombre");
     const prod_lab = elemento.attr("nLabNombre");
     const prod_tip_prod = elemento.attr("nTypeNombre");
     const prod_present = elemento.attr("nPreNombre");
@@ -29,7 +28,6 @@ $(document).ready(function () {
       id: id,
       nombre: nombre,
       adicional: adicional,
-      precio: precio,
       prod_lab: prod_lab,
       prod_tip_prod: prod_tip_prod,
       prod_present: prod_present,
@@ -267,7 +265,6 @@ $(document).ready(function () {
 
       $("#total_items_tipos").text(productos.length);
       $("#total_items").text(totalCantidad);
-      $("#total").val("0");
     }
 
     window.calcularTotal = calcularTotal;
@@ -284,7 +281,6 @@ $(document).ready(function () {
     let id_area = $("#area_destino").val();
     let cargo_receptor = $("#cargo_receptor").val() || "";
     let observacion = $("#observacion_entrega").val() || "";
-    let total = $("#total").val() || "0";
 
     if (RecuperarLS().length === 0) {
       Swal.fire({
@@ -319,9 +315,27 @@ $(document).ready(function () {
     let productos = JSON.stringify(RecuperarLS());
     $.post(
       "../controller/CompraController.php",
-      { total, nombre, ci, id_area, cargo_receptor, observacion, productos },
+      { funcion: "registrar_compra", nombre, ci, id_area, cargo_receptor, observacion, productos },
       (response) => {
-        if (response.trim() === "add") {
+        let isSuccess = false;
+        let errorMsg = "";
+
+        try {
+          let res = JSON.parse(response);
+          if (res.status === "success") {
+            isSuccess = true;
+          } else {
+            errorMsg = res.message || "Error al procesar el despacho.";
+          }
+        } catch (e) {
+          if (response.trim() === "add") {
+            isSuccess = true;
+          } else {
+            errorMsg = response;
+          }
+        }
+
+        if (isSuccess) {
           Swal.fire({
             icon: "success",
             title: "¡Acta de Entrega Registrada!",
@@ -340,7 +354,7 @@ $(document).ready(function () {
           Swal.fire({
             icon: "error",
             title: "Error al procesar",
-            text: "No se pudo registrar la entrega de insumos: " + response,
+            text: "No se pudo registrar la entrega de insumos: " + errorMsg,
             confirmButtonColor: "#1a3a5c"
           });
         }

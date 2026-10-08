@@ -225,7 +225,6 @@ $(document).ready(function() {
                     id_area: id_area,
                     cargo_receptor: cargo_receptor,
                     observacion: observacion,
-                    total: total_venta,
                     productos: JSON.stringify(productos_venta)
                 }, function(response) {
                     let data = JSON.parse(response);

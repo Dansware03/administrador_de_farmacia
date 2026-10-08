@@ -34,12 +34,12 @@ if (isset($_POST['funcion'])) {
                 $venta->revertir_venta($id_venta);
                 $mensaje = array(
                     'status' => 'success',
-                    'message' => 'Venta anulada correctamente. Los productos han sido devueltos al inventario.'
+                    'message' => 'Despacho anulado correctamente. Los insumos han sido reintegrados al inventario.'
                 );
             } catch (Exception $e) {
                 $mensaje = array(
                     'status' => 'error',
-                    'message' => 'Error al anular la venta: ' . $e->getMessage()
+                    'message' => 'Error al anular el despacho: ' . $e->getMessage()
                 );
             }
             echo json_encode($mensaje);
@@ -92,14 +92,13 @@ if (isset($_POST['funcion'])) {
             $id_venta = $_POST['id_venta'];
             $cliente = $_POST['cliente'];
             $ci = $_POST['ci'];
-            $total = $_POST['total'];
             $productos = $_POST['productos'];
             $id_area = !empty($_POST['id_area']) ? $_POST['id_area'] : null;
             $cargo_receptor = $_POST['cargo_receptor'] ?? '';
             $observacion = $_POST['observacion'] ?? '';
             
             try {
-                $venta->actualizar_venta($id_venta, $cliente, $ci, $total, $productos, $id_area, $cargo_receptor, $observacion);
+                $venta->actualizar_venta($id_venta, $cliente, $ci, $productos, $id_area, $cargo_receptor, $observacion);
                 $mensaje = array(
                     'status' => 'success',
                     'message' => 'Acta de entrega actualizada correctamente'
