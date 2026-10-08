@@ -5,10 +5,9 @@ $(document).ready(function() {
         e.preventDefault();
         let id_area = $('#id_editar_area').val();
         let nombre_area = $('#nombre-area').val().trim();
-        let nivel_riesgo = $('#nivel-riesgo-area').val();
         let funcion = id_area ? 'editar_area' : 'crear_area';
 
-        $.post('../controller/AreaController.php', { id_area, nombre_area, nivel_riesgo, funcion }, function(response) {
+        $.post('../controller/AreaController.php', { id_area, nombre_area, funcion }, function(response) {
             let res = {};
             try {
                 res = JSON.parse(response);
@@ -50,23 +49,15 @@ $(document).ready(function() {
 
             const container = $('#areas_tabla');
             if (!areas || areas.length === 0) {
-                container.html(`<tr><td colspan="3" class="text-center py-4 text-muted">No se encontraron áreas hospitalarias.</td></tr>`);
+                container.html(`<tr><td colspan="2" class="text-center py-4 text-muted">No se encontraron áreas hospitalarias.</td></tr>`);
                 return;
             }
 
             const template = areas.map(area => {
-                let badgeClass = 'bg-secondary';
-                if (area.nivel_riesgo === 'Alto') badgeClass = 'bg-danger';
-                else if (area.nivel_riesgo === 'Medio') badgeClass = 'bg-warning text-dark';
-                else if (area.nivel_riesgo === 'Bajo') badgeClass = 'bg-success';
-
                 return `
-                <tr areaId="${area.id_area}" areaNombre="${area.nombre_area}" areaRiesgo="${area.nivel_riesgo}">
+                <tr areaId="${area.id_area}" areaNombre="${area.nombre_area}">
                     <td class="ps-3 fw-semibold text-dark">
                         <i class="bi bi-hospital text-primary me-2"></i>${area.nombre_area}
-                    </td>
-                    <td>
-                        <span class="badge ${badgeClass}">${area.nivel_riesgo}</span>
                     </td>
                     <td class="text-end pe-3">
                         <button class="editar_area btn btn-sm btn-outline-success me-1" title="Editar" type="button" data-bs-toggle="modal" data-bs-target="#crear-area">
@@ -91,11 +82,9 @@ $(document).ready(function() {
         const elemento = $(this).closest('tr');
         const id = elemento.attr('areaId');
         const nombre = elemento.attr('areaNombre');
-        const riesgo = elemento.attr('areaRiesgo');
 
         $('#id_editar_area').val(id);
         $('#nombre-area').val(nombre);
-        $('#nivel-riesgo-area').val(riesgo);
         $('#crearAreaLabel').html('<i class="bi bi-pencil me-2"></i>Editar Área Hospitalaria');
     });
 

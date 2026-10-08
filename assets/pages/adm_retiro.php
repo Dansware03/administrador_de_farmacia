@@ -18,15 +18,6 @@
             <label for="modal_nombre_area" class="form-label fw-semibold small text-secondary">Nombre del Área / Departamento <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="modal_nombre_area" placeholder="Ej: Pediatría y Neonatología" required maxlength="100">
           </div>
-          <div class="mb-3">
-            <label for="modal_nivel_riesgo" class="form-label fw-semibold small text-secondary">Nivel de Riesgo Biológico <span class="text-danger">*</span></label>
-            <select class="form-select" id="modal_nivel_riesgo" required>
-              <option value="Bajo">Bajo (Áreas administrativas, pasillos, almacén)</option>
-              <option value="Medio" selected>Medio (Hospitalización, cocina, nutrición)</option>
-              <option value="Alto">Alto (Quirófano, aislamiento, emergencia, partos, baños)</option>
-            </select>
-            <div class="form-text small">Clasificación según directriz de bioseguridad SIMAP para prevención de contaminación cruzada.</div>
-          </div>
         </div>
         <div class="modal-footer bg-light">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>

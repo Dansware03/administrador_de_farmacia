@@ -7,7 +7,7 @@ $funcion = $_POST['funcion'] ?? '';
 
 if ($funcion == 'cargar_areas') {
     $db = new Conexion();
-    $sql = "SELECT id_area, nombre_area, nivel_riesgo FROM area_servicio ORDER BY nombre_area ASC";
+    $sql = "SELECT id_area, nombre_area FROM area_servicio ORDER BY nombre_area ASC";
     $query = $db->pdo->prepare($sql);
     $query->execute();
     $areas = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -47,10 +47,6 @@ if ($funcion == 'crear_area') {
         exit();
     }
     $nombre = trim($_POST['nombre_area'] ?? '');
-    $riesgo = trim($_POST['nivel_riesgo'] ?? 'Medio');
-    if (!in_array($riesgo, ['Bajo', 'Medio', 'Alto'])) {
-        $riesgo = 'Medio';
-    }
 
     if (empty($nombre)) {
         echo json_encode(['status' => 'error', 'message' => 'El nombre del área es requerido']);
@@ -68,17 +64,16 @@ if ($funcion == 'crear_area') {
         }
 
         $db->pdo->beginTransaction();
-        $sql = "INSERT INTO area_servicio (nombre_area, nivel_riesgo) VALUES (:nombre, :riesgo)";
+        $sql = "INSERT INTO area_servicio (nombre_area) VALUES (:nombre)";
         $query = $db->pdo->prepare($sql);
-        $query->execute([':nombre' => $nombre, ':riesgo' => $riesgo]);
+        $query->execute([':nombre' => $nombre]);
         $idNuevo = $db->pdo->lastInsertId();
         $db->pdo->commit();
 
         echo json_encode([
             'status' => 'success',
             'id_area' => $idNuevo,
-            'nombre_area' => $nombre,
-            'nivel_riesgo' => $riesgo
+            'nombre_area' => $nombre
         ]);
         exit();
     } catch (Exception $e) {
@@ -97,10 +92,6 @@ if ($funcion == 'editar_area') {
     }
     $id = (int)($_POST['id_area'] ?? 0);
     $nombre = trim($_POST['nombre_area'] ?? '');
-    $riesgo = trim($_POST['nivel_riesgo'] ?? 'Medio');
-    if (!in_array($riesgo, ['Bajo', 'Medio', 'Alto'])) {
-        $riesgo = 'Medio';
-    }
 
     if ($id <= 0 || empty($nombre)) {
         echo json_encode(['status' => 'error', 'message' => 'Datos incompletos']);
@@ -110,9 +101,9 @@ if ($funcion == 'editar_area') {
     $db = new Conexion();
     try {
         $db->pdo->beginTransaction();
-        $sql = "UPDATE area_servicio SET nombre_area = :nombre, nivel_riesgo = :riesgo WHERE id_area = :id";
+        $sql = "UPDATE area_servicio SET nombre_area = :nombre WHERE id_area = :id";
         $query = $db->pdo->prepare($sql);
-        $query->execute([':nombre' => $nombre, ':riesgo' => $riesgo, ':id' => $id]);
+        $query->execute([':nombre' => $nombre, ':id' => $id]);
         $db->pdo->commit();
         echo json_encode(['status' => 'success', 'message' => 'Área actualizada']);
         exit();

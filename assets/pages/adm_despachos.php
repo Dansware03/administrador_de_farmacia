@@ -22,7 +22,6 @@
           <div class="col-md-4">
             <small class="text-muted d-block">Área de Servicio:</small>
             <strong class="fs-6 text-primary" id="area_detalle">---</strong>
-            <span id="riesgo_badge_detalle" class="badge bg-secondary small mt-1"></span>
           </div>
           <div class="col-md-4">
             <small class="text-muted d-block">Cédula / Identificador:</small>

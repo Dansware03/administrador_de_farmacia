@@ -10,7 +10,7 @@ $(document).ready(function() {
     function cargar_areas(id_seleccionado = null) {
         $.post('../controller/AreaController.php', { funcion: 'cargar_areas' }, function(response) {
             let areas = JSON.parse(response);
-            let opciones = areas.map(a => `<option value="${a.id_area}">${a.nombre_area} (Riesgo: ${a.nivel_riesgo})</option>`);
+            let opciones = areas.map(a => `<option value="${a.id_area}">${a.nombre_area}</option>`);
             $('#area_destino').html(opciones.join(''));
             if (id_seleccionado) {
                 $('#area_destino').val(id_seleccionado).trigger('change');

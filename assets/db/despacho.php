@@ -95,8 +95,7 @@ class Despacho {
      */
     public function listar_despachos() {
         $sql = "SELECT d.*, (u.nombre_us || ' ' || u.apellidos_us) as responsable_nombre,
-                       COALESCE(a.nombre_area, 'Área General') as area,
-                       a.nivel_riesgo
+                       COALESCE(a.nombre_area, 'Área General') as area
                 FROM despacho d 
                 JOIN usuario u ON d.responsable = u.id_usuario 
                 LEFT JOIN area_servicio a ON d.id_area = a.id_area
@@ -111,8 +110,7 @@ class Despacho {
      */
     public function listar_despachos_por_fechas($fecha_inicio, $fecha_fin) {
         $sql = "SELECT d.*, (u.nombre_us || ' ' || u.apellidos_us) as responsable_nombre,
-                       COALESCE(a.nombre_area, 'Área General') as area,
-                       a.nivel_riesgo
+                       COALESCE(a.nombre_area, 'Área General') as area
                 FROM despacho d 
                 JOIN usuario u ON d.responsable = u.id_usuario 
                 LEFT JOIN area_servicio a ON d.id_area = a.id_area
@@ -154,7 +152,7 @@ class Despacho {
      */
     public function obtener_despacho($id_despacho) {
         $sql = "SELECT d.*, (u.nombre_us || ' ' || u.apellidos_us) as responsable_nombre,
-                       a.nombre_area, a.nivel_riesgo
+                       a.nombre_area
                 FROM despacho d 
                 JOIN usuario u ON d.responsable = u.id_usuario 
                 LEFT JOIN area_servicio a ON d.id_area = a.id_area

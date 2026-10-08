@@ -180,18 +180,16 @@ INSERT INTO unidad_medida VALUES(8,'Kit','kit');
 INSERT INTO unidad_medida VALUES(9,'Frasco','frc');
 CREATE TABLE IF NOT EXISTS "area_servicio" (
         "id_area" INTEGER PRIMARY KEY AUTOINCREMENT,
-        "nombre_area" TEXT NOT NULL,
-        "nivel_riesgo" TEXT DEFAULT 'Medio'
-    );
-INSERT INTO area_servicio VALUES(1,'Nutrición y Dietética','Medio');
-INSERT INTO area_servicio VALUES(2,'Quirófano / Pabellón','Alto');
-INSERT INTO area_servicio VALUES(3,'Emergencia y Triaje','Alto');
-INSERT INTO area_servicio VALUES(4,'Hospitalización','Medio');
-INSERT INTO area_servicio VALUES(5,'Mantenimiento y Servicios Generales','Bajo');
-INSERT INTO area_servicio VALUES(6,'Baños y Áreas Sanitarias','Alto');
-INSERT INTO area_servicio VALUES(7,'Dirección y Administración','Bajo');
-INSERT INTO area_servicio VALUES(8,'Sala de Partos','Alto');
-INSERT INTO area_servicio VALUES(9,'Laboratorio y Bioanálisis','Alto');
+        "nombre_area" TEXT NOT NULL);
+INSERT INTO area_servicio VALUES(1,'Nutrición y Dietética');
+INSERT INTO area_servicio VALUES(2,'Quirófano / Pabellón');
+INSERT INTO area_servicio VALUES(3,'Emergencia y Triaje');
+INSERT INTO area_servicio VALUES(4,'Hospitalización');
+INSERT INTO area_servicio VALUES(5,'Mantenimiento y Servicios Generales');
+INSERT INTO area_servicio VALUES(6,'Baños y Áreas Sanitarias');
+INSERT INTO area_servicio VALUES(7,'Dirección y Administración');
+INSERT INTO area_servicio VALUES(8,'Sala de Partos');
+INSERT INTO area_servicio VALUES(9,'Laboratorio y Bioanálisis');
 CREATE TABLE despacho (
     id_despacho INTEGER PRIMARY KEY AUTOINCREMENT,
     fecha DATETIME,

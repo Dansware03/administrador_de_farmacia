@@ -17,12 +17,8 @@ $(document).ready(function() {
             { data: "fecha" },
             { 
                 data: "area",
-                render: function(data, type, row) {
-                    let badgeClass = "bg-secondary";
-                    if (row.nivel_riesgo === "Alto") badgeClass = "bg-danger";
-                    else if (row.nivel_riesgo === "Medio") badgeClass = "bg-warning text-dark";
-                    else if (row.nivel_riesgo === "Bajo") badgeClass = "bg-success";
-                    return `<span class="fw-semibold text-dark">${data || 'General'}</span> <span class="badge ${badgeClass} ms-1 small" style="font-size:0.7rem;">${row.nivel_riesgo || 'Bajo'}</span>`;
+                render: function(data) {
+                    return `<span class="fw-semibold text-dark">${data || 'General'}</span>`;
                 }
             },
             { data: "receptor" },
@@ -76,12 +72,6 @@ $(document).ready(function() {
         $('#receptor_detalle').text(data.receptor);
         $('#cargo_detalle').text(data.cargo_receptor || 'Personal Asignado');
         $('#area_detalle').text(data.area || 'Área General');
-        let riesgo = data.nivel_riesgo || 'Bajo';
-        let badgeClass = "bg-secondary";
-        if (riesgo === "Alto") badgeClass = "bg-danger";
-        else if (riesgo === "Medio") badgeClass = "bg-warning text-dark";
-        else if (riesgo === "Bajo") badgeClass = "bg-success";
-        $('#riesgo_badge_detalle').attr('class', `badge ${badgeClass} small mt-1`).text(`Riesgo: ${riesgo}`);
 
         $('#ci_detalle').text(data.ci_receptor);
         $('#fecha_detalle').text(data.fecha);

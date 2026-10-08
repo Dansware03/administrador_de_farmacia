@@ -125,7 +125,6 @@ $fecha_formateada = date('d/m/Y h:i A', strtotime($despacho['fecha']));
       <div class="col-md-6">
         <span class="text-muted d-block">Área Hospitalaria de Destino:</span>
         <strong class="text-primary fs-6"><?php echo htmlspecialchars($despacho['nombre_area'] ?? 'Área Asistencial General'); ?></strong>
-        <span class="badge bg-secondary ms-1 badge-riesgo">Riesgo: <?php echo htmlspecialchars($despacho['nivel_riesgo'] ?? 'Bajo'); ?></span>
       </div>
       <div class="col-md-6">
         <span class="text-muted d-block">Funcionario Receptor:</span>

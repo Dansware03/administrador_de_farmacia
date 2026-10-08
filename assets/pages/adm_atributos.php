@@ -113,14 +113,6 @@ include_once 'layouts/header.php';
             <input id="nombre-area" type="text" class="form-control" placeholder="Ej: Pediatría, Traumatología, Sala de Espera" required maxlength="100">
             <input type="hidden" id="id_editar_area">
           </div>
-          <div class="mb-3">
-            <label for="nivel-riesgo-area" class="form-label fw-semibold small text-secondary">Nivel de Riesgo Biológico <span class="text-danger">*</span></label>
-            <select id="nivel-riesgo-area" class="form-select" required>
-              <option value="Bajo">Bajo (Administración, pasillos, archivo)</option>
-              <option value="Medio" selected>Medio (Hospitalización, cocina, consulta externa)</option>
-              <option value="Alto">Alto (Quirófano, aislamiento, emergencia, partos, baños)</option>
-            </select>
-          </div>
         </div>
         <div class="modal-footer bg-light">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -273,7 +265,6 @@ include_once 'layouts/header.php';
                   <thead class="table-light small">
                     <tr>
                       <th class="ps-3">Área / Departamento Asistencial</th>
-                      <th style="width: 180px;">Riesgo Biológico</th>
                       <th class="text-end pe-3" style="width: 150px;">Acciones</th>
                     </tr>
                   </thead>

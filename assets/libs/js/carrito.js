@@ -219,7 +219,7 @@ $(document).ready(function () {
       $.post('../controller/AreaController.php', { funcion: 'cargar_areas' })
         .done(function(response) {
           const areas = JSON.parse(response);
-          const opciones = areas.map(a => `<option value="${a.id_area}">${a.nombre_area} (Riesgo: ${a.nivel_riesgo})</option>`);
+          const opciones = areas.map(a => `<option value="${a.id_area}">${a.nombre_area}</option>`);
           $('#area_destino').html(opciones.join(''));
           if (id_seleccionar) {
             $('#area_destino').val(id_seleccionar).trigger('change');
@@ -234,14 +234,12 @@ $(document).ready(function () {
     $('#form_nueva_area_rapida').on('submit', function(e) {
       e.preventDefault();
       const nombre_area = $('#modal_nombre_area').val().trim();
-      const nivel_riesgo = $('#modal_nivel_riesgo').val();
 
       if (!nombre_area) return;
 
       $.post('../controller/AreaController.php', {
         funcion: 'crear_area',
-        nombre_area: nombre_area,
-        nivel_riesgo: nivel_riesgo
+        nombre_area: nombre_area
       }, function(response) {
         let res = {};
         try {
