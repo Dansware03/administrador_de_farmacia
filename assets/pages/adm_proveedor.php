@@ -138,5 +138,12 @@
 </div>
 <!-- /.content-wrapper -->
 
-<?php include_once 'layouts/footer.php'; } else { header('Location: ../../index.php'); } ?>
-<script src="../libs/js/proveedor.js"></script>
+<?php 
+$page_scripts = '
+<script src="' . asset_v('../libs/js/proveedor.js') . '"></script>
+';
+include_once 'layouts/footer.php'; 
+} else { 
+  header('Location: ../../index.php'); 
+} 
+?>

@@ -120,19 +120,18 @@
               <thead class="table-light small">
                 <tr>
                   <th>Insumo / Material</th>
+                  <th>Unidad / Espec.</th>
                   <th>Lote</th>
                   <th>Vencimiento</th>
-                  <th>Costo Ref.</th>
-                  <th>Cantidad</th>
-                  <th>Subtotal</th>
+                  <th>Cantidad a Despachar</th>
                   <th class="text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody></tbody>
               <tfoot class="table-light">
                 <tr>
-                  <th colspan="5" class="text-end fw-bold">Total Asignado:</th>
-                  <th id="total_venta" class="fw-bold text-primary fs-6">0.00</th>
+                  <th colspan="4" class="text-end fw-bold">Total Unidades Despachadas:</th>
+                  <th id="total_venta" class="fw-bold text-primary fs-6">0</th>
                   <th></th>
                 </tr>
               </tfoot>
@@ -154,5 +153,12 @@
 </div>
 <!-- /.content-wrapper -->
 
-<?php include_once 'layouts/footer.php'; } else { header('Location: ../../index.php'); } ?>
-<script src="../libs/js/editar_venta.js"></script>
+<?php 
+$page_scripts = '
+<script src="' . asset_v('../libs/js/editar_venta.js') . '"></script>
+';
+include_once 'layouts/footer.php'; 
+} else { 
+  header('Location: ../../index.php'); 
+} 
+?>

@@ -31,18 +31,6 @@
               <input type="hidden" id="concentracion" value="">
             </div>
 
-            <div class="col-md-6">
-              <label for="precio" class="form-label fw-semibold small text-secondary">Precio / Costo Referencial ($) <span class="text-danger">*</span></label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-currency-dollar"></i></span>
-                <input id="precio" type="number" class="form-control" placeholder="0.00" required step="0.01">
-              </div>
-              <div class="form-check form-switch mt-2">
-                <input class="form-check-input" type="checkbox" id="noVenta" name="noVenta">
-                <label class="form-check-label small text-muted" for="noVenta">Uso interno / No comercializable (Costo $0)</label>
-              </div>
-            </div>
-
             <div class="col-12">
               <label for="adicional" class="form-label fw-semibold small text-secondary">Información Adicional / Componentes</label>
               <textarea id="adicional" class="form-control" rows="2" placeholder="Detalles de uso, precauciones o almacenamiento..."></textarea>
@@ -216,5 +204,12 @@
 </div>
 <!-- /.content-wrapper -->
 
-<?php include_once 'layouts/footer.php'; } else { header('Location: ../../index.php'); } ?>
-<script src="../libs/js/producto.js"></script>
+<?php 
+$page_scripts = '
+<script src="' . asset_v('../libs/js/producto.js') . '"></script>
+';
+include_once 'layouts/footer.php'; 
+} else { 
+  header('Location: ../../index.php'); 
+} 
+?>

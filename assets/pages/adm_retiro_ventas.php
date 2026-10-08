@@ -44,9 +44,8 @@
             <thead class="table-light small">
               <tr>
                 <th>Insumo</th>
+                <th>Unidad / Espec.</th>
                 <th>Cantidad</th>
-                <th>Costo Ref.</th>
-                <th>Subtotal</th>
                 <th>Lote</th>
                 <th>Vencimiento</th>
               </tr>
@@ -54,7 +53,7 @@
             <tbody id="detalles_venta"></tbody>
             <tfoot class="table-light">
               <tr>
-                <th colspan="3" class="text-end fw-bold">Total Asignado:</th>
+                <th colspan="2" class="text-end fw-bold">Total Unidades Despachadas:</th>
                 <th id="total_detalle" colspan="3" class="fw-bold text-primary fs-6"></th>
               </tr>
             </tfoot>
@@ -161,7 +160,6 @@
                   <th>Área Destino</th>
                   <th>Receptor / Funcionario</th>
                   <th>Cédula</th>
-                  <th>Total Ref.</th>
                   <th>Responsable</th>
                   <th class="text-center">Acciones</th>
                 </tr>
@@ -176,5 +174,12 @@
 </div>
 <!-- /.content-wrapper -->
 
-<?php include_once 'layouts/footer.php'; } else { header('Location: ../../index.php'); } ?>
-<script src="../libs/js/retiro_ventas.js"></script>
+<?php 
+$page_scripts = '
+<script src="' . asset_v('../libs/js/retiro_ventas.js') . '"></script>
+';
+include_once 'layouts/footer.php'; 
+} else { 
+  header('Location: ../../index.php'); 
+} 
+?>

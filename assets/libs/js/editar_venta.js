@@ -67,13 +67,14 @@ $(document).ready(function() {
                 <tr>
                     <td>
                         <div class="fw-semibold text-dark">${producto.producto}</div>
-                        <small class="text-muted">${producto.especificacion_talla || ''} ${unidad}</small>
+                    </td>
+                    <td>
+                        <span class="badge bg-light text-primary border">${unidad || 'und'}</span>
+                        <small class="text-muted d-block">${producto.especificacion_talla || ''}</small>
                     </td>
                     <td><span class="badge bg-light text-secondary border">${producto.lote || 'N/A'}</span></td>
                     <td><small class="text-muted">${producto.vencimiento || 'N/A'}</small></td>
-                    <td>$${parseFloat(producto.precio).toFixed(2)}</td>
                     <td><span class="badge bg-primary-subtle text-primary fw-bold fs-6">${producto.cantidad}</span></td>
-                    <td class="fw-semibold">$${(producto.precio * producto.cantidad).toFixed(2)}</td>
                     <td class="text-center">
                         <div class="btn-group btn-group-sm" role="group">
                             <button class="btn btn-outline-warning editar-cantidad" data-id="${producto.id_ventaproducto}" data-producto="${producto.producto}" data-cantidad="${producto.cantidad}" title="Modificar cantidad">
@@ -94,13 +95,13 @@ $(document).ready(function() {
         $('#tabla_detalle_venta tbody').html(template);
     }
 
-    // Calcular el total de la entrega/salida
+    // Calcular el total de unidades físicas de la entrega/salida
     function calcular_total() {
         total_venta = 0;
         productos_venta.forEach(producto => {
-            total_venta += producto.precio * producto.cantidad;
+            total_venta += parseInt(producto.cantidad) || 0;
         });
-        $('#total_venta').text(`$${total_venta.toFixed(2)}`);
+        $('#total_venta').text(`${total_venta} unidades`);
     }
 
     // Obtener stock disponible para un producto

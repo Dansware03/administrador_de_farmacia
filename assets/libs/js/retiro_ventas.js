@@ -28,12 +28,6 @@ $(document).ready(function() {
             },
             { data: "cliente" },
             { data: "ci" },
-            { 
-                data: "total",
-                render: function(data, type, row) {
-                    return `$${parseFloat(data).toFixed(2)}`;
-                } 
-            },
             { data: "vendedor" },
             {
                 defaultContent: `
@@ -93,7 +87,6 @@ $(document).ready(function() {
         $('#ci_detalle').text(data.ci);
         $('#fecha_detalle').text(data.fecha);
         $('#vendedor_detalle').text(data.vendedor);
-        $('#total_detalle').text(`$${parseFloat(data.total).toFixed(2)}`);
         
         $.ajax({
             url: '../controller/VentaController.php',
@@ -105,18 +98,20 @@ $(document).ready(function() {
             success: function(response) {
                 let detalles = JSON.parse(response);
                 let template = '';
+                let totalPiezas = 0;
                 
                 detalles.forEach(detalle => {
+                    const cant = parseInt(detalle.cantidad) || 0;
+                    totalPiezas += cant;
                     const unidad = detalle.unidad_codigo ? `(${detalle.unidad_codigo})` : '';
                     template += `
                     <tr>
                         <td>
                             <div class="fw-semibold text-dark">${detalle.producto}</div>
-                            <small class="text-muted">${detalle.especificacion_talla || ''} ${unidad}</small>
+                            <small class="text-muted">${detalle.especificacion_talla || ''}</small>
                         </td>
-                        <td><span class="badge bg-primary-subtle text-primary fw-bold">${detalle.cantidad}</span></td>
-                        <td>$${parseFloat(detalle.precio).toFixed(2)}</td>
-                        <td class="fw-semibold">$${parseFloat(detalle.subtotal).toFixed(2)}</td>
+                        <td><span class="badge bg-light text-primary border">${unidad || 'und'}</span></td>
+                        <td><span class="badge bg-primary-subtle text-primary fw-bold fs-6">${cant}</span></td>
                         <td><span class="badge bg-light text-secondary border">${detalle.lote || 'N/A'}</span></td>
                         <td><small class="text-muted">${detalle.vencimiento || 'N/A'}</small></td>
                     </tr>
@@ -124,6 +119,7 @@ $(document).ready(function() {
                 });
                 
                 $('#detalles_venta').html(template);
+                $('#total_detalle').text(`${totalPiezas} unidades`);
             },
             error: function(error) {
                 console.error('Error al cargar detalles de salida:', error);

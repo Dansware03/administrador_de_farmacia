@@ -3,14 +3,6 @@ $(document).ready(function() {
     var edit = false;
     buscar_product();
 
-    $('#noVenta').change(function() {
-        if ($(this).is(':checked')) {
-            $('#precio').prop('disabled', true).val('0');
-        } else {
-            $('#precio').prop('disabled', false).val('');
-        }
-    });
-
     $('.select2').select2({
         dropdownParent: $('#crearproducto')
     });
@@ -109,7 +101,7 @@ $(document).ready(function() {
         let concentracion = especificacion_talla;
         let id_unidad = $('#unidad_medida').val();
         let adicional = $('#adicional').val();
-        let precio = $('#precio').val();
+        let precio = 0;
         let prod_lab = $('#laboratorio').val();
         let prod_tip_prod = $('#tipo').val();
         let prod_present = $('#presentacion').val();
@@ -228,7 +220,7 @@ $(document).ready(function() {
                             <div class="text-center mb-3">
                                 <img src="${avatarSrc}" alt="${product.nombre}" class="product-avatar mb-2 shadow-sm" onerror="this.src='../libs/img/product/prod_default.png'">
                                 <h5 class="fw-bold text-primary mb-1 text-truncate" title="${product.nombre}">${product.nombre}</h5>
-                                <div class="fw-bold fs-5 text-dark">$${parseFloat(product.precio || 0).toFixed(2)}</div>
+                                <span class="badge bg-light text-secondary border small">Cód: #${product.id}</span>
                             </div>
 
                             <ul class="list-unstyled small text-muted border-top pt-3 mb-0">
@@ -343,18 +335,9 @@ $(document).ready(function() {
         $('#unidad_medida').val(id_unidad).trigger('change');
         $('#concentracion').val(esp_talla);
         $('#adicional').val(adicional);
-        $('#precio').val(precio);
         $('#laboratorio').val(laboratorio).trigger('change');
         $('#tipo').val(tipo).trigger('change');
         $('#presentacion').val(presentacion).trigger('change');
-
-        if (precio === "0" || precio === "0.00") {
-            $('#noVenta').prop('checked', true);
-            $('#precio').prop('disabled', true);
-        } else {
-            $('#noVenta').prop('checked', false);
-            $('#precio').prop('disabled', false);
-        }
 
         $('#crearProductoLabel').html('<i class="bi bi-pencil-square me-2"></i>Editar Insumo');
         edit = true;
