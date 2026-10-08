@@ -1,4 +1,20 @@
-<?php session_start();
+<?php
+/**
+ * SIMAP - Portal Principal y Punto de Entrada de Autenticación
+ *
+ * Administra el punto de acceso inicial de la aplicación web:
+ * - Comprobación preventiva de instalación del sistema; si la base de datos o el usuario
+ *   administrador raíz no existen, redirige al asistente autónomo `install.php`.
+ * - Redirección automática de usuarios con sesión activa previa hacia sus paneles.
+ * - Emisión de cabeceras de seguridad HTTP robustas (CSP, HSTS, X-Frame-Options, X-XSS-Protection, Nosniff).
+ * - Renderizado de la pantalla de bienvenida y formulario de inicio de sesión institucional.
+ *
+ * @package SIMAP\Frontend
+ * @author Grupo de Proyecto
+ * @version 1.0.0
+ */
+
+session_start();
 
 // Comprobación preventiva de instalación de SIMAP
 $db_file = __DIR__ . '/assets/db/simap.db';
@@ -28,6 +44,7 @@ if (!empty($_SESSION['us_tipo'])) {
 } else {
     session_destroy();
 }
+
 if (!headers_sent()) {
     header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';");
     header("Strict-Transport-Security: max-age=31536000; includeSubDomains; preload");
@@ -45,7 +62,7 @@ if (!headers_sent()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIMAP - Iniciar Sesión</title>
     <link rel="icon" type="image/png" href="assets/libs/img/logo.png">
-    <!-- Bootstrap 5 y Bootstrap Icons (Offline) -->
+    <!-- Estilos Fundamentales y Plugins Locales (100% Offline) -->
     <link rel="stylesheet" href="assets/libs/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/libs/css/bootstrap-icons.min.css">
     <link rel="stylesheet" href="assets/libs/css/animate.min.css">
@@ -61,7 +78,7 @@ if (!headers_sent()) {
                 <div>
                     <div class="banner-badge mb-4">
                         <i class="bi bi-shield-check text-warning"></i>
-                        <span>Grupo Proyecto</span>
+                        <span>Grupo de Proyecto</span>
                     </div>
                 </div>
 
@@ -107,7 +124,7 @@ if (!headers_sent()) {
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
                     </div>
 
-                    <!-- Formulario -->
+                    <!-- Formulario de Acceso -->
                     <form id="login-form" action="assets/controller/LoginController.php" method="post"
                         autocomplete="off">
                         <!-- Campo Cédula -->
@@ -146,7 +163,7 @@ if (!headers_sent()) {
                         </div>
                     </form>
 
-                    <!-- Pie institucional (visible especialmente en móvil) -->
+                    <!-- Pie Institucional -->
                     <div class="text-center mt-4 pt-2 border-top">
                         <small class="text-muted d-block">
                             Área de Mantenimiento y Protección Institucional
@@ -160,7 +177,7 @@ if (!headers_sent()) {
         </div>
     </div>
 
-    <!-- Scripts Esenciales (Offline) -->
+    <!-- Scripts Esenciales (100% Offline) -->
     <script src="assets/libs/js/bootstrap.bundle.min.js"></script>
     <script src="assets/libs/js/sweetalert2.all.min.js"></script>
     <script src="assets/libs/js/login.js"></script>

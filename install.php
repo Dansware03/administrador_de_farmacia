@@ -1,5 +1,20 @@
 <?php
-// install.php - Asistente de Instalación SIMAP
+/**
+ * SIMAP - Asistente de Instalación y Configuración Inicial Autónomo
+ *
+ * Guía interactiva paso a paso para el aprovisionamiento del sistema en entornos nuevos:
+ * 1. Diagnóstico de Requisitos del Servidor: Versión PHP (>= 8.1), extensiones PDO, SQLite3,
+ *    OpenSSL, Mbstring, Fileinfo, Session y permisos de escritura en disco.
+ * 2. Inicialización de Base de Datos SQLite: Creación del archivo `simap.db`, configuración
+ *    de modo WAL (`PRAGMA journal_mode = WAL`), sincronización normal y llaves foráneas.
+ * 3. Ejecución del Esquema Canónico: Carga y ejecución del archivo DDL `assets/db/schema.sql`.
+ * 4. Registro del Administrador Raíz: Alta del primer usuario con credenciales seguras Bcrypt.
+ *
+ * @package SIMAP\Installer
+ * @author Grupo de Proyecto
+ * @version 1.0.0
+ */
+
 session_start();
 
 $db_file = __DIR__ . '/assets/db/simap.db';
@@ -7,7 +22,12 @@ $schema_file = __DIR__ . '/assets/db/schema.sql';
 $db_dir = __DIR__ . '/assets/db';
 $img_dir = __DIR__ . '/assets/libs/img';
 
-// Función para verificar si el sistema ya está completamente instalado
+/**
+ * Verificar si el sistema ya cuenta con base de datos e instalador configurado.
+ *
+ * @param string $db_path Ruta física al archivo SQLite.
+ * @return bool True si ya existe al menos un administrador registrado.
+ */
 function esta_instalado($db_path) {
     if (!file_exists($db_path) || filesize($db_path) === 0) {
         return false;

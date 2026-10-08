@@ -1,8 +1,20 @@
 <?php
 /**
  * SIMAP - Suite Autónoma de Verificación, Linting y Auditoría de Seguridad
- * Filosofía Ponytail: 0 dependencias externas, ejecución nativa ultra-rápida.
- * Ejecución: php check.php
+ *
+ * Herramienta de aseguramiento de calidad y seguridad previa a despliegue o commit.
+ * Diseñada bajo principios de rendimiento nativo (cero dependencias externas npm/composer):
+ * 1. Verificación de sintaxis de archivos PHP (`php -l`).
+ * 2. Validación de sintaxis JavaScript nativa (Motor Node.js V8 `node -c`).
+ * 3. Auditoría de seguridad estática:
+ *    - Detección de inyecciones SQL (100% PDO Prepared Statements requeridos).
+ *    - Protección de sesiones (`session_start()`) en controladores y páginas.
+ *    - Autenticación criptográfica segura con algoritmo Bcrypt (`PASSWORD_BCRYPT`).
+ * 4. Integridad física y referencial de SQLite (`PRAGMA quick_check` y `PRAGMA foreign_key_check`).
+ *
+ * @package SIMAP\Tools
+ * @author Grupo de Proyecto
+ * @version 1.0.0
  */
 
 $start_time = microtime(true);
@@ -15,8 +27,8 @@ echo "======================================================\n\n";
 
 // 1. CHEQUEO DE SINTAXIS PHP (php -l)
 echo "[1/4] Analizando sintaxis PHP...\n";
-$php_dirs = ['assets/controller', 'assets/db', 'assets/pages'];
-$php_files = ['index.php'];
+$php_dirs = ['assets/controller', 'assets/db', 'assets/pages', 'assets/pages/layouts'];
+$php_files = ['index.php', 'install.php', 'check.php'];
 
 foreach ($php_dirs as $dir) {
     if (is_dir($dir)) {
@@ -27,6 +39,7 @@ foreach ($php_dirs as $dir) {
     }
 }
 
+$php_files = array_unique($php_files);
 $php_ok = 0;
 foreach ($php_files as $file) {
     $cmd = "php -l " . escapeshellarg($file);
@@ -40,7 +53,7 @@ foreach ($php_files as $file) {
 }
 echo "  ✓ Sintaxis PHP validada: $php_ok archivos sin errores.\n\n";
 
-// 2. CHEQUEO DE SINTAXIS JS (Node V8 Parser nativo)
+// 2. CHEQUEO DE SINTAXIS JS (Motor Node.js V8)
 echo "[2/4] Analizando sintaxis JavaScript (Motor V8 nativo)...\n";
 $js_dir = 'assets/libs/js';
 $js_files = [];
@@ -66,19 +79,17 @@ foreach ($js_files as $file) {
 }
 echo "  ✓ Sintaxis JS validada: $js_ok archivos propios sin errores.\n\n";
 
-// 3. AUDITORÍA DE SEGURIDAD ESTÁTICA (Security Audit Ponytail)
+// 3. AUDITORÍA DE SEGURIDAD ESTÁTICA
 echo "[3/4] Ejecutando Auditoría de Seguridad Estática...\n";
 
-// 3.1 Chequeo de Inyecciones SQL (Interpolación insegura de variables en SQL)
+// 3.1 Chequeo de Inyecciones SQL (Interpolación insegura de variables)
 $sqli_sospechosas = 0;
 $backend_files = array_merge(glob("assets/controller/*.php") ?: [], glob("assets/db/*.php") ?: []);
 
 foreach ($backend_files as $bf) {
     $lineas = file($bf);
     foreach ($lineas as $num => $linea) {
-        // Buscar queries SQL que concatenen variables directamente: SELECT ... '$var' o INSERT ... $var
         if (preg_match('/\$sql\s*=\s*["\'].*(SELECT|INSERT|UPDATE|DELETE).*\$([a-zA-Z0-9_]+)/i', $linea, $m)) {
-            // Ignorar variables de nombre de tabla o condiciones estáticas conocidas
             echo "  [ALERTA SEGURIDAD - SQLi Potencial] $bf en línea " . ($num + 1) . ": Interpolación directa en SQL ($m[0])\n";
             $advertencias++;
             $sqli_sospechosas++;
@@ -94,7 +105,6 @@ $paginas_sin_sesion = 0;
 $paginas = glob("assets/pages/*.php") ?: [];
 foreach ($paginas as $pag) {
     $contenido = file_get_contents($pag);
-    // Las actas pueden requerir sesión o token; verificar session_start
     if (!str_contains($contenido, 'session_start()')) {
         echo "  [AVISO SEGURIDAD] $pag no inicia sesión de forma explícita.\n";
         $advertencias++;
@@ -167,3 +177,4 @@ if ($errores === 0) {
     echo "======================================================\n\n";
     exit(1);
 }
+?>
