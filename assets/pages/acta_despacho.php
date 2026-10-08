@@ -1,6 +1,11 @@
 <?php
 // SIMAP - Acta Oficial de Entrega / Despacho Institucional
 // C.P.E. La Fría - Inventario de Materiales e Insumos de Protección
+session_start();
+if (empty($_SESSION['us_tipo']) || ($_SESSION['us_tipo'] != 1 && $_SESSION['us_tipo'] != 2)) {
+    header('Location: ../../index.php');
+    exit();
+}
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     die('Error: Identificador de despacho no especificado.');
