@@ -1,0 +1,5 @@
+- [Inicio](README.md)
+- [Arquitectura y Capas](arquitectura.md)
+- [Flujo de Datos Extremo a Extremo](flujo_datos.md)
+- [Diccionario de Base de Datos](base_datos.md)
+- [Manual Técnico Completo (PDF)](manual_tecnico.html)

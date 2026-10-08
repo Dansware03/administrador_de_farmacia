@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SIMAP - Manual Técnico y Arquitectura de Software</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1.8cm 1.5cm;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #1e293b;
+            line-height: 1.5;
+            font-size: 10pt;
+            background: #fff;
+            margin: 0;
+            padding: 20px;
+        }
+        .header-cover {
+            text-align: center;
+            padding: 40px 0 30px;
+            border-bottom: 3px solid #0284c7;
+            margin-bottom: 30px;
+        }
+        .header-cover img {
+            width: 75px;
+            height: 75px;
+            margin-bottom: 10px;
+        }
+        .header-cover h1 {
+            color: #0f172a;
+            font-size: 22pt;
+            margin: 0 0 8px;
+            font-weight: 800;
+        }
+        .header-cover .subtitle {
+            color: #64748b;
+            font-size: 11pt;
+            margin: 0;
+        }
+        h2 {
+            color: #0f172a;
+            font-size: 15pt;
+            border-bottom: 1.5px solid #e2e8f0;
+            padding-bottom: 6px;
+            margin-top: 25px;
+            page-break-after: avoid;
+        }
+        h3 {
+            color: #0369a1;
+            font-size: 12pt;
+            margin-top: 18px;
+            page-break-after: avoid;
+        }
+        .doc-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-bottom: 14px;
+            background: #f8fafc;
+            page-break-inside: avoid;
+        }
+        .doc-card h4 {
+            margin: 0 0 6px;
+            color: #0284c7;
+            font-size: 11pt;
+        }
+        .badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 8pt;
+            font-weight: 600;
+        }
+        pre {
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 8pt;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .print-btn-bar {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        .btn-print {
+            background: #0284c7;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+        }
+        @media print {
+            .print-btn-bar { display: none !important; }
+            body { padding: 0; }
+            .page-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body>
+    <div class="print-btn-bar">
+        <button class="btn-print" onclick="window.print()">🖨️ Imprimir / Guardar en PDF</button>
+    </div>
+
+    <div class="header-cover">
+        <img src="../assets/libs/img/logo.png" alt="Logo SIMAP">
+        <h1>SIMAP &bull; Manual Técnico de Arquitectura</h1>
+        <p class="subtitle">Clínica Popular Especializada La Fría &bull; Generado automáticamente el 08/10/2026 19:37</p>
+    </div>
+
+    <h2>1. Resumen de Arquitectura</h2>
+    <p>
+        El sistema implementa una arquitectura modular MVC nativa en PHP 8 y SQLite 3. Los datos fluyen de forma continua:
+        <strong>Formulario HTML &rarr; Script AJAX (JS) &rarr; Controlador (PHP) &rarr; Modelo de Persistencia (PDO) &rarr; Almacén SQLite (Modo WAL)</strong>.
+    </p>
+
+    <h2>2. Controladores del Sistema (Capa de Orquestación)</h2>
+            <div class="doc-card">
+            <h4>AreaController.php <span class="badge">Controlador</span></h4>
+            <p><strong>Ubicación:</strong> <code>assets/controller/AreaController.php</code></p>
+            <p><strong>Acciones / Casos de uso registrados:</strong></p>
+            <ul>
+                                    <li><em>Acción única o controlador de flujo directo.</em></li>
+                            </ul>
+        </div>
+            <div class="doc-card">
+            <h4>DespachoController.php <span class="badge">Controlador</span></h4>
+            <p><strong>Ubicación:</strong> <code>assets/controller/DespachoController.php</code></p>
+            <p><strong>Acciones / Casos de uso registrados:</strong></p>
+            <ul>
+                                                            <li><code>registrar_despacho</code></li>
+                                            <li><code>listar_despachos</code></li>
+                                            <li><code>ver_detalle_despacho</code></li>
+                                            <li><code>revertir_despacho</code></li>
+                                            <li><code>obtener_despacho</code></li>
+                                            <li><code>obtener_stock_lote</code></li>
+                                            <li><code>actualizar_despacho</code></li>
+                                                </ul>
+        </div>
+            <div class="doc-card">
+            <h4>LaboratoryController.php <span class="badge">Controlador</span></h4>
+            <p><strong>Ubicación:</strong> <code>assets/controller/LaboratoryController.php</code></p>
+            <p><strong>Acciones / Casos de uso registrados:</strong></p>
+            <ul>
+                                                            <li><code>crear</code></li>
+                                            <li><code>editar</code></li>
+                                            <li><code>buscar</code></li>
+                                            <li><code>borrar_lab</code></li>
+                                            <li><code>rellenar_laboratorio</code></li>
+                                                </ul>
+        </div>
+            <div class="doc-card">
+            <h4>LoginController.php <span class="badge">Controlador</span></h4>
+            <p><strong>Ubicación:</strong> <code>assets/controller/LoginController.php</code></p>
+            <p><strong>Acciones / Casos de uso registrados:</strong></p>
+            <ul>
+                                    <li><em>Acción única o controlador de flujo directo.</em></li>
+                            </ul>
+        </div>
+            <div class="doc-card">
+            <h4>Logout.php <span class="badge">Controlador</span></h4>
+            <p><strong>Ubicación:</strong> <code>assets/controller/Logout.php</code></p>
+            <p><strong>Acciones / Casos de uso registrados:</strong></p>
+            <ul>
+                                    <li><em>Acción única o controlador de flujo directo.</em></li>
+                            </ul>
+        </div>
+            <div class="doc-card">
+            <h4>LoteController.php <span class="badge">Controlador</span></h4>
+            <p><strong>Ubicación:</strong> <code>assets/controller/LoteController.php</code></p>
+            <p><strong>Acciones / Casos de uso registrados:</strong></p>
+            <ul>
+                                                            <li><code>crear</code></li>
+                                            <li><code>buscar_lote</code></li>
+                                            <li><code>editar</code></li>
+                                            <li><code>borrar_lote</code></li>
+                                                </ul>
+        </div>
+            <div class="doc-card">
+            <h4>PresentacionesController.php <span class="badge">Controlador</span></h4>
+            <p><strong>Ubicación:</strong> <code>assets/controller/PresentacionesController.php</code></p>
+            <p><strong>Acciones / Casos de uso registrados:</strong></p>
+            <ul>
+                                                            <li><code>crear</code></li>
+                                            <li><code>editar</code></li>
+                                            <li><code>buscar</code></li>
+                                            <li><code>borrar_pre</code></li>
+                                            <li><code>rellenar_presentacion</code></li>
+                                                </ul>
+        </div>
+            <div class="doc-card">
+            <h4>ProductoController.php <span class="badge">Controlador</span></h4>
+            <p><strong>Ubicación:</strong> <code>assets/controller/ProductoController.php</code></p>
+            <p><strong>Acciones / Casos de uso registrados:</strong></p>
+            <ul>
+                                                            <li><code>crear</code></li>
+                                            <li><code>cambiar_avatar</code></li>
+                                            <li><code>buscar_product</code></li>
+                                            <li><code>editar</code></li>
+                                            <li><code>borrar_produts</code></li>
+                                            <li><code>validar_existencia</code></li>
+                                            <li><code>verificarStock</code></li>
+                                                </ul>
+        </div>
+            <div class="doc-card">
+            <h4>ProveedorController.php <span class="badge">Controlador</span></h4>
+            <p><strong>Ubicación:</strong> <code>assets/controller/ProveedorController.php</code></p>
+            <p><strong>Acciones / Casos de uso registrados:</strong></p>
+            <ul>
+                                                            <li><code>crear</code></li>
+                                            <li><code>cambiar_avatar</code></li>
+                                            <li><code>buscar_prov</code></li>
+                                            <li><code>editar</code></li>
+                                            <li><code>borrar_prove</code></li>
+                                            <li><code>rellenar_proveedor</code></li>
+                                                </ul>
+        </div>
+            <div class="doc-card">
+            <h4>TypeController.php <span class="badge">Controlador</span></h4>
+            <p><strong>Ubicación:</strong> <code>assets/controller/TypeController.php</code></p>
+            <p><strong>Acciones / Casos de uso registrados:</strong></p>
+            <ul>
+                                                            <li><code>crear</code></li>
+                                            <li><code>editar_type</code></li>
+                                            <li><code>buscar</code></li>
+                                            <li><code>borrar_type</code></li>
+                                            <li><code>rellenar_type</code></li>
+                                                </ul>
+        </div>
+            <div class="doc-card">
+            <h4>UserController.php <span class="badge">Controlador</span></h4>
+            <p><strong>Ubicación:</strong> <code>assets/controller/UserController.php</code></p>
+            <p><strong>Acciones / Casos de uso registrados:</strong></p>
+            <ul>
+                                    <li><em>Acción única o controlador de flujo directo.</em></li>
+                            </ul>
+        </div>
+    
+    <div class="page-break"></div>
+
+    <h2>3. Modelos de Base de Datos y Persistencia PDO</h2>
+            <div class="doc-card">
+            <h4>Proveedor.php <span class="badge">Modelo PDO</span></h4>
+            <p><strong>Ubicación:</strong> <code>assets/db/Proveedor.php</code></p>
+            <p><strong>Métodos disponibles:</strong></p>
+            <ul>
+                                    <li>
+                        <strong>crear</strong>(<em>$nombre, $telefono, $correo, $direccion, $avatar</em>)
+                    </li>
+                            </ul>
+        </div>
+            <div class="doc-card">
+            <h4>despacho.php <span class="badge">Modelo PDO</span></h4>
+            <p><strong>Ubicación:</strong> <code>assets/db/despacho.php</code></p>
+            <p><strong>Métodos disponibles:</strong></p>
+            <ul>
+                                    <li>
+                        <strong>registrar_despacho</strong>(<em>$receptor, $ci_receptor, $responsable, $productos, $id_area = null, $cargo_receptor = &#039;&#039;, $observacion = &#039;&#039;</em>)
+                    </li>
+                                    <li>
+                        <strong>actualizar_stock_por_lotes</strong>(<em>$id_producto, $cantidad_requerida, $id_despacho</em>)
+                    </li>
+                                    <li>
+                        <strong>listar_despachos</strong>(<em></em>)
+                    </li>
+                                    <li>
+                        <strong>listar_despachos_por_fechas</strong>(<em>$fecha_inicio, $fecha_fin</em>)
+                    </li>
+                                    <li>
+                        <strong>ver_detalle_despacho</strong>(<em>$id_despacho</em>)
+                    </li>
+                                    <li>
+                        <strong>obtener_despacho</strong>(<em>$id_despacho</em>)
+                    </li>
+                                    <li>
+                        <strong>revertir_despacho</strong>(<em>$id_despacho</em>)
+                    </li>
+                                    <li>
+                        <strong>obtener_stock_lote</strong>(<em>$id_producto, $id_lote</em>)
+                    </li>
+                                    <li>
+                        <strong>actualizar_despacho</strong>(<em>$id_despacho, $receptor, $ci_receptor, $productos, $id_area = null, $cargo_receptor = &#039;&#039;, $observacion = &#039;&#039;</em>)
+                    </li>
+                            </ul>
+        </div>
+            <div class="doc-card">
+            <h4>laboratory.php <span class="badge">Modelo PDO</span></h4>
+            <p><strong>Ubicación:</strong> <code>assets/db/laboratory.php</code></p>
+            <p><strong>Métodos disponibles:</strong></p>
+            <ul>
+                            </ul>
+        </div>
+            <div class="doc-card">
+            <h4>lote.php <span class="badge">Modelo PDO</span></h4>
+            <p><strong>Ubicación:</strong> <code>assets/db/lote.php</code></p>
+            <p><strong>Métodos disponibles:</strong></p>
+            <ul>
+                            </ul>
+        </div>
+            <div class="doc-card">
+            <h4>presentaciones.php <span class="badge">Modelo PDO</span></h4>
+            <p><strong>Ubicación:</strong> <code>assets/db/presentaciones.php</code></p>
+            <p><strong>Métodos disponibles:</strong></p>
+            <ul>
+                            </ul>
+        </div>
+            <div class="doc-card">
+            <h4>producto.php <span class="badge">Modelo PDO</span></h4>
+            <p><strong>Ubicación:</strong> <code>assets/db/producto.php</code></p>
+            <p><strong>Métodos disponibles:</strong></p>
+            <ul>
+                            </ul>
+        </div>
+            <div class="doc-card">
+            <h4>type.php <span class="badge">Modelo PDO</span></h4>
+            <p><strong>Ubicación:</strong> <code>assets/db/type.php</code></p>
+            <p><strong>Métodos disponibles:</strong></p>
+            <ul>
+                            </ul>
+        </div>
+            <div class="doc-card">
+            <h4>usuario.php <span class="badge">Modelo PDO</span></h4>
+            <p><strong>Ubicación:</strong> <code>assets/db/usuario.php</code></p>
+            <p><strong>Métodos disponibles:</strong></p>
+            <ul>
+                                    <li>
+                        <strong>Loguearse</strong>(<em>$ci, $pass</em>)
+                    </li>
+                            </ul>
+        </div>
+    
+    <h2>4. Instrucciones para Exportación a PDF</h2>
+    <p>
+        Para generar el documento físico o digital oficial:
+        <ol>
+            <li>Presione <strong>Ctrl + P</strong> (o el botón Imprimir arriba a la derecha).</li>
+            <li>En Destino, seleccione <strong>Guardar como PDF</strong>.</li>
+            <li>En Configuración de página, asegúrese de seleccionar tamaño <strong>A4</strong> o <strong>Carta</strong> con gráficos de fondo activados.</li>
+        </ol>
+    </p>
+</body>
+</html>
