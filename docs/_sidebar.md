@@ -1,4 +1,5 @@
 - [Inicio](README.md)
-- [Controladores del Sistema (Backend)](controladores.md)
 - [Flujo de Datos Extremo a Extremo](flujo_datos.md)
+- [Controladores del Sistema (Backend)](controladores.md)
+- [Modelos y Base de Datos (Persistencia)](modelos.md)
 - [Manual Técnico Completo (PDF)](manual_tecnico.html)

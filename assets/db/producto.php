@@ -1,12 +1,48 @@
 <?php
+/**
+ * Modelo de Insumos y Materiales Médicos (Catálogo Central)
+ *
+ * Administra el catálogo de insumos sanitarios, materiales de bioseguridad y EPIs.
+ * Gestiona inserciones atómicas, consultas optimizadas con consolidación de inventario
+ * para prevenir problemas N+1, y trazabilidad de almacenamiento.
+ *
+ * @package SIMAP\Database
+ * @author Grupo de Proyecto
+ * @version 1.0.0
+ */
 include_once 'conexion.php';
+
 class Producto {
+    /** @var array Arreglo contenedor de resultados de consultas. */
     var $objetos;
+
+    /** @var PDO Instancia activa del conector de base de datos. */
     private $acceso;
+
+    /**
+     * Constructor de la clase Producto.
+     * Inicializa la conexión PDO mediante la instancia singleton.
+     */
     public function __construct() {
         $db = new Conexion();
         $this->acceso = $db->pdo;
     }
+
+    /**
+     * Registra un nuevo insumo y opcionalmente su primer lote de inventario en una transacción atómica.
+     *
+     * @param string $nombre Nombre del insumo o material.
+     * @param string $concentracion Concentración o detalle técnico (opcional).
+     * @param string $adicional Indicaciones complementarias o especificaciones.
+     * @param string $avatar Nombre del archivo de avatar/imagen.
+     * @param int|string $prod_lab Identificador del fabricante o laboratorio.
+     * @param int|string $prod_tip_prod Identificador de la categoría o tipo.
+     * @param int|string $prod_present Identificador de la presentación comercial.
+     * @param int $id_unidad Identificador de la unidad de medida (und, L, gal, etc.).
+     * @param string $especificacion_talla Talla o medida física (S, M, L, XL, etc.).
+     * @param array|null $lote_data Datos opcionales para la inserción inicial de lote.
+     * @return void Emite salida de texto ('add' o mensaje de error).
+     */
     public function crear($nombre, $concentracion, $adicional, $avatar = 'ProductDefault.png', $prod_lab = '', $prod_tip_prod = '', $prod_present = '', $id_unidad = 1, $especificacion_talla = '', $lote_data = null) {
         try {
             $sql = "SELECT id_producto FROM producto WHERE nombre = :nombre and concentracion=:concentracion and adicional=:adicional and prod_lab=:laboratorio and prod_tip_prod=:tipo and prod_present=:presentacion";
@@ -57,6 +93,13 @@ class Producto {
             echo $e->getMessage();
         }
     }
+    /**
+     * Consulta el inventario consolidado de insumos con búsqueda opcional por texto.
+     * Agrupa y suma el stock de todos los lotes asociados para prevenir consultas N+1.
+     *
+     * @param string $consulta Texto de filtro (nombre, categoría o fabricante).
+     * @return array|false Lista de insumos con su stock total calculado o false en caso de error.
+     */
     function buscar($consulta = '') {
         try {
             // ponytail: Consulta unificada con suma de stock de lotes agrupada para evitar N+1 queries.
@@ -103,11 +146,34 @@ class Producto {
             return false;
         }
     }
-    function cambiar_avatar($id,$nombre) {
+
+    /**
+     * Actualiza la imagen representativa del insumo.
+     *
+     * @param int|string $id Identificador del producto.
+     * @param string $nombre Nombre del archivo de imagen.
+     * @return void
+     */
+    function cambiar_avatar($id, $nombre) {
         $sql = "UPDATE producto SET avatar=:nombre where id_producto =:id";
         $query = $this->acceso->prepare($sql);
         $query->execute(array(':id' => $id, ':nombre' => $nombre));
     }
+
+    /**
+     * Actualiza la ficha descriptiva y clasificaciones de un insumo.
+     *
+     * @param int|string $id_edit_prod Identificador del producto.
+     * @param string $nombre Denominación del producto.
+     * @param string $concentracion Concentración técnica o dosificación.
+     * @param string $adicional Notas adicionales.
+     * @param int|string $prod_lab Fabricante o laboratorio.
+     * @param int|string $prod_tip_prod Categoría del producto.
+     * @param int|string $prod_present Presentación empaquetada.
+     * @param int $id_unidad Unidad de medida física.
+     * @param string $especificacion_talla Talla o medida complementaria.
+     * @return void Emite 'edit' o error.
+     */
     public function editar($id_edit_prod, $nombre, $concentracion, $adicional, $prod_lab = '', $prod_tip_prod = '', $prod_present = '', $id_unidad = 1, $especificacion_talla = '') {
         try {
             $sql_update = "UPDATE producto SET nombre = :nombre, concentracion = :concentracion, adicional = :adicional, prod_lab = :laboratorio, prod_tip_prod = :tipo, prod_present = :presentacion, id_unidad = :id_unidad, especificacion_talla = :especificacion_talla WHERE id_producto = :id_edit_prod";
@@ -132,6 +198,13 @@ class Producto {
             echo $e->getMessage();
         }
     }
+
+    /**
+     * Elimina un producto y remueve su archivo de imagen asociado si no es el por defecto.
+     *
+     * @param int|string $id Identificador del producto a eliminar.
+     * @return void Emite 'borrado' o JSON con mensaje de error.
+     */
     function borrar_produts($id){
         try {
             $sql = "SELECT avatar FROM producto WHERE id_producto = :id";
@@ -157,9 +230,15 @@ class Producto {
             }
         } catch (PDOException $e) {
             echo json_encode(['status' => 'error', 'message' => 'Error en el servidor.']);
-            // Puedes agregar un mensaje de error o log aquí
         }
     }
+
+    /**
+     * Obtiene la sumatoria total del stock físico de todos los lotes de un producto.
+     *
+     * @param int|string $id Identificador del producto.
+     * @return array Registros con la sumatoria de stock ('total').
+     */
     function obtener_stock($id){
         $sql="SELECT SUM(stock) as total FROM lote where id_lote_prod=:id";
         $query = $this->acceso->prepare($sql);
@@ -168,6 +247,12 @@ class Producto {
         return $this->objetos;
     }
 
+    /**
+     * Valida de manera masiva la existencia de un conjunto de IDs de productos en la base de datos.
+     *
+     * @param array $ids Lista de IDs a verificar.
+     * @return array IDs confirmados existentes.
+     */
     function validar_existentes($ids = []){
         if (empty($ids) || !is_array($ids)) {
             return [];

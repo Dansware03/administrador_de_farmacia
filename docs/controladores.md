@@ -7,8 +7,6 @@
 
 ## AreaController.php
 
-**Descripción:** Administra las áreas de servicio hospitalario receptoras de insumos
-
 ### Casos de Uso Documentados en Código
 
 | Acción (`funcion`) | Ruta / Endpoint | Parámetros |
@@ -23,8 +21,6 @@
 ---
 
 ## DespachoController.php
-
-**Descripción:** Administra las transacciones institucionales de salida y despacho
 
 ### Casos de Uso Documentados en Código
 
@@ -43,8 +39,6 @@
 
 ## LaboratoryController.php
 
-**Descripción:** Administra las entidades de fabricantes y laboratorios farmacéuticos
-
 ### Casos de Uso Documentados en Código
 
 | Acción (`funcion`) | Ruta / Endpoint | Parámetros |
@@ -59,8 +53,6 @@
 
 ## LoginController.php
 
-**Descripción:** Procesa el inicio de sesión de usuarios, valida credenciales
-
 ### Casos de Uso Documentados en Código
 
 | Acción (`funcion`) | Ruta / Endpoint | Parámetros |
@@ -71,15 +63,11 @@
 
 ## Logout.php
 
-**Descripción:** Destruye de forma segura la sesión activa del usuario actual
-
 _Controlador de acción directa o redirección de sesión._
 
 ---
 
 ## LoteController.php
-
-**Descripción:** Administra los lotes de existencias, fechas de vencimiento,
 
 ### Casos de Uso Documentados en Código
 
@@ -94,8 +82,6 @@ _Controlador de acción directa o redirección de sesión._
 
 ## PresentacionesController.php
 
-**Descripción:** Administra el catálogo de formas farmacéuticas y tipos de empaque
-
 ### Casos de Uso Documentados en Código
 
 | Acción (`funcion`) | Ruta / Endpoint | Parámetros |
@@ -109,8 +95,6 @@ _Controlador de acción directa o redirección de sesión._
 ---
 
 ## ProductoController.php
-
-**Descripción:** Administra el catálogo maestro de insumos médicos, materiales
 
 ### Casos de Uso Documentados en Código
 
@@ -128,8 +112,6 @@ _Controlador de acción directa o redirección de sesión._
 
 ## ProveedorController.php
 
-**Descripción:** Gestiona las entidades de proveedores comerciales, organismos
-
 ### Casos de Uso Documentados en Código
 
 | Acción (`funcion`) | Ruta / Endpoint | Parámetros |
@@ -145,8 +127,6 @@ _Controlador de acción directa o redirección de sesión._
 
 ## TypeController.php
 
-**Descripción:** Administra el catálogo de tipos o categorías de insumos médicos
-
 ### Casos de Uso Documentados en Código
 
 | Acción (`funcion`) | Ruta / Endpoint | Parámetros |
@@ -160,8 +140,6 @@ _Controlador de acción directa o redirección de sesión._
 ---
 
 ## UserController.php
-
-**Descripción:** Administra el ciclo de vida de los usuarios del sistema SIMAP,
 
 ### Casos de Uso Documentados en Código
 
