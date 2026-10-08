@@ -1,14 +1,14 @@
 <?php session_start(); if ($_SESSION['us_tipo']==1) { include_once 'layouts/header.php'; ?>
-<title><?php echo htmlspecialchars($_SESSION['nombre_us']); ?> | Historial de Salidas</title>
+<title><?php echo htmlspecialchars($_SESSION['nombre_us']); ?> | Historial de Despachos</title>
 <?php include_once 'layouts/nav.php'; ?>
 
-<!-- Modal Detalles de Solicitud/Salida -->
-<div class="modal fade" id="vista_venta" tabindex="-1" aria-labelledby="vistaVentaLabel" aria-hidden="true">
+<!-- Modal Detalles de Despacho -->
+<div class="modal fade" id="vista_despacho" tabindex="-1" aria-labelledby="vistaDespachoLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content border-0 shadow">
       <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title fw-bold" id="vistaVentaLabel">
-          <i class="bi bi-receipt me-2"></i>Comprobante de Entrega de Insumos
+        <h5 class="modal-title fw-bold" id="vistaDespachoLabel">
+          <i class="bi bi-file-earmark-medical me-2"></i>Comprobante de Entrega de Insumos
         </h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
@@ -16,7 +16,7 @@
         <div class="row g-3 p-3 bg-light rounded-3 mb-4">
           <div class="col-md-4">
             <small class="text-muted d-block">Receptor / Funcionario:</small>
-            <strong class="fs-6 text-dark" id="cliente_detalle">---</strong>
+            <strong class="fs-6 text-dark" id="receptor_detalle">---</strong>
             <small class="text-secondary d-block" id="cargo_detalle"></small>
           </div>
           <div class="col-md-4">
@@ -34,7 +34,7 @@
           </div>
           <div class="col-md-6">
             <small class="text-muted d-block">Responsable de Entrega:</small>
-            <strong class="text-secondary" id="vendedor_detalle">---</strong>
+            <strong class="text-secondary" id="responsable_detalle">---</strong>
           </div>
         </div>
 
@@ -50,7 +50,7 @@
                 <th>Vencimiento</th>
               </tr>
             </thead>
-            <tbody id="detalles_venta"></tbody>
+            <tbody id="detalles_despacho"></tbody>
             <tfoot class="table-light">
               <tr>
                 <th colspan="2" class="text-end fw-bold">Total Unidades Despachadas:</th>
@@ -63,7 +63,7 @@
       <div class="modal-footer bg-light justify-content-between">
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
         <button type="button" class="btn btn-primary fw-semibold" id="btn_imprimir">
-          <i class="bi bi-printer me-1"></i>Imprimir Recibo
+          <i class="bi bi-printer me-1"></i>Imprimir Acta
         </button>
       </div>
     </div>
@@ -104,13 +104,13 @@
     <div class="container-fluid">
       <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-2">
         <div>
-          <h1 class="h3 fw-bold mb-1 text-primary">Historial de Salidas y Entregas</h1>
-          <p class="text-muted small mb-0">Registro histórico de insumos entregados a departamentos y personal</p>
+          <h1 class="h3 fw-bold mb-1 text-primary">Historial de Despachos y Entregas</h1>
+          <p class="text-muted small mb-0">Registro histórico de insumos entregados a áreas hospitalarias y personal asistencial</p>
         </div>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb mb-0 small">
             <li class="breadcrumb-item"><a href="adm_catalogo.php" class="text-decoration-none">Inicio</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Salidas y Entregas</li>
+            <li class="breadcrumb-item active" aria-current="page">Historial de Despachos</li>
           </ol>
         </nav>
       </div>
@@ -152,7 +152,7 @@
 
           <!-- Tabla con DataTables -->
           <div class="table-responsive">
-            <table id="tabla_ventas" class="table table-hover align-middle w-100">
+            <table id="tabla_despachos" class="table table-hover align-middle w-100">
               <thead class="table-light small">
                 <tr>
                   <th>N°</th>
@@ -176,7 +176,7 @@
 
 <?php 
 $page_scripts = '
-<script src="' . asset_v('../libs/js/retiro_ventas.js') . '"></script>
+<script src="' . asset_v('../libs/js/despachos.js') . '"></script>
 ';
 include_once 'layouts/footer.php'; 
 } else { 

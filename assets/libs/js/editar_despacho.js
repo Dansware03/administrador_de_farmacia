@@ -1,9 +1,9 @@
-// SIMAP - Modificar Registro de Entrega/Salida
+// SIMAP - Modificar Registro de Despacho y Entrega
 $(document).ready(function() {
-    let id_venta = new URLSearchParams(window.location.search).get('id');
-    let productos_venta = [];
+    let id_despacho = new URLSearchParams(window.location.search).get('id');
+    let productos_despacho = [];
     let stock_original = {};
-    let total_venta = 0;
+    let total_despacho = 0;
 
     cargar_areas();
 
@@ -18,21 +18,21 @@ $(document).ready(function() {
         });
     }
 
-    // Cargar datos de la venta/salida
-    function cargar_venta() {
-        $.post('../controller/VentaController.php', {
-            funcion: 'obtener_venta',
-            id_venta: id_venta
+    // Cargar datos del despacho
+    function cargar_despacho() {
+        $.post('../controller/DespachoController.php', {
+            funcion: 'obtener_despacho',
+            id_despacho: id_despacho
         }, function(response) {
             let data = JSON.parse(response);
             if (data.status === 'success') {
-                let venta = data.venta;
-                $('#cliente').val(venta.cliente);
-                $('#ci').val(venta.ci);
-                $('#cargo_receptor').val(venta.cargo_receptor || '');
-                $('#observacion').val(venta.observacion || '');
-                if (venta.id_area) {
-                    cargar_areas(venta.id_area);
+                let despacho = data.despacho;
+                $('#receptor').val(despacho.receptor);
+                $('#ci_receptor').val(despacho.ci_receptor);
+                $('#cargo_receptor').val(despacho.cargo_receptor || '');
+                $('#observacion').val(despacho.observacion || '');
+                if (despacho.id_area) {
+                    cargar_areas(despacho.id_area);
                 }
             } else {
                 Swal.fire({
@@ -40,19 +40,19 @@ $(document).ready(function() {
                     title: 'Error',
                     text: data.message
                 }).then(() => {
-                    window.location.href = '../pages/adm_retiro_ventas.php';
+                    window.location.href = '../pages/adm_despachos.php';
                 });
             }
         });
     }
 
-    // Cargar detalles de productos
-    function cargar_detalles_venta() {
-        $.post('../controller/VentaController.php', {
-            funcion: 'ver_detalle_venta',
-            id_venta: id_venta
+    // Cargar detalles de productos despachados
+    function cargar_detalles_despacho() {
+        $.post('../controller/DespachoController.php', {
+            funcion: 'ver_detalle_despacho',
+            id_despacho: id_despacho
         }, function(response) {
-            productos_venta = JSON.parse(response);
+            productos_despacho = JSON.parse(response);
             mostrar_productos_tabla();
             calcular_total();
         });
@@ -61,8 +61,9 @@ $(document).ready(function() {
     // Mostrar productos en la tabla
     function mostrar_productos_tabla() {
         let template = '';
-        productos_venta.forEach(producto => {
+        productos_despacho.forEach(producto => {
             const unidad = producto.unidad_codigo ? `(${producto.unidad_codigo})` : '';
+            const idItem = producto.id_despacho_insumo || producto.id_ventaproducto;
             template += `
                 <tr>
                     <td>
@@ -77,10 +78,10 @@ $(document).ready(function() {
                     <td><span class="badge bg-primary-subtle text-primary fw-bold fs-6">${producto.cantidad}</span></td>
                     <td class="text-center">
                         <div class="btn-group btn-group-sm" role="group">
-                            <button class="btn btn-outline-warning editar-cantidad" data-id="${producto.id_ventaproducto}" data-producto="${producto.producto}" data-cantidad="${producto.cantidad}" title="Modificar cantidad">
+                            <button class="btn btn-outline-warning editar-cantidad" data-id="${idItem}" data-producto="${producto.producto}" data-cantidad="${producto.cantidad}" title="Modificar cantidad">
                                 <i class="bi bi-pencil"></i>
                             </button>
-                            <button class="btn btn-outline-danger eliminar-producto" data-id="${producto.id_ventaproducto}" title="Remover insumo">
+                            <button class="btn btn-outline-danger eliminar-producto" data-id="${idItem}" title="Remover insumo">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </div>
@@ -89,24 +90,24 @@ $(document).ready(function() {
             `;
             
             // Guardar stock original para referencia
-            stock_original[producto.id_ventaproducto] = producto.cantidad;
+            stock_original[idItem] = producto.cantidad;
         });
         
-        $('#tabla_detalle_venta tbody').html(template);
+        $('#tabla_detalle_despacho tbody').html(template);
     }
 
-    // Calcular el total de unidades físicas de la entrega/salida
+    // Calcular el total de unidades físicas despachadas
     function calcular_total() {
-        total_venta = 0;
-        productos_venta.forEach(producto => {
-            total_venta += parseInt(producto.cantidad) || 0;
+        total_despacho = 0;
+        productos_despacho.forEach(producto => {
+            total_despacho += parseInt(producto.cantidad) || 0;
         });
-        $('#total_venta').text(`${total_venta} unidades`);
+        $('#total_despacho').text(`${total_despacho} unidades`);
     }
 
-    // Obtener stock disponible para un producto
+    // Obtener stock disponible para un lote de producto
     function obtener_stock_disponible(id_producto, id_lote, callback) {
-        $.post('../controller/VentaController.php', {
+        $.post('../controller/DespachoController.php', {
             funcion: 'obtener_stock_lote',
             id_producto: id_producto,
             id_lote: id_lote
@@ -122,7 +123,7 @@ $(document).ready(function() {
         let producto_nombre = $(this).data('producto');
         let cantidad_actual = $(this).data('cantidad');
         
-        let producto = productos_venta.find(p => p.id_ventaproducto == id_detalle);
+        let producto = productos_despacho.find(p => (p.id_despacho_insumo == id_detalle || p.id_ventaproducto == id_detalle));
         
         $('#producto_editar').val(producto_nombre);
         $('#id_detalle_editar').val(id_detalle);
@@ -143,7 +144,6 @@ $(document).ready(function() {
         let id_detalle = $('#id_detalle_editar').val();
         let nueva_cantidad = parseInt($('#nueva_cantidad').val());
         let stock_disponible = parseInt($('#stock_disponible').val());
-        let cantidad_actual = parseInt($('#cantidad_actual').val());
         
         if (isNaN(nueva_cantidad) || nueva_cantidad <= 0) {
             Swal.fire('Error', 'La cantidad debe ser mayor a cero', 'error');
@@ -155,9 +155,9 @@ $(document).ready(function() {
             return;
         }
         
-        let index = productos_venta.findIndex(p => p.id_ventaproducto == id_detalle);
+        let index = productos_despacho.findIndex(p => (p.id_despacho_insumo == id_detalle || p.id_ventaproducto == id_detalle));
         if (index !== -1) {
-            productos_venta[index].cantidad = nueva_cantidad;
+            productos_despacho[index].cantidad = nueva_cantidad;
             mostrar_productos_tabla();
             calcular_total();
             const modalEl = document.getElementById('modal_editar_cantidad');
@@ -166,13 +166,13 @@ $(document).ready(function() {
         }
     });
 
-    // Eliminar producto de la venta
+    // Eliminar producto del despacho
     $(document).on('click', '.eliminar-producto', function() {
         let id_detalle = $(this).data('id');
         
         Swal.fire({
             title: '¿Remover insumo?',
-            text: "Este insumo será retirado de la solicitud y no se entregará",
+            text: "Este insumo será retirado del despacho y reintegrado al inventario",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#0d6efd',
@@ -181,34 +181,34 @@ $(document).ready(function() {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                productos_venta = productos_venta.filter(p => p.id_ventaproducto != id_detalle);
+                productos_despacho = productos_despacho.filter(p => (p.id_despacho_insumo != id_detalle && p.id_ventaproducto != id_detalle));
                 mostrar_productos_tabla();
                 calcular_total();
             }
         });
     });
 
-    // Guardar cambios en la venta
-    $('#btn_actualizar_venta').click(function() {
-        let cliente = $('#cliente').val();
-        let ci = $('#ci').val();
+    // Guardar cambios en el despacho
+    $('#btn_actualizar_despacho').click(function() {
+        let receptor = $('#receptor').val();
+        let ci_receptor = $('#ci_receptor').val();
         let id_area = $('#area_destino').val();
         let cargo_receptor = $('#cargo_receptor').val() || '';
         let observacion = $('#observacion').val() || '';
         
-        if (productos_venta.length === 0) {
-            Swal.fire('Error', 'No hay ningún insumo en la solicitud', 'error');
+        if (productos_despacho.length === 0) {
+            Swal.fire('Error', 'No hay ningún insumo en la solicitud de despacho', 'error');
             return;
         }
 
-        if (!cliente || cliente.trim() === '' || !ci || ci.trim() === '') {
-            Swal.fire('Atención', 'Complete el nombre del funcionario y su cédula', 'warning');
+        if (!receptor || receptor.trim() === '' || !ci_receptor || ci_receptor.trim() === '') {
+            Swal.fire('Atención', 'Complete el nombre del funcionario receptor y su cédula', 'warning');
             return;
         }
         
         Swal.fire({
             title: '¿Guardar cambios?',
-            text: "Se recalcularán las existencias y los comprobantes asociados",
+            text: "Se recalcularán las existencias y el acta oficial de entrega",
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: '#0d6efd',
@@ -217,15 +217,15 @@ $(document).ready(function() {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                $.post('../controller/VentaController.php', {
-                    funcion: 'actualizar_venta',
-                    id_venta: id_venta,
-                    cliente: cliente,
-                    ci: ci,
+                $.post('../controller/DespachoController.php', {
+                    funcion: 'actualizar_despacho',
+                    id_despacho: id_despacho,
+                    receptor: receptor,
+                    ci_receptor: ci_receptor,
                     id_area: id_area,
                     cargo_receptor: cargo_receptor,
                     observacion: observacion,
-                    productos: JSON.stringify(productos_venta)
+                    productos: JSON.stringify(productos_despacho)
                 }, function(response) {
                     let data = JSON.parse(response);
                     if (data.status === 'success') {
@@ -236,7 +236,7 @@ $(document).ready(function() {
                             showConfirmButton: false,
                             timer: 1500
                         }).then(() => {
-                            window.location.href = '../pages/adm_retiro_ventas.php';
+                            window.location.href = '../pages/adm_despachos.php';
                         });
                     } else {
                         Swal.fire({
@@ -251,6 +251,6 @@ $(document).ready(function() {
     });
 
     // Inicializar
-    cargar_venta();
-    cargar_detalles_venta();
+    cargar_despacho();
+    cargar_detalles_despacho();
 });

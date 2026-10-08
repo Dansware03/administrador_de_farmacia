@@ -314,8 +314,8 @@ $(document).ready(function () {
 
     let productos = JSON.stringify(RecuperarLS());
     $.post(
-      "../controller/CompraController.php",
-      { funcion: "registrar_compra", nombre, ci, id_area, cargo_receptor, observacion, productos },
+      "../controller/DespachoController.php",
+      { funcion: "registrar_despacho", nombre, ci, id_area, cargo_receptor, observacion, productos },
       (response) => {
         let isSuccess = false;
         let errorMsg = "";

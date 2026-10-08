@@ -3,28 +3,28 @@
 // C.P.E. La Fría - Inventario de Materiales e Insumos de Protección
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
-    die('Error: Identificador de entrega no especificado.');
+    die('Error: Identificador de despacho no especificado.');
 }
 
-require_once '../db/venta.php';
+require_once '../db/despacho.php';
 
-$venta_model = new Venta();
-$id_venta = intval($_GET['id']);
+$despacho_model = new Despacho();
+$id_despacho = intval($_GET['id']);
 
-$venta = $venta_model->obtener_venta($id_venta);
-if (!$venta) {
+$despacho = $despacho_model->obtener_despacho($id_despacho);
+if (!$despacho) {
     die('Error: No se encontró el registro de entrega solicitada.');
 }
 
-$detalles = $venta_model->ver_detalle_venta($id_venta);
-$fecha_formateada = date('d/m/Y h:i A', strtotime($venta['fecha']));
+$detalles = $despacho_model->ver_detalle_despacho($id_despacho);
+$fecha_formateada = date('d/m/Y h:i A', strtotime($despacho['fecha']));
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acta de Entrega #<?php echo htmlspecialchars($id_venta); ?> | SIMAP</title>
+  <title>Acta de Despacho #<?php echo htmlspecialchars($id_despacho); ?> | SIMAP</title>
   <link rel="stylesheet" href="../libs/css/bootstrap.min.css">
   <link rel="stylesheet" href="../libs/css/bootstrap-icons.min.css">
   <style>
@@ -88,7 +88,7 @@ $fecha_formateada = date('d/m/Y h:i A', strtotime($venta['fecha']));
 <div class="no-print bg-dark text-white py-2 px-3 sticky-top shadow-sm d-flex justify-content-between align-items-center">
   <div class="d-flex align-items-center gap-2">
     <i class="bi bi-file-earmark-medical-fill text-info fs-5"></i>
-    <span class="fw-semibold">SIMAP - Acta Oficial de Despacho #<?php echo htmlspecialchars($id_venta); ?></span>
+    <span class="fw-semibold">SIMAP - Acta Oficial de Despacho #<?php echo htmlspecialchars($id_despacho); ?></span>
   </div>
   <div class="d-flex gap-2">
     <button onclick="window.print()" class="btn btn-primary btn-sm fw-semibold">
@@ -113,7 +113,7 @@ $fecha_formateada = date('d/m/Y h:i A', strtotime($venta['fecha']));
     </div>
     <div class="text-end">
       <div class="badge bg-light text-dark border fs-6 fw-bold px-3 py-2 mb-1">
-        ACTA DE ENTREGA #<?php echo htmlspecialchars($id_venta); ?>
+        ACTA DE ENTREGA #<?php echo htmlspecialchars($id_despacho); ?>
       </div>
       <div class="small text-muted d-block">Fecha: <?php echo $fecha_formateada; ?></div>
     </div>
@@ -124,28 +124,28 @@ $fecha_formateada = date('d/m/Y h:i A', strtotime($venta['fecha']));
     <div class="row g-3 small">
       <div class="col-md-6">
         <span class="text-muted d-block">Área Hospitalaria de Destino:</span>
-        <strong class="text-primary fs-6"><?php echo htmlspecialchars($venta['nombre_area'] ?? 'Área Asistencial General'); ?></strong>
-        <span class="badge bg-secondary ms-1 badge-riesgo">Riesgo: <?php echo htmlspecialchars($venta['nivel_riesgo'] ?? 'Bajo'); ?></span>
+        <strong class="text-primary fs-6"><?php echo htmlspecialchars($despacho['nombre_area'] ?? 'Área Asistencial General'); ?></strong>
+        <span class="badge bg-secondary ms-1 badge-riesgo">Riesgo: <?php echo htmlspecialchars($despacho['nivel_riesgo'] ?? 'Bajo'); ?></span>
       </div>
       <div class="col-md-6">
         <span class="text-muted d-block">Funcionario Receptor:</span>
-        <strong class="text-dark fs-6"><?php echo htmlspecialchars($venta['cliente']); ?></strong>
-        <?php if (!empty($venta['cargo_receptor'])): ?>
-          <span class="text-muted d-block">(<?php echo htmlspecialchars($venta['cargo_receptor']); ?>)</span>
+        <strong class="text-dark fs-6"><?php echo htmlspecialchars($despacho['receptor']); ?></strong>
+        <?php if (!empty($despacho['cargo_receptor'])): ?>
+          <span class="text-muted d-block">(<?php echo htmlspecialchars($despacho['cargo_receptor']); ?>)</span>
         <?php endif; ?>
       </div>
       <div class="col-md-6">
         <span class="text-muted d-block">Cédula de Identidad:</span>
-        <strong class="text-dark"><?php echo htmlspecialchars($venta['ci']); ?></strong>
+        <strong class="text-dark"><?php echo htmlspecialchars($despacho['ci_receptor']); ?></strong>
       </div>
       <div class="col-md-6">
         <span class="text-muted d-block">Responsable de Despacho (SIMAP):</span>
-        <strong class="text-dark"><?php echo htmlspecialchars($venta['vendedor']); ?></strong>
+        <strong class="text-dark"><?php echo htmlspecialchars($despacho['responsable_nombre']); ?></strong>
       </div>
-      <?php if (!empty($venta['observacion'])): ?>
+      <?php if (!empty($despacho['observacion'])): ?>
       <div class="col-12 border-top pt-2 mt-2">
         <span class="text-muted d-block">Motivo / Observaciones:</span>
-        <span class="text-dark italic"><?php echo nl2br(htmlspecialchars($venta['observacion'])); ?></span>
+        <span class="text-dark italic"><?php echo nl2br(htmlspecialchars($despacho['observacion'])); ?></span>
       </div>
       <?php endif; ?>
     </div>
@@ -214,15 +214,15 @@ $fecha_formateada = date('d/m/Y h:i A', strtotime($venta['fecha']));
       <div class="col-4">
         <div class="firma-box">
           <strong>ENTREGADO POR</strong><br>
-          <?php echo htmlspecialchars($venta['vendedor']); ?><br>
+          <?php echo htmlspecialchars($despacho['responsable_nombre']); ?><br>
           <span class="text-muted">Depósito de Insumos SIMAP</span>
         </div>
       </div>
       <div class="col-4">
         <div class="firma-box">
           <strong>RECIBIDO CONFORME</strong><br>
-          <?php echo htmlspecialchars($venta['cliente']); ?><br>
-          <span class="text-muted">C.I: <?php echo htmlspecialchars($venta['ci']); ?></span>
+          <?php echo htmlspecialchars($despacho['receptor']); ?><br>
+          <span class="text-muted">C.I: <?php echo htmlspecialchars($despacho['ci_receptor']); ?></span>
         </div>
       </div>
       <div class="col-4">

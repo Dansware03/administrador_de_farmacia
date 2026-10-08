@@ -1,6 +1,6 @@
 <?php session_start(); if ($_SESSION['us_tipo']==1) { include_once 'layouts/header.php'; ?>
-<title><?php echo htmlspecialchars($_SESSION['nombre_us']); ?> | Modificar Solicitud</title>
-<?php include_once 'layouts/nav.php'; $id_venta = $_GET['id'] ?? ''; ?>
+<title><?php echo htmlspecialchars($_SESSION['nombre_us']); ?> | Modificar Despacho</title>
+<?php include_once 'layouts/nav.php'; $id_despacho = $_GET['id'] ?? ''; ?>
 
 <!-- Modal Editar Cantidad -->
 <div class="modal fade" id="modal_editar_cantidad" tabindex="-1" aria-labelledby="modalEditarCantidadLabel" aria-hidden="true">
@@ -52,13 +52,13 @@
     <div class="container-fluid">
       <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-2">
         <div>
-          <h1 class="h3 fw-bold mb-1 text-primary">Modificar Registro de Entrega #<?php echo htmlspecialchars($id_venta); ?></h1>
-          <p class="text-muted small mb-0">Corrección de cantidades e información de receptor</p>
+          <h1 class="h3 fw-bold mb-1 text-primary">Modificar Registro de Despacho #<?php echo htmlspecialchars($id_despacho); ?></h1>
+          <p class="text-muted small mb-0">Corrección de cantidades e información de funcionario receptor</p>
         </div>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb mb-0 small">
             <li class="breadcrumb-item"><a href="adm_catalogo.php" class="text-decoration-none">Inicio</a></li>
-            <li class="breadcrumb-item"><a href="adm_retiro_ventas.php" class="text-decoration-none">Historial</a></li>
+            <li class="breadcrumb-item"><a href="adm_despachos.php" class="text-decoration-none">Historial</a></li>
             <li class="breadcrumb-item active" aria-current="page">Editar</li>
           </ol>
         </nav>
@@ -74,24 +74,24 @@
           <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
             <i class="bi bi-info-circle-fill fs-4 me-3"></i>
             <div>
-              <strong>Aviso de Inventario:</strong> Al modificar las cantidades de esta entrega, las existencias en el depósito se recalcularán automáticamente en el sistema.
+              <strong>Aviso de Inventario:</strong> Al modificar las cantidades de este despacho, las existencias en el depósito se recalcularán automáticamente en el sistema.
             </div>
           </div>
 
-          <!-- Datos de la entrega / acta -->
+          <!-- Datos del despacho / acta -->
           <div class="row g-3 mb-4 p-3 bg-light rounded-3 border">
             <div class="col-md-6">
-              <label for="cliente" class="form-label small fw-semibold text-secondary">Nombre del Receptor / Funcionario: <span class="text-danger">*</span></label>
+              <label for="receptor" class="form-label small fw-semibold text-secondary">Nombre del Receptor / Funcionario: <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-person"></i></span>
-                <input type="text" class="form-control" id="cliente" name="cliente" required>
+                <input type="text" class="form-control" id="receptor" name="receptor" required>
               </div>
             </div>
             <div class="col-md-6">
-              <label for="ci" class="form-label small fw-semibold text-secondary">Cédula / Identificador: <span class="text-danger">*</span></label>
+              <label for="ci_receptor" class="form-label small fw-semibold text-secondary">Cédula / Identificador: <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
-                <input type="text" class="form-control" id="ci" name="ci" required>
+                <input type="text" class="form-control" id="ci_receptor" name="ci_receptor" required>
               </div>
             </div>
             <div class="col-md-6">
@@ -105,18 +105,18 @@
               <label for="cargo_receptor" class="form-label small fw-semibold text-secondary">Cargo / Función del Receptor:</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-briefcase"></i></span>
-                <input type="text" class="form-control" id="cargo_receptor" placeholder="Ej: Enfermera Jefe / Supervisor de Aseo">
+                <input type="text" class="form-control" id="cargo_receptor" placeholder="Ej: Coordinador Asistencial / Enfermera Jefe">
               </div>
             </div>
             <div class="col-12">
               <label for="observacion" class="form-label small fw-semibold text-secondary">Observaciones / Justificación de la Modificación:</label>
-              <textarea class="form-control" id="observacion" rows="2" placeholder="Motivo del ajuste o notas de entrega..."></textarea>
+              <textarea class="form-control" id="observacion" rows="2" placeholder="Motivo del ajuste o notas de despacho..."></textarea>
             </div>
           </div>
 
           <!-- Tabla de productos -->
           <div class="table-responsive border rounded-3 mb-4">
-            <table class="table table-hover align-middle mb-0" id="tabla_detalle_venta">
+            <table class="table table-hover align-middle mb-0" id="tabla_detalle_despacho">
               <thead class="table-light small">
                 <tr>
                   <th>Insumo / Material</th>
@@ -131,7 +131,7 @@
               <tfoot class="table-light">
                 <tr>
                   <th colspan="4" class="text-end fw-bold">Total Unidades Despachadas:</th>
-                  <th id="total_venta" class="fw-bold text-primary fs-6">0</th>
+                  <th id="total_despacho" class="fw-bold text-primary fs-6">0</th>
                   <th></th>
                 </tr>
               </tfoot>
@@ -139,10 +139,10 @@
           </div>
 
           <div class="d-flex justify-content-between align-items-center">
-            <a href="../pages/adm_retiro_ventas.php" class="btn btn-outline-secondary">
+            <a href="../pages/adm_despachos.php" class="btn btn-outline-secondary">
               <i class="bi bi-arrow-left me-1"></i>Volver al Historial
             </a>
-            <button id="btn_actualizar_venta" class="btn btn-primary fw-semibold px-4 shadow-sm">
+            <button id="btn_actualizar_despacho" class="btn btn-primary fw-semibold px-4 shadow-sm">
               <i class="bi bi-save me-1"></i>Guardar Cambios
             </button>
           </div>
@@ -155,7 +155,7 @@
 
 <?php 
 $page_scripts = '
-<script src="' . asset_v('../libs/js/editar_venta.js') . '"></script>
+<script src="' . asset_v('../libs/js/editar_despacho.js') . '"></script>
 ';
 include_once 'layouts/footer.php'; 
 } else { 

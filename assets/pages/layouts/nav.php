@@ -189,14 +189,14 @@ $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
           <span>Usuarios</span>
         </a>
 
-        <div class="nav-header">Retiros y Entregas</div>
+        <div class="nav-header">Despachos y Entregas</div>
         <a href="adm_retiro.php" class="nav-link <?php echo ($current_page == 'adm_retiro.php') ? 'active' : ''; ?>">
           <i class="bi bi-cart-check"></i>
-          <span>Procesar Retiro</span>
+          <span>Procesar Despacho</span>
         </a>
-        <a href="adm_retiro_ventas.php" class="nav-link <?php echo in_array($current_page, ['adm_retiro_ventas.php', 'editar_venta.php']) ? 'active' : ''; ?>">
+        <a href="adm_despachos.php" class="nav-link <?php echo in_array($current_page, ['adm_despachos.php', 'adm_editar_despacho.php']) ? 'active' : ''; ?>">
           <i class="bi bi-box-arrow-up-right"></i>
-          <span>Lista de Retiros</span>
+          <span>Historial de Despachos</span>
         </a>
 
         <div class="nav-header">Depósito de Insumos</div>
@@ -285,14 +285,14 @@ $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
             <span>Usuarios</span>
           </a>
 
-          <div class="nav-header">Retiros y Entregas</div>
+          <div class="nav-header">Despachos y Entregas</div>
           <a href="adm_retiro.php" class="nav-link <?php echo ($current_page == 'adm_retiro.php') ? 'active' : ''; ?>">
             <i class="bi bi-cart-check"></i>
-            <span>Procesar Retiro</span>
+            <span>Procesar Despacho</span>
           </a>
-          <a href="adm_retiro_ventas.php" class="nav-link <?php echo in_array($current_page, ['adm_retiro_ventas.php', 'editar_venta.php']) ? 'active' : ''; ?>">
+          <a href="adm_despachos.php" class="nav-link <?php echo in_array($current_page, ['adm_despachos.php', 'adm_editar_despacho.php']) ? 'active' : ''; ?>">
             <i class="bi bi-box-arrow-up-right"></i>
-            <span>Lista de Retiros</span>
+            <span>Historial de Despachos</span>
           </a>
 
           <div class="nav-header">Depósito de Insumos</div>

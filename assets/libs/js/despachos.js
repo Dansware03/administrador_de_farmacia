@@ -1,20 +1,19 @@
-// SIMAP - Historial de Salidas y Entregas
+// SIMAP - Historial de Despachos y Actas de Entrega
 $(document).ready(function() {
-    // Inicializar DataTable con traducción local 100% offline
-    let tabla_ventas = $('#tabla_ventas').DataTable({
+    let tabla_despachos = $('#tabla_despachos').DataTable({
         responsive: true,
         autoWidth: false,
         deferRender: true,
         ajax: {
-            url: "../controller/VentaController.php",
+            url: "../controller/DespachoController.php",
             method: "POST",
             data: {
-                funcion: "listar_ventas"
+                funcion: "listar_despachos"
             },
             dataSrc: ""
         },
         columns: [
-            { data: "id_venta" },
+            { data: "id_despacho" },
             { data: "fecha" },
             { 
                 data: "area",
@@ -26,22 +25,22 @@ $(document).ready(function() {
                     return `<span class="fw-semibold text-dark">${data || 'General'}</span> <span class="badge ${badgeClass} ms-1 small" style="font-size:0.7rem;">${row.nivel_riesgo || 'Bajo'}</span>`;
                 }
             },
-            { data: "cliente" },
-            { data: "ci" },
-            { data: "vendedor" },
+            { data: "receptor" },
+            { data: "ci_receptor" },
+            { data: "responsable_nombre" },
             {
                 defaultContent: `
                 <div class="btn-group btn-group-sm" role="group">
-                    <button class="ver_detalles btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#vista_venta" title="Ver comprobante">
+                    <button class="ver_detalles btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#vista_despacho" title="Ver acta">
                         <i class="bi bi-eye"></i>
                     </button>
-                    <button class="editar btn btn-outline-warning" title="Editar salida">
+                    <button class="editar btn btn-outline-warning" title="Editar despacho">
                         <i class="bi bi-pencil"></i>
                     </button>
                     <button class="revertir btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmar_revertir" title="Anular entrega">
                         <i class="bi bi-trash"></i>
                     </button>
-                    <button class="imprimir btn btn-outline-primary" title="Imprimir recibo">
+                    <button class="imprimir btn btn-outline-primary" title="Imprimir acta">
                         <i class="bi bi-printer"></i>
                     </button>
                 </div>
@@ -55,7 +54,7 @@ $(document).ready(function() {
             info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
             infoEmpty: "Mostrando 0 a 0 de 0 registros",
             infoFiltered: "(filtrado de _MAX_ registros en total)",
-            zeroRecords: "No se encontraron entregas registradas",
+            zeroRecords: "No se encontraron despachos registrados",
             emptyTable: "No hay registros disponibles",
             paginate: {
                 first: "Primero",
@@ -67,14 +66,14 @@ $(document).ready(function() {
         order: [[ 0, "desc" ]]
     });
 
-    let id_venta_seleccionada;
+    let id_despacho_seleccionado;
 
-    // Ver detalles
-    $('#tabla_ventas tbody').on('click', '.ver_detalles', function() {
-        let data = tabla_ventas.row($(this).parents('tr')).data();
-        id_venta_seleccionada = data.id_venta;
+    // Ver detalles del despacho
+    $('#tabla_despachos tbody').on('click', '.ver_detalles', function() {
+        let data = tabla_despachos.row($(this).parents('tr')).data();
+        id_despacho_seleccionado = data.id_despacho;
         
-        $('#cliente_detalle').text(data.cliente);
+        $('#receptor_detalle').text(data.receptor);
         $('#cargo_detalle').text(data.cargo_receptor || 'Personal Asignado');
         $('#area_detalle').text(data.area || 'Área General');
         let riesgo = data.nivel_riesgo || 'Bajo';
@@ -84,16 +83,16 @@ $(document).ready(function() {
         else if (riesgo === "Bajo") badgeClass = "bg-success";
         $('#riesgo_badge_detalle').attr('class', `badge ${badgeClass} small mt-1`).text(`Riesgo: ${riesgo}`);
 
-        $('#ci_detalle').text(data.ci);
+        $('#ci_detalle').text(data.ci_receptor);
         $('#fecha_detalle').text(data.fecha);
-        $('#vendedor_detalle').text(data.vendedor);
+        $('#responsable_detalle').text(data.responsable_nombre);
         
         $.ajax({
-            url: '../controller/VentaController.php',
+            url: '../controller/DespachoController.php',
             type: 'POST',
             data: {
-                funcion: 'ver_detalle_venta',
-                id_venta: id_venta_seleccionada
+                funcion: 'ver_detalle_despacho',
+                id_despacho: id_despacho_seleccionado
             },
             success: function(response) {
                 let detalles = JSON.parse(response);
@@ -118,29 +117,29 @@ $(document).ready(function() {
                     `;
                 });
                 
-                $('#detalles_venta').html(template);
+                $('#detalles_despacho').html(template);
                 $('#total_detalle').text(`${totalPiezas} unidades`);
             },
             error: function(error) {
-                console.error('Error al cargar detalles de salida:', error);
+                console.error('Error al cargar detalles del despacho:', error);
             }
         });
     });
 
     // Abrir modal de anulación
-    $('#tabla_ventas tbody').on('click', '.revertir', function() {
-        let data = tabla_ventas.row($(this).parents('tr')).data();
-        id_venta_seleccionada = data.id_venta;
+    $('#tabla_despachos tbody').on('click', '.revertir', function() {
+        let data = tabla_despachos.row($(this).parents('tr')).data();
+        id_despacho_seleccionado = data.id_despacho;
     });
 
     // Confirmar anulación
     $('#btn_confirmar_revertir').click(function() {
         $.ajax({
-            url: '../controller/VentaController.php',
+            url: '../controller/DespachoController.php',
             type: 'POST',
             data: {
-                funcion: 'revertir_venta',
-                id_venta: id_venta_seleccionada
+                funcion: 'revertir_despacho',
+                id_despacho: id_despacho_seleccionado
             },
             success: function(response) {
                 const resultado = JSON.parse(response);
@@ -152,12 +151,12 @@ $(document).ready(function() {
                     Swal.fire({
                         position: 'center',
                         icon: 'success',
-                        title: 'Entrega anulada',
+                        title: 'Despacho anulado',
                         text: resultado.message,
                         showConfirmButton: false,
                         timer: 1500
                     }).then(function() {
-                        tabla_ventas.ajax.reload();
+                        tabla_despachos.ajax.reload();
                     });
                 } else {
                     Swal.fire({
@@ -170,29 +169,29 @@ $(document).ready(function() {
                 }
             },
             error: function(error) {
-                console.error('Error al revertir salida:', error);
+                console.error('Error al anular despacho:', error);
             }
         });
     });
 
-    // Editar venta/salida
-    $('#tabla_ventas tbody').on('click', '.editar', function() {
-        let data = tabla_ventas.row($(this).parents('tr')).data();
-        id_venta_seleccionada = data.id_venta;
-        window.location.href = `editar_venta.php?id=${id_venta_seleccionada}`;
+    // Editar despacho
+    $('#tabla_despachos tbody').on('click', '.editar', function() {
+        let data = tabla_despachos.row($(this).parents('tr')).data();
+        id_despacho_seleccionado = data.id_despacho;
+        window.location.href = `adm_editar_despacho.php?id=${id_despacho_seleccionado}`;
     });
 
-    // Imprimir desde tabla
-    $('#tabla_ventas tbody').on('click', '.imprimir', function() {
-        let data = tabla_ventas.row($(this).parents('tr')).data();
-        id_venta_seleccionada = data.id_venta;
-        window.open(`../pages/recibo_venta.php?id=${id_venta_seleccionada}`, '_blank');
+    // Imprimir acta desde tabla
+    $('#tabla_despachos tbody').on('click', '.imprimir', function() {
+        let data = tabla_despachos.row($(this).parents('tr')).data();
+        id_despacho_seleccionado = data.id_despacho;
+        window.open(`../pages/acta_despacho.php?id=${id_despacho_seleccionado}`, '_blank');
     });
 
-    // Imprimir desde modal
+    // Imprimir acta desde modal
     $('#btn_imprimir').click(function() {
-        if (id_venta_seleccionada) {
-            window.open(`../pages/recibo_venta.php?id=${id_venta_seleccionada}`, '_blank');
+        if (id_despacho_seleccionado) {
+            window.open(`../pages/acta_despacho.php?id=${id_despacho_seleccionado}`, '_blank');
         }
     });
 
@@ -210,13 +209,13 @@ $(document).ready(function() {
             return;
         }
         
-        tabla_ventas.ajax.url(`../controller/VentaController.php?funcion=listar_ventas&fecha_inicio=${fecha_inicio}&fecha_fin=${fecha_fin}`).load();
+        tabla_despachos.ajax.url(`../controller/DespachoController.php?funcion=listar_despachos&fecha_inicio=${fecha_inicio}&fecha_fin=${fecha_fin}`).load();
     });
 
     // Limpiar filtros
     $('#btn_limpiar').click(function() {
         $('#fecha_inicio').val('');
         $('#fecha_fin').val('');
-        tabla_ventas.ajax.url('../controller/VentaController.php?funcion=listar_ventas').load();
+        tabla_despachos.ajax.url('../controller/DespachoController.php?funcion=listar_despachos').load();
     });
 });

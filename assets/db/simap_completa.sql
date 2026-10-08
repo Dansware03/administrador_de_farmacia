@@ -1,19 +1,5 @@
 PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
-CREATE TABLE IF NOT EXISTS "detalle_venta" (
-	"id_detalle"	INTEGER,
-	"det_cantidad"	INTEGER NOT NULL,
-	"det_vencimiento"	DATE NOT NULL,
-	"id_det_lote"	INTEGER NOT NULL,
-	"id_det_prod"	INTEGER NOT NULL,
-	"lote_id_prov"	INTEGER NOT NULL,
-	"id_det_venta"	INTEGER NOT NULL,
-	FOREIGN KEY("id_det_venta") REFERENCES "venta"("id_venta"),
-	PRIMARY KEY("id_detalle" AUTOINCREMENT)
-);
-INSERT INTO detalle_venta VALUES(1,1,'2027-08-31',5,5,2,1);
-INSERT INTO detalle_venta VALUES(2,2,'2028-06-30',15,21,2,1);
-INSERT INTO detalle_venta VALUES(3,50,'2028-12-31',17,25,1,1);
 CREATE TABLE IF NOT EXISTS "laboratorio" (
 	"id_laboratorio"	INTEGER,
 	"nombre"	TEXT NOT NULL,
@@ -37,7 +23,7 @@ CREATE TABLE IF NOT EXISTS "lote" (
 	FOREIGN KEY("id_lote_prod") REFERENCES "producto"("id_producto"),
 	PRIMARY KEY("id_lote" AUTOINCREMENT)
 );
-INSERT INTO lote VALUES(1,50,'2026-12-31',1,3,202601);
+INSERT INTO lote VALUES(1,49,'2026-12-31',1,3,202601);
 INSERT INTO lote VALUES(2,35,'2026-11-30',2,3,202602);
 INSERT INTO lote VALUES(3,43,'2027-06-30',3,1,102401);
 INSERT INTO lote VALUES(4,20,'2027-01-31',4,1,102402);
@@ -178,28 +164,6 @@ CREATE TABLE IF NOT EXISTS "usuario" (
 	PRIMARY KEY("id_usuario" AUTOINCREMENT)
 );
 INSERT INTO usuario VALUES(1,'Administrador','SIMAP','2003-01-06','123456789','$2y$10$4cQ98SMc6D5Jta3kQOY/BOHQyePT7JRtvwtcen4FaEVcUpDlYOlWG','0414-1234567','admin@simap.gob.ve','hombre','Administrador Principal SIMAP','user-default.png',1);
-CREATE TABLE IF NOT EXISTS "venta" (
-	"id_venta"	INTEGER,
-	"fecha"	DATETIME,
-	"cliente"	TEXT,
-	"ci"	TEXT,
-	"vendedor"	INTEGER NOT NULL, "id_area" INTEGER DEFAULT NULL, "cargo_receptor" TEXT DEFAULT NULL, "observacion" TEXT DEFAULT NULL,
-	FOREIGN KEY("vendedor") REFERENCES "usuario"("id_usuario"),
-	PRIMARY KEY("id_venta" AUTOINCREMENT)
-);
-INSERT INTO venta VALUES(1,'2026-09-28 10:30:00','Adriana López','15272470',1,1,'Coordinadora de Nutrición','Dotación mensual según Acta FUNREAHV');
-CREATE TABLE IF NOT EXISTS "venta_producto" (
-	"id_ventaproducto"	INTEGER,
-	"cantidad"	INTEGER NOT NULL,
-	"producto_id_producto"	INTEGER NOT NULL,
-	"venta_id_venta"	INTEGER NOT NULL,
-	FOREIGN KEY("producto_id_producto") REFERENCES "producto"("id_producto"),
-	FOREIGN KEY("venta_id_venta") REFERENCES "venta"("id_venta"),
-	PRIMARY KEY("id_ventaproducto" AUTOINCREMENT)
-);
-INSERT INTO venta_producto VALUES(1,1,5,1);
-INSERT INTO venta_producto VALUES(2,2,21,1);
-INSERT INTO venta_producto VALUES(3,50,25,1);
 CREATE TABLE IF NOT EXISTS "unidad_medida" (
         "id_unidad" INTEGER PRIMARY KEY AUTOINCREMENT,
         "nombre" TEXT NOT NULL,
@@ -228,6 +192,43 @@ INSERT INTO area_servicio VALUES(6,'Baños y Áreas Sanitarias','Alto');
 INSERT INTO area_servicio VALUES(7,'Dirección y Administración','Bajo');
 INSERT INTO area_servicio VALUES(8,'Sala de Partos','Alto');
 INSERT INTO area_servicio VALUES(9,'Laboratorio y Bioanálisis','Alto');
+CREATE TABLE despacho (
+    id_despacho INTEGER PRIMARY KEY AUTOINCREMENT,
+    fecha DATETIME,
+    receptor TEXT,
+    ci_receptor TEXT,
+    responsable INTEGER NOT NULL,
+    id_area INTEGER DEFAULT NULL,
+    cargo_receptor TEXT DEFAULT NULL,
+    observacion TEXT DEFAULT NULL,
+    FOREIGN KEY(responsable) REFERENCES usuario(id_usuario),
+    FOREIGN KEY(id_area) REFERENCES area_servicio(id_area)
+);
+INSERT INTO despacho VALUES(1,'2026-09-28 10:30:00','Adriana López','15272470',1,1,'Coordinadora de Nutrición','Dotación mensual según Acta FUNREAHV');
+CREATE TABLE despacho_insumo (
+    id_despacho_insumo INTEGER PRIMARY KEY AUTOINCREMENT,
+    cantidad INTEGER NOT NULL,
+    producto_id_producto INTEGER NOT NULL,
+    despacho_id_despacho INTEGER NOT NULL,
+    FOREIGN KEY(producto_id_producto) REFERENCES producto(id_producto),
+    FOREIGN KEY(despacho_id_despacho) REFERENCES despacho(id_despacho)
+);
+INSERT INTO despacho_insumo VALUES(1,1,5,1);
+INSERT INTO despacho_insumo VALUES(2,2,21,1);
+INSERT INTO despacho_insumo VALUES(3,50,25,1);
+CREATE TABLE detalle_despacho (
+    id_detalle INTEGER PRIMARY KEY AUTOINCREMENT,
+    det_cantidad INTEGER NOT NULL,
+    det_vencimiento DATE NOT NULL,
+    id_det_lote INTEGER NOT NULL,
+    id_det_prod INTEGER NOT NULL,
+    lote_id_prov INTEGER NOT NULL,
+    id_det_despacho INTEGER NOT NULL,
+    FOREIGN KEY(id_det_despacho) REFERENCES despacho(id_despacho)
+);
+INSERT INTO detalle_despacho VALUES(1,1,'2027-08-31',5,5,2,1);
+INSERT INTO detalle_despacho VALUES(2,2,'2028-06-30',15,21,2,1);
+INSERT INTO detalle_despacho VALUES(3,50,'2028-12-31',17,25,1,1);
 INSERT INTO sqlite_sequence VALUES('laboratorio',25);
 INSERT INTO sqlite_sequence VALUES('presentacion',19);
 INSERT INTO sqlite_sequence VALUES('tipo_producto',14);
@@ -236,9 +237,9 @@ INSERT INTO sqlite_sequence VALUES('usuario',3);
 INSERT INTO sqlite_sequence VALUES('producto',50);
 INSERT INTO sqlite_sequence VALUES('proveedor',3);
 INSERT INTO sqlite_sequence VALUES('lote',20);
-INSERT INTO sqlite_sequence VALUES('venta',5);
-INSERT INTO sqlite_sequence VALUES('venta_producto',6);
-INSERT INTO sqlite_sequence VALUES('detalle_venta',5);
 INSERT INTO sqlite_sequence VALUES('unidad_medida',9);
 INSERT INTO sqlite_sequence VALUES('area_servicio',10);
+INSERT INTO sqlite_sequence VALUES('despacho',1);
+INSERT INTO sqlite_sequence VALUES('despacho_insumo',7);
+INSERT INTO sqlite_sequence VALUES('detalle_despacho',6);
 COMMIT;
