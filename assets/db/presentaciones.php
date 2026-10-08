@@ -1,29 +1,66 @@
 <?php
+/**
+ * Modelo de Datos y Lógica de Negocio para Presentaciones Farmacéuticas
+ *
+ * Administra el catálogo maestro de presentaciones, formas farmacéuticas
+ * y empaques de insumos y medicamentos (Ampolla, Frasco, Blíster, Caja x 50, etc.).
+ * Implementa control de duplicados y validación de integridad referencial.
+ *
+ * Flujo de Integración Extremo a Extremo:
+ * 1. UI/Cliente: Formulario en vista de presentaciones (`assets/libs/js/presentacion.js`).
+ * 2. Petición HTTP: AJAX POST hacia `assets/controller/PresentacionesController.php`.
+ * 3. Procesamiento Modelo: `Presentacion::crear`, `buscar`, `editar`, `borrar_pre`.
+ * 4. Persistencia DB: Operaciones sobre tabla `presentacion` y validación de dependencias en `producto`.
+ * 5. Respuesta: Notificaciones de texto plano ('add', 'no add', 'edit', 'borrado') o colección JSON.
+ *
+ * @package SIMAP\Models
+ * @author Grupo de Proyecto
+ * @version 1.0.0
+ */
+
 include_once 'conexion.php';
-class presentacion {
-    var $objetos;
+
+class Presentacion {
+    /**
+     * @var array Colección de registros resultantes de consultas.
+     */
+    public $objetos;
+
+    /**
+     * @var PDO Instancia activa de conexión a la base de datos.
+     */
     private $acceso;
 
+    /**
+     * Constructor del modelo Presentacion.
+     *
+     * Inicializa la conexión PDO mediante la clase centralizada `Conexion`.
+     */
     public function __construct() {
         $db = new Conexion();
         $this->acceso = $db->pdo;
     }
 
-    function crear($nombre) {
+    /**
+     * Registrar una nueva presentación farmacéutica.
+     *
+     * Verifica previamente que no exista otra presentación con la misma denominación.
+     *
+     * @param string $nombre Nombre descriptivo de la presentación o empaque.
+     * @return void Emite 'add' si se inserta exitosamente o 'no add' si ya existe.
+     */
+    public function crear($nombre) {
         try {
-            // Verifica si la presentación ya existe
             $sql = "SELECT id_presentacion FROM presentacion WHERE nombre = :nombre";
             $query = $this->acceso->prepare($sql);
-            $query->execute(array(':nombre' => $nombre));
+            $query->execute([':nombre' => $nombre]);
 
-            // Si ya existe, no la agrega
             if ($query->rowCount() > 0) {
                 echo 'no add';
             } else {
-                // Si no existe, la agrega
                 $sql = "INSERT INTO presentacion (nombre) VALUES (:nombre)";
                 $query = $this->acceso->prepare($sql);
-                if ($query->execute(array(':nombre' => $nombre))) {
+                if ($query->execute([':nombre' => $nombre])) {
                     echo 'add';
                 }
             }
@@ -32,16 +69,30 @@ class presentacion {
         }
     }
 
-    function buscar() {
-        $consulta = isset($_POST['consulta']) ? $_POST['consulta'] : '';
+    /**
+     * Buscar presentaciones por coincidencia de texto en el nombre.
+     *
+     * @return array Registros coincidentes con el criterio de búsqueda.
+     */
+    public function buscar() {
+        $consulta = $_POST['consulta'] ?? '';
         $sql = "SELECT * FROM presentacion WHERE nombre LIKE :consulta ORDER BY id_presentacion LIMIT 10";
         $query = $this->acceso->prepare($sql);
-        $query->execute(array(':consulta' => "%$consulta%"));
+        $query->execute([':consulta' => "%$consulta%"]);
         $this->objetos = $query->fetchAll();
         return $this->objetos;
     }
 
-    function borrar_pre($id) {
+    /**
+     * Eliminar una presentación garantizando integridad referencial.
+     *
+     * Valida si existen productos vinculados a la presentación en la tabla `producto`
+     * antes de proceder con el borrado.
+     *
+     * @param int $id Identificador único de la presentación a eliminar.
+     * @return void Emite 'borrado', 'no-borrado' o mensaje de advertencia si tiene productos vinculados.
+     */
+    public function borrar_pre($id) {
         try {
             $verificar_sql = "SELECT COUNT(*) as count FROM producto WHERE prod_present = :id";
             $verificar_query = $this->acceso->prepare($verificar_sql);
@@ -63,13 +114,22 @@ class presentacion {
         }
     }
 
-    function editar($nombre, $id_editado) {
+    /**
+     * Actualizar la denominación de una presentación farmacéutica existente.
+     *
+     * @param string $nombre Nuevo nombre de la presentación.
+     * @param int $id_editado Identificador de la presentación a modificar.
+     * @return void Emite 'edit' o mensaje de validación ante campos vacíos.
+     */
+    public function editar($nombre, $id_editado) {
         try {
-            // Verifica que el nombre no sea vacío antes de intentar actualizar
             if (!empty($nombre)) {
                 $sql = "UPDATE presentacion SET nombre = :nombre WHERE id_presentacion = :id";
                 $query = $this->acceso->prepare($sql);
-                $query->execute(array(':id' => $id_editado, ':nombre' => $nombre));
+                $query->execute([
+                    ':id' => $id_editado,
+                    ':nombre' => $nombre
+                ]);
                 echo 'edit';
             } else {
                 echo 'Nombre no válido para editar';
@@ -79,8 +139,15 @@ class presentacion {
         }
     }
 
-    function rellenar_presentacion() {
-        $sql = "SELECT * FROM presentacion ORDER BY nombre asc";
+    /**
+     * Obtener el catálogo completo de presentaciones ordenadas alfabéticamente.
+     *
+     * Utilizado para poblar selectores desplegables HTML (`<select>`) en la gestión de insumos.
+     *
+     * @return array Colección completa de presentaciones registradas.
+     */
+    public function rellenar_presentacion() {
+        $sql = "SELECT * FROM presentacion ORDER BY nombre ASC";
         $query = $this->acceso->prepare($sql);
         $query->execute();
         $this->objetos = $query->fetchAll();

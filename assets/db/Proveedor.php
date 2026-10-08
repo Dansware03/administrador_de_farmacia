@@ -6,6 +6,9 @@
  * DESCRIPCIÓN: Administra las entidades de proveedores y donantes humanitarios
  *              en la base de datos local SQLite.
  * TABLA ASOCIADA: `proveedor`
+ * @package SIMAP\Models
+ * @author Grupo de Proyecto
+ * @version 1.0.0
  * ============================================================================
  */
 include_once 'conexion.php';
