@@ -1,13 +1,42 @@
 <?php
+/**
+ * ============================================================================
+ * ARCHIVO: Proveedor.php
+ * CAPA: Modelo (Persistencia y Acceso a Datos PDO)
+ * DESCRIPCIÓN: Administra las entidades de proveedores y donantes humanitarios
+ *              en la base de datos local SQLite.
+ * TABLA ASOCIADA: `proveedor`
+ * ============================================================================
+ */
 include_once 'conexion.php';
-class Proveedor{
+
+class Proveedor {
     var $objetos;
     private $acceso;
+
     public function __construct()
     {
         $db = new Conexion();
         $this->acceso = $db->pdo;
     }
+
+    /**
+     * Registra un nuevo proveedor o donante en la base de datos SQLite.
+     *
+     * FLUJO DE PERSISTENCIA:
+     *   1. Verifica si ya existe un proveedor registrado con el mismo nombre.
+     *   2. Si existe, emite respuesta de duplicado ('no add').
+     *   3. Si no existe, ejecuta sentencia preparada PDO INSERT INTO proveedor (...).
+     *   4. Emite respuesta de éxito ('add') si la inserción fue satisfactoria.
+     *
+     * @param string $nombre    Nombre de la empresa u organización donante.
+     * @param string $telefono  Número de contacto telefónico.
+     * @param string $correo    Dirección de correo electrónico institucional.
+     * @param string $direccion Dirección física o sede operativa.
+     * @param string $avatar    Nombre del archivo de imagen de logotipo.
+     * @return void
+     * @throws Exception Si ocurre un fallo en la ejecución de la consulta.
+     */
     function crear($nombre, $telefono, $correo, $direccion, $avatar) {
         try {
             $sql = "SELECT id_proveedor FROM proveedor WHERE nombre = :nombre";

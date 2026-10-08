@@ -1,9 +1,36 @@
 <?php
+/**
+ * ============================================================================
+ * ARCHIVO: ProveedorController.php
+ * CAPA: Controlador (Orquestación Backend HTTP)
+ * DESCRIPCIÓN: Gestiona las peticiones de proveedores y donantes institucionales.
+ * ENTRADA: Peticiones AJAX POST desde assets/libs/js/proveedor.js.
+ * SALIDA: Estados en texto plano ('add', 'edit', 'borrado') o JSON.
+ * DEPENDENCIAS: assets/db/Proveedor.php (Modelo Proveedor).
+ * ============================================================================
+ */
 include_once '../db/Proveedor.php';
 $proveedor = new Proveedor();
+
 if (isset($_POST['funcion'])) {
     $funcion = $_POST['funcion'];
     switch ($funcion) {
+        /**
+         * CASO DE USO: Registrar Proveedor o Donante
+         * --------------------------------------------------------------------
+         * @route POST assets/controller/ProveedorController.php [funcion=crear]
+         * @param string $_POST['nombre'] Nombre de la entidad proveedora.
+         * @param string $_POST['telefono'] Número de contacto.
+         * @param string $_POST['correo'] Correo electrónico (opcional).
+         * @param string $_POST['direccion'] Ubicación física o sede.
+         * 
+         * FLUJO DE EJECUCIÓN:
+         *   1. Recepción y saneamiento de variables de entrada.
+         *   2. Validación de presencia de campos obligatorios (nombre y teléfono).
+         *   3. Delegación al Modelo: $proveedor->crear(...).
+         *   4. Respuesta: Imprime 'add' en éxito o mensaje de error.
+         * --------------------------------------------------------------------
+         */
         case 'crear':
             try {
                 $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : '';
