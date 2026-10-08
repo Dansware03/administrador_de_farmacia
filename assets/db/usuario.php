@@ -101,14 +101,16 @@ class Usuario {
 
     function buscar() {
         if (!empty($_POST['consulta'])) {
-            $consulta = $_POST['consulta'];
-            $sql = "SELECT * FROM usuario join tipo_us ON us_tipo=id_tipo_us where nombre_us LIKE :consulta";
+            $consulta = trim($_POST['consulta']);
+            $sql = "SELECT * FROM usuario JOIN tipo_us ON us_tipo=id_tipo_us 
+                    WHERE nombre_us LIKE :q OR apellidos_us LIKE :q OR ci_us LIKE :q 
+                    ORDER BY id_usuario DESC LIMIT 50";
             $query = $this->acceso->prepare($sql);
-            $query->execute(array(':consulta' => "%$consulta%"));
+            $query->execute(array(':q' => "%$consulta%"));
             $this->objetos = $query->fetchAll();
             return $this->objetos;
         } else {
-            $sql = "SELECT * FROM usuario join tipo_us ON us_tipo=id_tipo_us where nombre_us NOT LIKE '' ORDER BY id_usuario LIMIT 25";
+            $sql = "SELECT * FROM usuario JOIN tipo_us ON us_tipo=id_tipo_us ORDER BY id_usuario ASC LIMIT 50";
             $query = $this->acceso->prepare($sql);
             $query->execute();
             $this->objetos = $query->fetchAll();
@@ -185,6 +187,20 @@ class Usuario {
 
     function descender($pass, $id_donw, $id_usuario) {
         try {
+            // Regla anti-auto-descenso
+            if ($id_donw == $id_usuario) {
+                echo 'self-downgrade';
+                return;
+            }
+
+            // Regla del último administrador
+            $countQuery = $this->acceso->query("SELECT COUNT(*) AS total FROM usuario WHERE us_tipo = 1");
+            $totalAdmins = $countQuery->fetch()->total ?? 0;
+            if ($totalAdmins <= 1) {
+                echo 'last-admin';
+                return;
+            }
+
             if ($this->verificarPasswordAdmin($pass, $id_usuario)) {
                 $this->acceso->beginTransaction();
                 $tipo = 2;
@@ -206,12 +222,46 @@ class Usuario {
 
     function delete($pass, $id_delete, $id_usuario) {
         try {
+            // Regla anti-auto-eliminación
+            if ($id_delete == $id_usuario) {
+                echo 'self-delete';
+                return;
+            }
+
+            // Comprobar si el usuario a eliminar es un administrador
+            $checkUser = $this->acceso->prepare("SELECT us_tipo, avatar FROM usuario WHERE id_usuario = :id");
+            $checkUser->execute([':id' => $id_delete]);
+            $targetUser = $checkUser->fetch();
+
+            if (!$targetUser) {
+                echo 'no-delete';
+                return;
+            }
+
+            if ($targetUser->us_tipo == 1) {
+                $countQuery = $this->acceso->query("SELECT COUNT(*) AS total FROM usuario WHERE us_tipo = 1");
+                $totalAdmins = $countQuery->fetch()->total ?? 0;
+                if ($totalAdmins <= 1) {
+                    echo 'last-admin';
+                    return;
+                }
+            }
+
             if ($this->verificarPasswordAdmin($pass, $id_usuario)) {
                 $this->acceso->beginTransaction();
                 $sql = "DELETE FROM usuario where id_usuario=:id";
                 $query = $this->acceso->prepare($sql);
                 $query->execute(array(':id' => $id_delete));
                 $this->acceso->commit();
+
+                // Eliminar archivo de avatar del disco si no es el default
+                if (!empty($targetUser->avatar) && strpos($targetUser->avatar, 'user-default') === false) {
+                    $avatarPath = '../libs/img/avatars/' . $targetUser->avatar;
+                    if (file_exists($avatarPath)) {
+                        @unlink($avatarPath);
+                    }
+                }
+
                 echo 'delete';
             } else {
                 echo 'no-delete';

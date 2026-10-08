@@ -16,11 +16,17 @@
         <div class="modal-body p-4 text-center">
           <img id="avatar3" src="../libs/img/avatars/user-default.png" class="rounded-circle shadow-sm border mb-2" style="width: 80px; height: 80px; object-fit: cover;">
           <div class="fw-bold text-dark fs-6 mb-1"><?php echo htmlspecialchars($_SESSION['nombre_us']); ?></div>
-          <p class="text-muted small mb-3">Ingrese su contraseña de administrador para confirmar esta operación:</p>
+          <div id="check-accion-msg" class="alert alert-info py-2 px-3 small mb-3">
+            Confirmar operación sobre el usuario
+          </div>
+          <p class="text-muted small mb-3">Ingrese su contraseña de administrador para autorizar esta operación:</p>
 
           <div class="input-group mb-2">
             <span class="input-group-text"><i class="bi bi-key"></i></span>
-            <input class="form-control" type="password" id="oldpass" placeholder="Contraseña actual" required autofocus>
+            <input class="form-control" type="password" id="oldpass" placeholder="Contraseña de administrador" required autofocus>
+            <button class="btn btn-outline-secondary" type="button" id="toggleCheckPass">
+              <i class="bi bi-eye"></i>
+            </button>
           </div>
           <input type="hidden" id="id_user_rol">
           <input type="hidden" id="funcion">
@@ -42,7 +48,7 @@
     <div class="modal-content border-0 shadow">
       <div class="modal-header bg-primary text-white">
         <h5 class="modal-title fw-bold" id="newUserLabel">
-          <i class="bi bi-person-plus me-2"></i>Registrar Nuevo Usuario
+          <i class="bi bi-person-plus me-2"></i>Registrar Nuevo Personal
         </h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
@@ -53,7 +59,7 @@
               <label for="nombre" class="form-label fw-semibold small text-secondary">Nombres <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-person"></i></span>
-                <input id="nombre" type="text" class="form-control" placeholder="Ej: Carlos Alberto" required>
+                <input id="nombre" type="text" class="form-control" placeholder="Ej: Carlos Alberto" required maxlength="50">
               </div>
             </div>
 
@@ -61,7 +67,7 @@
               <label for="apellido" class="form-label fw-semibold small text-secondary">Apellidos <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-person"></i></span>
-                <input id="apellido" type="text" class="form-control" placeholder="Ej: Gómez Pérez" required>
+                <input id="apellido" type="text" class="form-control" placeholder="Ej: Gómez Pérez" required maxlength="50">
               </div>
             </div>
 
@@ -69,13 +75,14 @@
               <label for="ci" class="form-label fw-semibold small text-secondary">Cédula de Identidad <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
-                <input id="ci" type="text" class="form-control" placeholder="Ej: 12345678" required>
+                <input id="ci" type="text" pattern="[0-9]{6,10}" class="form-control" placeholder="Solo números (ej: 12345678)" required title="Debe contener solo dígitos numéricos (6 a 10 cifras)">
               </div>
             </div>
 
             <div class="col-md-6">
               <label for="edad" class="form-label fw-semibold small text-secondary">Fecha de Nacimiento <span class="text-danger">*</span></label>
-              <input id="edad" type="date" class="form-control" required>
+              <input id="edad" type="date" class="form-control" max="<?php echo date('Y-m-d', strtotime('-18 years')); ?>" required>
+              <div class="form-text small">El usuario debe ser mayor de edad (+18 años).</div>
             </div>
 
             <div class="col-md-6">
@@ -88,10 +95,13 @@
             </div>
 
             <div class="col-md-6">
-              <label for="pass" class="form-label fw-semibold small text-secondary">Contraseña Temporal <span class="text-danger">*</span></label>
+              <label for="pass" class="form-label fw-semibold small text-secondary">Contraseña Inicial <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                <input id="pass" type="password" class="form-control" placeholder="••••••••" required>
+                <input id="pass" type="password" minlength="6" class="form-control" placeholder="Mínimo 6 caracteres" required>
+                <button class="btn btn-outline-secondary" type="button" id="toggleNewPass">
+                  <i class="bi bi-eye"></i>
+                </button>
               </div>
             </div>
           </div>
@@ -99,7 +109,7 @@
         <div class="modal-footer bg-light">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
           <button type="submit" class="btn btn-primary fw-semibold">
-            <i class="bi bi-check-lg me-1"></i>Crear Usuario
+            <i class="bi bi-check-lg me-1"></i>Registrar Usuario
           </button>
         </div>
       </form>
@@ -121,7 +131,8 @@
             </button>
           </h1>
           <p class="text-muted small mb-0">Gestión de cuentas, roles de acceso y personal del centro asistencial</p>
-          <input type="hidden" id="tipo_usuario" value="<?php echo $_SESSION['us_tipo']?>">
+          <input type="hidden" id="tipo_usuario" value="<?php echo $_SESSION['us_tipo']; ?>">
+          <input type="hidden" id="id_usuario_actual" value="<?php echo $_SESSION['usuario']; ?>">
         </div>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb mb-0 small">
@@ -155,5 +166,12 @@
 </div>
 <!-- /.content-wrapper -->
 
-<?php include_once 'layouts/footer.php'; } else { header('Location: ../../index.php'); } ?>
-<script src="../libs/js/gestion_user.js"></script>
+<?php 
+$page_scripts = '
+<script src="' . asset_v('../libs/js/gestion_user.js') . '"></script>
+';
+include_once 'layouts/footer.php'; 
+} else { 
+  header('Location: ../../index.php'); 
+} 
+?>

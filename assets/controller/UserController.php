@@ -115,31 +115,61 @@ if ($_POST['funcion'] == 'buscar_usuario_adm') {
     echo $jsonstring;
 }
 if ($_POST['funcion'] == 'crear_usuario') {
-    $nombre = $_POST['nombre'];
-    $apellido = $_POST['apellido'];
-    $edad = $_POST['edad'];
-    $ci = $_POST['ci'];
-    $genero = $_POST['genero'];
-    $pass = $_POST['pass'];
-    // ponytail: Por política institucional SIMAP, los nuevos registros creados corresponden al rol Secretario (tipo = 2).
-    $tipo=2;
-    $avatar='user-default.png';
-    $usuario->crear($nombre,$apellido,$edad,$ci,$genero,$pass,$tipo,$avatar);
+    if (!isset($_SESSION['us_tipo']) || $_SESSION['us_tipo'] != 1) {
+        echo 'no add';
+        exit;
+    }
+    $nombre = trim($_POST['nombre'] ?? '');
+    $apellido = trim($_POST['apellido'] ?? '');
+    $edad = trim($_POST['edad'] ?? '');
+    $ci = trim($_POST['ci'] ?? '');
+    $genero = trim($_POST['genero'] ?? 'hombre');
+    $pass = $_POST['pass'] ?? '';
+
+    // Validaciones de robustez en el servidor
+    if (empty($nombre) || empty($apellido) || empty($ci) || empty($edad) || strlen($pass) < 6 || !is_numeric($ci)) {
+        echo 'no add';
+        exit;
+    }
+
+    // Por política institucional SIMAP, los nuevos registros creados corresponden al rol Secretario (tipo = 2).
+    $tipo = 2;
+    $avatar = 'user-default.png';
+    $usuario->crear($nombre, $apellido, $edad, $ci, $genero, $pass, $tipo, $avatar);
+    exit;
 }
-if ($_POST['funcion']=='ascender') {
-    $pass = $_POST['pass'];
-    $id_up = $_POST['id_usuario'];
-    $usuario->ascender($pass,$id_up,$id_usuario);
+if ($_POST['funcion'] == 'ascender') {
+    if (!isset($_SESSION['us_tipo']) || $_SESSION['us_tipo'] != 1) {
+        echo 'no-up';
+        exit;
+    }
+    $pass = $_POST['pass'] ?? '';
+    $id_up = (int)($_POST['id_usuario'] ?? 0);
+    $id_admin_session = (int)$_SESSION['usuario'];
+    $usuario->ascender($pass, $id_up, $id_admin_session);
+    exit;
 }
-if ($_POST['funcion']=='descender') {
-    $pass = $_POST['pass'];
-    $id_donw = $_POST['id_usuario'];
-    $usuario->descender($pass,$id_donw,$id_usuario);
+if ($_POST['funcion'] == 'descender') {
+    if (!isset($_SESSION['us_tipo']) || $_SESSION['us_tipo'] != 1) {
+        echo 'no-donw';
+        exit;
+    }
+    $pass = $_POST['pass'] ?? '';
+    $id_donw = (int)($_POST['id_usuario'] ?? 0);
+    $id_admin_session = (int)$_SESSION['usuario'];
+    $usuario->descender($pass, $id_donw, $id_admin_session);
+    exit;
 }
-if ($_POST['funcion']=='delete_user') {
-    $pass = $_POST['pass'];
-    $id_delete = $_POST['id_usuario'];
-    $usuario->delete($pass,$id_delete,$id_usuario);
+if ($_POST['funcion'] == 'delete_user') {
+    if (!isset($_SESSION['us_tipo']) || $_SESSION['us_tipo'] != 1) {
+        echo 'no-delete';
+        exit;
+    }
+    $pass = $_POST['pass'] ?? '';
+    $id_delete = (int)($_POST['id_usuario'] ?? 0);
+    $id_admin_session = (int)$_SESSION['usuario'];
+    $usuario->delete($pass, $id_delete, $id_admin_session);
+    exit;
 }
 
 ?>
