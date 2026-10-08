@@ -1,6 +1,20 @@
-<?php session_start(); if ($_SESSION['us_tipo']==1) { include_once 'layouts/header.php'; ?>
+<?php session_start(); 
+if (empty($_SESSION['us_tipo'])) {
+    header('Location: ../../error.php?code=401');
+    exit();
+}
+if ($_SESSION['us_tipo'] != 1) {
+    header('Location: ../../error.php?code=403');
+    exit();
+}
+$id_despacho = $_GET['id'] ?? '';
+if (empty($id_despacho)) {
+    header('Location: ../../error.php?code=400');
+    exit();
+}
+include_once 'layouts/header.php'; ?>
 <title><?php echo htmlspecialchars($_SESSION['nombre_us']); ?> | Modificar Despacho</title>
-<?php include_once 'layouts/nav.php'; $id_despacho = $_GET['id'] ?? ''; ?>
+<?php include_once 'layouts/nav.php'; ?>
 
 <!-- Modal Editar Cantidad -->
 <div class="modal fade" id="modal_editar_cantidad" tabindex="-1" aria-labelledby="modalEditarCantidadLabel" aria-hidden="true">
@@ -158,7 +172,4 @@ $page_scripts = '
 <script src="' . asset_v('../libs/js/editar_despacho.js') . '"></script>
 ';
 include_once 'layouts/footer.php'; 
-} else { 
-  header('Location: ../../index.php'); 
-} 
 ?>

@@ -28,7 +28,7 @@ echo "======================================================\n\n";
 // 1. CHEQUEO DE SINTAXIS PHP (php -l)
 echo "[1/4] Analizando sintaxis PHP...\n";
 $php_dirs = ['assets/controller', 'assets/db', 'assets/pages', 'assets/pages/layouts'];
-$php_files = ['index.php', 'install.php', 'check.php'];
+$php_files = ['index.php', 'install.php', 'check.php', 'error.php'];
 
 foreach ($php_dirs as $dir) {
     if (is_dir($dir)) {

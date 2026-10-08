@@ -8,7 +8,8 @@ if (empty($_SESSION['us_tipo']) || ($_SESSION['us_tipo'] != 1 && $_SESSION['us_t
 }
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
-    die('Error: Identificador de despacho no especificado.');
+    header('Location: ../../error.php?code=400');
+    exit();
 }
 
 require_once '../db/despacho.php';
@@ -18,7 +19,8 @@ $id_despacho = intval($_GET['id']);
 
 $despacho = $despacho_model->obtener_despacho($id_despacho);
 if (!$despacho) {
-    die('Error: No se encontró el registro de entrega solicitada.');
+    header('Location: ../../error.php?code=404');
+    exit();
 }
 
 $detalles = $despacho_model->ver_detalle_despacho($id_despacho);

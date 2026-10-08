@@ -1,4 +1,13 @@
-<?php session_start(); if ($_SESSION['us_tipo']==1) { include_once 'layouts/header.php'; ?>
+<?php session_start(); 
+if (empty($_SESSION['us_tipo'])) {
+    header('Location: ../../error.php?code=401');
+    exit();
+}
+if ($_SESSION['us_tipo'] != 1) {
+    header('Location: ../../error.php?code=403');
+    exit();
+}
+include_once 'layouts/header.php'; ?>
 <title><?php echo htmlspecialchars($_SESSION['nombre_us']); ?> | Gestión de Proveedores</title>
 <?php include_once 'layouts/nav.php'; ?>
 
@@ -143,7 +152,4 @@ $page_scripts = '
 <script src="' . asset_v('../libs/js/proveedor.js') . '"></script>
 ';
 include_once 'layouts/footer.php'; 
-} else { 
-  header('Location: ../../index.php'); 
-} 
 ?>
