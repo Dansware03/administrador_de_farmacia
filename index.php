@@ -1,4 +1,27 @@
 <?php session_start();
+
+// Comprobación preventiva de instalación de SIMAP
+$db_file = __DIR__ . '/assets/db/simap.db';
+$requiere_instalacion = true;
+
+if (file_exists($db_file) && filesize($db_file) > 0) {
+    try {
+        $pdo_check = new PDO("sqlite:" . $db_file);
+        $pdo_check->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $stmt = $pdo_check->query("SELECT COUNT(*) FROM usuario WHERE us_tipo = 1");
+        if ($stmt && (int)$stmt->fetchColumn() > 0) {
+            $requiere_instalacion = false;
+        }
+    } catch (Exception $e) {
+        $requiere_instalacion = true;
+    }
+}
+
+if ($requiere_instalacion) {
+    header('Location: install.php');
+    exit;
+}
+
 if (!empty($_SESSION['us_tipo'])) {
     header('Location: assets/controller/LoginController.php');
     exit;
