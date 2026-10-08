@@ -1,7 +1,43 @@
 $(document).ready(function () {
-  RecuperarLS_carrito();
-  Contar_productos();
-  RecuperarLS_carrito_Pedido();
+  // Sincronizar y validar que los insumos en localStorage realmente existan en la base de datos
+  validarYLimpiarCarrito();
+
+  function validarYLimpiarCarrito() {
+    let productos = RecuperarLS();
+    if (productos.length === 0) {
+      RecuperarLS_carrito();
+      Contar_productos();
+      RecuperarLS_carrito_Pedido();
+      return;
+    }
+
+    const ids = productos.map((p) => p.id);
+    $.post(
+      "../controller/ProductoController.php",
+      { funcion: "validar_existencia", ids: JSON.stringify(ids) },
+      function (response) {
+        try {
+          const idsValidos = JSON.parse(response);
+          const productosFiltrados = productos.filter((p) =>
+            idsValidos.includes(String(p.id))
+          );
+
+          if (productosFiltrados.length !== productos.length) {
+            localStorage.setItem("productos", JSON.stringify(productosFiltrados));
+          }
+        } catch (e) {
+          // Si ocurre error de parseo o DB vacía sin conexión, no bloquear interfaz
+        }
+        RecuperarLS_carrito();
+        Contar_productos();
+        RecuperarLS_carrito_Pedido();
+      }
+    ).fail(function () {
+      RecuperarLS_carrito();
+      Contar_productos();
+      RecuperarLS_carrito_Pedido();
+    });
+  }
 
   function mostrarNotificacion(mensaje, tipo) {
     if (typeof toastr !== "undefined") {

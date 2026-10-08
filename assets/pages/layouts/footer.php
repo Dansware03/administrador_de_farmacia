@@ -63,6 +63,9 @@ document.addEventListener('DOMContentLoaded', function() {
         cancelButtonText: 'Cancelar'
       }).then((result) => {
         if (result.isConfirmed) {
+          // Limpiar caché local de solicitudes e insumos
+          localStorage.removeItem('productos');
+
           Swal.fire({
             title: 'Sesión finalizada',
             text: 'Redirigiendo...',

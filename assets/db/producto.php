@@ -167,5 +167,15 @@ class Producto {
         $this->objetos = $query->fetchAll();
         return $this->objetos;
     }
+
+    function validar_existentes($ids = []){
+        if (empty($ids) || !is_array($ids)) {
+            return [];
+        }
+        $marks = implode(',', array_fill(0, count($ids), '?'));
+        $query = $this->acceso->prepare("SELECT id_producto FROM producto WHERE id_producto IN (" . $marks . ")");
+        $query->execute(array_values($ids));
+        return $query->fetchAll(PDO::FETCH_COLUMN);
+    }
 };
 ?>

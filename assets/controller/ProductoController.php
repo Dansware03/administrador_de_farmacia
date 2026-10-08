@@ -111,6 +111,12 @@ if (isset($_POST['funcion'])) {
             $id = $_POST['id'];
             $producto->borrar_produts($id);
         break;
+        case 'validar_existencia':
+            // Recibe un array de IDs y retorna únicamente los que aún existen en la base de datos
+            $ids = isset($_POST['ids']) ? json_decode($_POST['ids'], true) : [];
+            $validos = $producto->validar_existentes($ids);
+            echo json_encode(array_map('strval', $validos));
+            break;
         case 'verificarStock':
             $error = 0;
             $productos = json_decode($_POST['productos']);
