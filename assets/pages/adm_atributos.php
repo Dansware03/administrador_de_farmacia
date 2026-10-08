@@ -1,4 +1,11 @@
-<?php session_start(); if ($_SESSION['us_tipo']==1) { include_once 'layouts/header.php'; ?>
+<?php 
+session_start();
+if (empty($_SESSION['us_tipo']) || $_SESSION['us_tipo'] != 1) {
+    header('Location: ../../index.php');
+    exit();
+}
+include_once 'layouts/header.php'; 
+?>
 <title><?php echo htmlspecialchars($_SESSION['nombre_us']); ?> | Gestión de Atributos</title>
 <?php include_once 'layouts/nav.php'; ?>
 
@@ -78,6 +85,17 @@
             <input type="hidden" id="id_editar_presentacion">
           </div>
         </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary fw-semibold">
+            <i class="bi bi-check-lg me-1"></i>Guardar Presentación
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <!-- Modal Área Hospitalaria -->
 <div class="modal fade" id="crear-area" tabindex="-1" aria-labelledby="crearAreaLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -279,7 +297,4 @@ $page_scripts = '
 <script src="' . asset_v('../libs/js/areas.js') . '"></script>
 ';
 include_once 'layouts/footer.php'; 
-} else { 
-  header('Location: ../../index.php'); 
-} 
 ?>
