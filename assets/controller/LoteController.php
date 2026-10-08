@@ -9,6 +9,8 @@
  * ENTRADA: Peticiones AJAX POST desde assets/libs/js/lote.js y gestion_lote.js.
  * SALIDA: Arreglos JSON con información enriquecida de inventario o estados de acción.
  * DEPENDENCIAS: assets/db/lote.php (Modelo Lote).
+ * @author Grupo de Proyecto
+ * @version 1.0.0
  * ============================================================================
  */
 

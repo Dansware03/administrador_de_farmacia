@@ -10,6 +10,8 @@
  * ENTRADA: Peticiones AJAX POST desde assets/libs/js/proveedor.js y lote.js.
  * SALIDA: Estados en texto plano ('add', 'edit', 'borrado') o arreglos en formato JSON.
  * DEPENDENCIAS: assets/db/Proveedor.php (Modelo Proveedor).
+ * @author Grupo de Proyecto
+ * @version 1.0.0
  * ============================================================================
  */
 

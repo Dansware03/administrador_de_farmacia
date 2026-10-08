@@ -8,6 +8,8 @@
  * ENTRADA: Peticiones AJAX POST desde assets/libs/js/laboratorio.js y producto.js.
  * SALIDA: Estados en texto plano ('add', 'edit', 'borrado') o arreglos en formato JSON.
  * DEPENDENCIAS: assets/db/laboratory.php (Modelo Laboratorio).
+ * @author Grupo de Proyecto
+ * @version 1.0.0
  * ============================================================================
  */
 

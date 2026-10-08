@@ -10,6 +10,8 @@
  * SALIDA: Redirección mediante cabeceras HTTP (Location) hacia las vistas autorizadas
  *         o retorno con bandera de error (?login_error=1).
  * DEPENDENCIAS: assets/db/usuario.php (Modelo Usuario).
+ * @author Grupo de Proyecto
+ * @version 1.0.0
  * ============================================================================
  */
 

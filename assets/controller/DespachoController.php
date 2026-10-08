@@ -10,6 +10,8 @@
  *          y solicitudes de generación de actas PDF (acta_despacho.php).
  * SALIDA: Respuestas en formato JSON con estados de transacción e información de actas.
  * DEPENDENCIAS: assets/db/despacho.php (Modelo Despacho).
+ * @author Grupo de Proyecto
+ * @version 1.0.0
  * ============================================================================
  */
 

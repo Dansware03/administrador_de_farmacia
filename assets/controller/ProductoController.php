@@ -10,6 +10,8 @@
  * ENTRADA: Peticiones AJAX POST desde assets/libs/js/producto.js y carrito.js.
  * SALIDA: Arreglos JSON o respuestas de estado ('add', 'edit', 'borrado').
  * DEPENDENCIAS: assets/db/producto.php (Modelo Producto).
+ * @author Grupo de Proyecto
+ * @version 1.0.0
  * ============================================================================
  */
 

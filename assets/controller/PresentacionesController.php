@@ -8,6 +8,8 @@
  * ENTRADA: Peticiones AJAX POST desde assets/libs/js/presentacion.js y producto.js.
  * SALIDA: Respuestas en texto plano ('add', 'edit', 'borrado') o arreglos en formato JSON.
  * DEPENDENCIAS: assets/db/presentaciones.php (Modelo Presentacion).
+ * @author Grupo de Proyecto
+ * @version 1.0.0
  * ============================================================================
  */
 

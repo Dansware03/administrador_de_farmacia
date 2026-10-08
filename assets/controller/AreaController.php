@@ -9,6 +9,8 @@
  * ENTRADA: Peticiones AJAX POST desde assets/libs/js/area.js, adm_area.js y carrito.js.
  * SALIDA: Respuestas estructuradas en formato JSON con estados y payloads de datos.
  * DEPENDENCIAS: assets/db/conexion.php (Conexión PDO SQLite).
+ * @author Grupo de Proyecto
+ * @version 1.0.0
  * ============================================================================
  */
 

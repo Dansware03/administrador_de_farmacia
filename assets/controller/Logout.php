@@ -8,6 +8,8 @@
  * ENTRADA: Solicitud GET o navegación hacia assets/controller/Logout.php
  *          (habitualmente invocada desde el botón #btn-logout en la barra de navegación).
  * SALIDA: Destrucción de variables de sesión y redirección HTTP a index.php.
+ * @author Grupo de Proyecto
+ * @version 1.0.0
  * ============================================================================
  */
 

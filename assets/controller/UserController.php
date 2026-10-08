@@ -11,6 +11,8 @@
  * ENTRADA: Peticiones AJAX POST desde assets/libs/js/usuario.js y gestion_user.js.
  * SALIDA: Arreglos JSON o respuestas de estado ('editado', 'no add', 'no-up', etc.).
  * DEPENDENCIAS: assets/db/usuario.php (Modelo Usuario).
+ * @author Grupo de Proyecto
+ * @version 1.0.0
  * ============================================================================
  */
 
