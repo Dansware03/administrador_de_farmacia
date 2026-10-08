@@ -130,12 +130,12 @@ class Usuario {
             } else {
                 $this->acceso->beginTransaction();
                 $hash = password_hash($pass, PASSWORD_BCRYPT);
-                $sql = "INSERT INTO usuario (nombre_us, apellidos_us, edad, ci_us, genero_us, contrasena_us, us_tipo, avatar) VALUES (:nombre, :apellido, :edad, :ci, :genero, :pass, :tipo, :avatar)";
+                $sql = "INSERT INTO usuario (nombre_us, apellidos_us, fecha_nacimiento, ci_us, genero_us, contrasena_us, us_tipo, avatar) VALUES (:nombre, :apellido, :fecha_nacimiento, :ci, :genero, :pass, :tipo, :avatar)";
                 $query = $this->acceso->prepare($sql);
                 $query->execute(array(
                     ':nombre' => $nombre,
                     ':apellido' => $apellido,
-                    ':edad' => $edad,
+                    ':fecha_nacimiento' => $edad,
                     ':ci' => $ci,
                     ':genero' => $genero,
                     ':pass' => $hash,

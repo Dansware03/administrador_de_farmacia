@@ -151,7 +151,7 @@ CREATE TABLE IF NOT EXISTS "usuario" (
 	"id_usuario"	INTEGER,
 	"nombre_us"	TEXT NOT NULL,
 	"apellidos_us"	TEXT NOT NULL,
-	"edad"	DATE NOT NULL,
+	"fecha_nacimiento"	DATE NOT NULL,
 	"ci_us"	TEXT,
 	"contrasena_us"	TEXT NOT NULL,
 	"telefono_us"	TEXT,
@@ -239,7 +239,7 @@ INSERT INTO sqlite_sequence VALUES('proveedor',3);
 INSERT INTO sqlite_sequence VALUES('lote',20);
 INSERT INTO sqlite_sequence VALUES('unidad_medida',9);
 INSERT INTO sqlite_sequence VALUES('area_servicio',10);
-INSERT INTO sqlite_sequence VALUES('despacho',1);
-INSERT INTO sqlite_sequence VALUES('despacho_insumo',7);
-INSERT INTO sqlite_sequence VALUES('detalle_despacho',6);
+INSERT INTO sqlite_sequence VALUES('despacho',2);
+INSERT INTO sqlite_sequence VALUES('despacho_insumo',8);
+INSERT INTO sqlite_sequence VALUES('detalle_despacho',7);
 COMMIT;

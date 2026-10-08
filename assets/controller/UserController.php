@@ -8,7 +8,7 @@ if ($_POST['funcion']=='buscar_usuario'){
     $fecha_actual = new DateTime();
     $usuario->obtener_datos($_POST['dato']);
     foreach ($usuario->objetos as $objeto) {
-        $nacimiento = new DateTime($objeto->edad);
+        $nacimiento = new DateTime($objeto->fecha_nacimiento);
         $edad = $nacimiento->diff($fecha_actual);
         $edad_year = $edad->y;
         $json[]=array(
@@ -93,7 +93,7 @@ if ($_POST['funcion'] == 'buscar_usuario_adm') {
     $fecha_actual = new DateTime();
     $usuario->buscar();
     foreach ($usuario->objetos as $objeto) {
-        $nacimiento = new DateTime($objeto->edad);
+        $nacimiento = new DateTime($objeto->fecha_nacimiento);
         $edad = $nacimiento->diff($fecha_actual);
         $edad_year = $edad->y;
         $json[] = array(
