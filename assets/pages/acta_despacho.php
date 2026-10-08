@@ -24,57 +24,155 @@ $fecha_formateada = date('d/m/Y h:i A', strtotime($despacho['fecha']));
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acta de Despacho #<?php echo htmlspecialchars($id_despacho); ?> | SIMAP</title>
+  <title>Acta de Despacho #<?php echo str_pad($id_despacho, 5, '0', STR_PAD_LEFT); ?> | SIMAP</title>
   <link rel="stylesheet" href="../libs/css/bootstrap.min.css">
   <link rel="stylesheet" href="../libs/css/bootstrap-icons.min.css">
   <style>
+    @page {
+      size: letter portrait;
+      margin: 12mm 15mm;
+    }
+    :root {
+      --primary: #0f172a;
+      --secondary: #475569;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --border-dark: #cbd5e1;
+      --surface: #f8fafc;
+      --accent: #0284c7;
+    }
     body {
-      background-color: #f8fafc;
-      color: #1e293b;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background-color: #f1f5f9;
+      color: var(--primary);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
     }
     .document-page {
       max-width: 820px;
-      margin: 30px auto;
+      margin: 25px auto;
       background: #ffffff;
-      padding: 40px;
-      border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      padding: 42px 48px;
+      border-radius: 4px;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+      border: 1px solid var(--border);
     }
-    .inst-header {
-      border-bottom: 2px solid #0284c7;
-      padding-bottom: 15px;
-      margin-bottom: 25px;
+    .doc-brand {
+      letter-spacing: -0.02em;
     }
-    .badge-riesgo {
-      font-size: 0.75rem;
-      padding: 4px 8px;
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px 24px;
+      padding: 16px 20px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 4px;
     }
-    .firmas-section {
-      margin-top: 50px;
-      padding-top: 20px;
+    .meta-item .meta-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 2px;
     }
-    .firma-box {
-      border-top: 1px solid #64748b;
-      padding-top: 8px;
+    .meta-item .meta-val {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .table-minimal {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
+    .table-minimal th {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--secondary);
+      border-bottom: 1.5px solid var(--primary);
+      padding: 8px 10px;
+      background: transparent;
+    }
+    .table-minimal td {
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+      font-size: 12.5px;
+    }
+    .table-minimal tbody tr:last-child td {
+      border-bottom: 1.5px solid var(--border-dark);
+    }
+    .table-minimal tfoot td {
+      padding: 10px;
+      font-weight: 700;
+      border-bottom: 2px solid var(--primary);
+      background: var(--surface);
+    }
+    .code-tag {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11px;
+      padding: 2px 6px;
+      background-color: #f1f5f9;
+      border-radius: 3px;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+    }
+    .firmas-container {
+      margin-top: 65px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    .firma-card {
       text-align: center;
-      margin-top: 60px;
-      font-size: 0.85rem;
+      border-top: 1px solid #94a3b8;
+      padding-top: 8px;
+    }
+    .firma-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      color: var(--secondary);
+      margin-bottom: 4px;
+    }
+    .firma-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .firma-sub {
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .doc-stamp {
+      border-top: 1px dashed var(--border);
+      margin-top: 36px;
+      padding-top: 12px;
+      font-size: 10.5px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     @media print {
       body {
-        background: #ffffff;
-        color: #000000;
-        margin: 0;
-        padding: 0;
+        background: #ffffff !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
       }
       .document-page {
-        box-shadow: none;
-        padding: 0;
-        margin: 0;
-        max-width: 100%;
-        border-radius: 0;
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
       }
       .no-print {
         display: none !important;
@@ -84,83 +182,113 @@ $fecha_formateada = date('d/m/Y h:i A', strtotime($despacho['fecha']));
 </head>
 <body>
 
-<!-- Barra Superior Flotante para Acciones (No imprimible) -->
-<div class="no-print bg-dark text-white py-2 px-3 sticky-top shadow-sm d-flex justify-content-between align-items-center">
-  <div class="d-flex align-items-center gap-2">
-    <i class="bi bi-file-earmark-medical-fill text-info fs-5"></i>
-    <span class="fw-semibold">SIMAP - Acta Oficial de Despacho #<?php echo htmlspecialchars($id_despacho); ?></span>
-  </div>
-  <div class="d-flex gap-2">
-    <button onclick="window.print()" class="btn btn-primary btn-sm fw-semibold">
-      <i class="bi bi-printer me-1"></i>Imprimir / Guardar PDF
-    </button>
-    <button onclick="window.close()" class="btn btn-outline-light btn-sm">
-      <i class="bi bi-x-lg me-1"></i>Cerrar
-    </button>
+<!-- Barra de Controles Flotante (No imprimible) -->
+<div class="no-print sticky-top bg-white border-bottom shadow-sm py-2 px-3">
+  <div class="max-w-820 mx-auto d-flex justify-content-between align-items-center" style="max-width: 820px;">
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge bg-dark px-2 py-1 font-monospace">ACTA-<?php echo str_pad($id_despacho, 5, '0', STR_PAD_LEFT); ?></span>
+      <span class="small text-secondary fw-semibold">Comprobante Oficial de Despacho SIMAP</span>
+    </div>
+    <div class="d-flex gap-2">
+      <button onclick="window.print()" class="btn btn-dark btn-sm fw-semibold d-flex align-items-center gap-1 shadow-sm">
+        <i class="bi bi-printer"></i> Imprimir / PDF
+      </button>
+      <button onclick="window.close()" class="btn btn-outline-secondary btn-sm">
+        Cerrar
+      </button>
+    </div>
   </div>
 </div>
 
 <div class="document-page">
-  <!-- Encabezado Institucional -->
-  <div class="inst-header d-flex justify-content-between align-items-start">
+  <!-- Encabezado Corporativo Minimalista -->
+  <div class="d-flex justify-content-between align-items-start border-bottom pb-4 mb-4">
     <div class="d-flex align-items-center gap-3">
-      <img src="../libs/img/logo.png" alt="Logo Hospital" style="max-height: 65px;" onerror="this.style.display='none'">
+      <img src="../libs/img/logo.png" alt="Logo SIMAP" style="height: 52px; width: auto; object-fit: contain;" onerror="this.style.display='none'">
       <div>
-        <h5 class="fw-bold mb-0 text-primary">CLÍNICA POPULAR ESPECIALIZADA LA FRÍA</h5>
-        <div class="small text-secondary fw-semibold">Sistema de Inventario de Materiales e Insumos de Protección (SIMAP)</div>
-        <small class="text-muted">Municipio García de Hevia, Estado Táchira - República Bolivariana de Venezuela</small>
+        <h6 class="fw-bold mb-0 text-dark doc-brand" style="font-size: 15px; letter-spacing: -0.01em;">
+          CLÍNICA POPULAR ESPECIALIZADA LA FRÍA
+        </h6>
+        <div class="text-secondary small fw-medium" style="font-size: 11.5px;">
+          Sistema de Inventario de Materiales e Insumos de Protección (SIMAP)
+        </div>
+        <div class="text-muted" style="font-size: 10.5px;">
+          Municipio García de Hevia, Estado Táchira &bull; República Bolivariana de Venezuela
+        </div>
       </div>
     </div>
     <div class="text-end">
-      <div class="badge bg-light text-dark border fs-6 fw-bold px-3 py-2 mb-1">
-        ACTA DE ENTREGA #<?php echo htmlspecialchars($id_despacho); ?>
+      <div class="text-uppercase fw-bold text-dark" style="font-size: 13px; letter-spacing: 0.05em;">
+        ACTA DE ENTREGA
       </div>
-      <div class="small text-muted d-block">Fecha: <?php echo $fecha_formateada; ?></div>
+      <div class="font-monospace fw-bold fs-5 text-dark" style="letter-spacing: -0.02em;">
+        #<?php echo str_pad($id_despacho, 5, '0', STR_PAD_LEFT); ?>
+      </div>
+      <div class="text-muted" style="font-size: 11px;">
+        Emisión: <span class="fw-semibold text-secondary"><?php echo $fecha_formateada; ?></span>
+      </div>
     </div>
   </div>
 
-  <!-- Información de la Entrega y Receptor -->
-  <div class="card border-0 bg-light rounded-3 p-3 mb-4">
-    <div class="row g-3 small">
-      <div class="col-md-6">
-        <span class="text-muted d-block">Área Hospitalaria de Destino:</span>
-        <strong class="text-primary fs-6"><?php echo htmlspecialchars($despacho['nombre_area'] ?? 'Área Asistencial General'); ?></strong>
+  <!-- Rejilla de Metadatos de la Dotación -->
+  <div class="meta-grid mb-4">
+    <div class="meta-item">
+      <div class="meta-label">Área Hospitalaria de Destino</div>
+      <div class="meta-val text-dark">
+        <?php echo htmlspecialchars($despacho['nombre_area'] ?? 'Área Asistencial General'); ?>
       </div>
-      <div class="col-md-6">
-        <span class="text-muted d-block">Funcionario Receptor:</span>
-        <strong class="text-dark fs-6"><?php echo htmlspecialchars($despacho['receptor']); ?></strong>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Funcionario Receptor</div>
+      <div class="meta-val text-dark">
+        <?php echo htmlspecialchars($despacho['receptor']); ?>
         <?php if (!empty($despacho['cargo_receptor'])): ?>
-          <span class="text-muted d-block">(<?php echo htmlspecialchars($despacho['cargo_receptor']); ?>)</span>
+          <span class="fw-normal text-muted" style="font-size: 11.5px;">— <?php echo htmlspecialchars($despacho['cargo_receptor']); ?></span>
         <?php endif; ?>
       </div>
-      <div class="col-md-6">
-        <span class="text-muted d-block">Cédula de Identidad:</span>
-        <strong class="text-dark"><?php echo htmlspecialchars($despacho['ci_receptor']); ?></strong>
-      </div>
-      <div class="col-md-6">
-        <span class="text-muted d-block">Responsable de Despacho (SIMAP):</span>
-        <strong class="text-dark"><?php echo htmlspecialchars($despacho['responsable_nombre']); ?></strong>
-      </div>
-      <?php if (!empty($despacho['observacion'])): ?>
-      <div class="col-12 border-top pt-2 mt-2">
-        <span class="text-muted d-block">Motivo / Observaciones:</span>
-        <span class="text-dark italic"><?php echo nl2br(htmlspecialchars($despacho['observacion'])); ?></span>
-      </div>
-      <?php endif; ?>
     </div>
+    <div class="meta-item">
+      <div class="meta-label">Cédula de Identidad Receptor</div>
+      <div class="meta-val font-monospace">
+        V-<?php echo htmlspecialchars($despacho['ci_receptor']); ?>
+      </div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Responsable de Salida (Depósito SIMAP)</div>
+      <div class="meta-val text-dark">
+        <?php echo htmlspecialchars($despacho['responsable_nombre']); ?>
+      </div>
+    </div>
+    <?php if (!empty($despacho['observacion'])): ?>
+    <div class="meta-item" style="grid-column: span 2;">
+      <div class="meta-label">Motivo / Justificación del Despacho</div>
+      <div class="meta-val fw-normal text-secondary" style="font-size: 12px;">
+        <?php echo nl2br(htmlspecialchars($despacho['observacion'])); ?>
+      </div>
+    </div>
+    <?php endif; ?>
   </div>
 
-  <!-- Tabla de Insumos y Materiales Despachados -->
-  <div class="table-responsive mb-4">
-    <table class="table table-bordered align-middle mb-0" style="font-size: 0.88rem;">
-      <thead class="table-light">
+  <!-- Detalle Tabular de Insumos Despachados -->
+  <div class="mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-1">
+      <span class="text-uppercase fw-bold text-secondary" style="font-size: 10.5px; letter-spacing: 0.04em;">
+        Relación de Insumos y Materiales Suministrados
+      </span>
+      <span class="text-muted" style="font-size: 11px;">
+        Total ítems: <b><?php echo count($detalles); ?></b>
+      </span>
+    </div>
+
+    <table class="table-minimal">
+      <thead>
         <tr>
-          <th style="width: 5%;">#</th>
-          <th style="width: 38%;">Insumo / Material</th>
+          <th style="width: 5%; text-align: center;">#</th>
+          <th style="width: 42%;">Descripción del Insumo / Material</th>
           <th style="width: 15%;">Unidad / Talla</th>
-          <th style="width: 14%;">Lote</th>
-          <th style="width: 14%;">Vencimiento</th>
-          <th style="width: 14%;" class="text-center">Cantidad</th>
+          <th style="width: 18%;">Lote / Control</th>
+          <th style="width: 10%;">Caducidad</th>
+          <th style="width: 10%; text-align: right;">Cant.</th>
         </tr>
       </thead>
       <tbody>
@@ -171,66 +299,75 @@ $fecha_formateada = date('d/m/Y h:i A', strtotime($despacho['fecha']));
           $total_piezas += intval($det['cantidad']);
           $unidad_codigo = !empty($det['unidad_codigo']) ? $det['unidad_codigo'] : 'und';
           $espec = !empty($det['especificacion_talla']) ? $det['especificacion_talla'] : '-';
+          $vencimiento = !empty($det['vencimiento']) && $det['vencimiento'] !== '2035-12-31' ? date('m/Y', strtotime($det['vencimiento'])) : 'N/A';
         ?>
         <tr>
-          <td class="text-center text-muted"><?php echo $i++; ?></td>
+          <td style="text-align: center; color: var(--muted); font-size: 11px;"><?php echo $i++; ?></td>
           <td>
-            <strong class="text-dark"><?php echo htmlspecialchars($det['producto']); ?></strong>
-          </td>
-          <td>
-            <span class="fw-semibold text-primary"><?php echo htmlspecialchars($unidad_codigo); ?></span>
-            <small class="text-muted d-block"><?php echo htmlspecialchars($espec); ?></small>
+            <div class="fw-semibold text-dark"><?php echo htmlspecialchars($det['producto']); ?></div>
           </td>
           <td>
-            <span class="badge bg-light text-dark border"><?php echo htmlspecialchars($det['lote'] ?: 'LOTE-UNICO'); ?></span>
+            <span class="fw-medium text-dark"><?php echo htmlspecialchars($unidad_codigo); ?></span>
+            <?php if ($espec !== '-'): ?>
+              <span class="text-muted" style="font-size: 11px;">(<?php echo htmlspecialchars($espec); ?>)</span>
+            <?php endif; ?>
           </td>
-          <td class="small text-muted">
-            <?php echo htmlspecialchars($det['vencimiento'] ?: 'No aplica'); ?>
+          <td>
+            <span class="code-tag"><?php echo htmlspecialchars($det['lote'] ?: 'LOTE-UNICO'); ?></span>
           </td>
-          <td class="text-center fw-bold fs-6 text-primary">
-            <?php echo htmlspecialchars($det['cantidad']); ?>
+          <td style="font-size: 11.5px; color: var(--muted);">
+            <?php echo $vencimiento; ?>
+          </td>
+          <td style="text-align: right; font-weight: 700; font-size: 13.5px; color: var(--primary);">
+            <?php echo number_format($det['cantidad'], 0, ',', '.'); ?>
           </td>
         </tr>
         <?php endforeach; ?>
       </tbody>
-      <tfoot class="table-light fw-bold">
+      <tfoot>
         <tr>
-          <td colspan="5" class="text-end">Total de Unidades / Insumos Despachados:</td>
-          <td class="text-center fs-6 text-primary"><?php echo $total_piezas; ?></td>
+          <td colspan="5" style="text-align: right; font-size: 11.5px; text-transform: uppercase; color: var(--secondary);">
+            Total Unidades Despachadas:
+          </td>
+          <td style="text-align: right; font-size: 14px; font-weight: 800; color: var(--primary);">
+            <?php echo number_format($total_piezas, 0, ',', '.'); ?>
+          </td>
         </tr>
       </tfoot>
     </table>
   </div>
 
-  <div class="small text-muted mb-4">
-    <i class="bi bi-info-circle me-1"></i>
-    <strong>Régimen Institucional:</strong> Entrega formal de materiales e insumos de protección y bioseguridad para uso estricto en las instalaciones y servicios de la Clínica Popular Especializada La Fría.
+  <!-- Declaración de Conformidad Institucional -->
+  <div class="p-2 px-3 mb-4 rounded" style="background-color: var(--surface); border-left: 3px solid #0f172a; font-size: 11px; color: var(--secondary);">
+    <b>Certificación de Salida:</b> Los materiales detallados han sido retirados del almacén central para uso exclusivo en la atención hospitalaria y protocolos de bioseguridad de la unidad solicitante.
   </div>
 
-  <!-- Sección de Firmas y Validación Institucional -->
-  <div class="firmas-section">
-    <div class="row text-center">
-      <div class="col-4">
-        <div class="firma-box">
-          <strong>ENTREGADO POR</strong><br>
-          <?php echo htmlspecialchars($despacho['responsable_nombre']); ?><br>
-          <span class="text-muted">Depósito de Insumos SIMAP</span>
-        </div>
-      </div>
-      <div class="col-4">
-        <div class="firma-box">
-          <strong>RECIBIDO CONFORME</strong><br>
-          <?php echo htmlspecialchars($despacho['receptor']); ?><br>
-          <span class="text-muted">C.I: <?php echo htmlspecialchars($despacho['ci_receptor']); ?></span>
-        </div>
-      </div>
-      <div class="col-4">
-        <div class="firma-box">
-          <strong>SELLO Y CONFORMIDAD</strong><br>
-          <span>Coordinación Asistencial</span><br>
-          <span class="text-muted">C.P.E. La Fría</span>
-        </div>
-      </div>
+  <!-- Sección de Firmas Formales -->
+  <div class="firmas-container">
+    <div class="firma-card">
+      <div class="firma-title">Entregado por</div>
+      <div class="firma-name"><?php echo htmlspecialchars($despacho['responsable_nombre']); ?></div>
+      <div class="firma-sub">Responsable SIMAP</div>
+    </div>
+    <div class="firma-card">
+      <div class="firma-title">Recibido Conforme</div>
+      <div class="firma-name"><?php echo htmlspecialchars($despacho['receptor']); ?></div>
+      <div class="firma-sub">C.I. V-<?php echo htmlspecialchars($despacho['ci_receptor']); ?></div>
+    </div>
+    <div class="firma-card">
+      <div class="firma-title">Conformidad / Sello</div>
+      <div class="firma-name">Supervisión Médica</div>
+      <div class="firma-sub">C.P.E. La Fría</div>
+    </div>
+  </div>
+
+  <!-- Pie de Documento y Trazabilidad -->
+  <div class="doc-stamp">
+    <div>
+      Documento Oficial emitido por SIMAP &bull; Registro #<?php echo str_pad($id_despacho, 5, '0', STR_PAD_LEFT); ?>
+    </div>
+    <div>
+      Página 1 de 1
     </div>
   </div>
 
