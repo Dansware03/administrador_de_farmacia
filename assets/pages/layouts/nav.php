@@ -190,6 +190,10 @@ $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
         </a>
 
         <div class="nav-header">Retiros y Entregas</div>
+        <a href="adm_retiro.php" class="nav-link <?php echo ($current_page == 'adm_retiro.php') ? 'active' : ''; ?>">
+          <i class="bi bi-cart-check"></i>
+          <span>Procesar Retiro</span>
+        </a>
         <a href="adm_retiro_ventas.php" class="nav-link <?php echo in_array($current_page, ['adm_retiro_ventas.php', 'editar_venta.php']) ? 'active' : ''; ?>">
           <i class="bi bi-box-arrow-up-right"></i>
           <span>Lista de Retiros</span>
@@ -209,7 +213,7 @@ $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
           <span>Gestión de Lotes</span>
         </a>
 
-        <div class="nav-header">Entregas y Compras</div>
+        <div class="nav-header">Proveedores</div>
         <a href="adm_proveedor.php" class="nav-link <?php echo ($current_page == 'adm_proveedor.php') ? 'active' : ''; ?>">
           <i class="bi bi-truck"></i>
           <span>Gestión de Proveedor</span>
@@ -282,6 +286,10 @@ $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
           </a>
 
           <div class="nav-header">Retiros y Entregas</div>
+          <a href="adm_retiro.php" class="nav-link <?php echo ($current_page == 'adm_retiro.php') ? 'active' : ''; ?>">
+            <i class="bi bi-cart-check"></i>
+            <span>Procesar Retiro</span>
+          </a>
           <a href="adm_retiro_ventas.php" class="nav-link <?php echo in_array($current_page, ['adm_retiro_ventas.php', 'editar_venta.php']) ? 'active' : ''; ?>">
             <i class="bi bi-box-arrow-up-right"></i>
             <span>Lista de Retiros</span>
@@ -301,7 +309,7 @@ $home_url = ($user_type == 2) ? 'tec_catalogo.php' : 'adm_catalogo.php';
             <span>Gestión de Lotes</span>
           </a>
 
-          <div class="nav-header">Entregas y Compras</div>
+          <div class="nav-header">Proveedores</div>
           <a href="adm_proveedor.php" class="nav-link <?php echo ($current_page == 'adm_proveedor.php') ? 'active' : ''; ?>">
             <i class="bi bi-truck"></i>
             <span>Gestión de Proveedor</span>

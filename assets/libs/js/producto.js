@@ -85,8 +85,6 @@ $(document).ready(function() {
 
     $(document).on('click', '.crearpd', function() {
         $('#form-crear-producto').trigger('reset');
-        $('#noVenta').prop('checked', false);
-        $('#precio').prop('disabled', false).val('');
         $('#crearProductoLabel').html('<i class="bi bi-box-seam me-2"></i>Nuevo Insumo');
         $('#id_edit_prod').val('');
         $('#especificacion_talla').val('');
@@ -101,7 +99,6 @@ $(document).ready(function() {
         let concentracion = especificacion_talla;
         let id_unidad = $('#unidad_medida').val();
         let adicional = $('#adicional').val();
-        let precio = 0;
         let prod_lab = $('#laboratorio').val();
         let prod_tip_prod = $('#tipo').val();
         let prod_present = $('#presentacion').val();
@@ -114,7 +111,7 @@ $(document).ready(function() {
 
         $.post(
             '../controller/ProductoController.php',
-            { funcion, id_edit_prod, nombre, concentracion, adicional, precio, prod_lab, prod_tip_prod, prod_present, id_unidad, especificacion_talla }
+            { funcion, id_edit_prod, nombre, concentracion, adicional, prod_lab, prod_tip_prod, prod_present, id_unidad, especificacion_talla }
         )
         .done(response => {
             if (response === 'add') {
@@ -205,7 +202,7 @@ $(document).ready(function() {
             const especTexto = product.especificacion_talla || product.concentracion || 'Sin especificación';
 
             return `
-                <div proId="${product.id}" proNombre="${product.nombre}" conNombre="${product.concentracion}" addNombre="${product.adicional}" preNombre="${product.precio}" nLabNombre="${product.laboratorio_id}" nTypeNombre="${product.tipo_id}" nPreNombre="${product.presentacion_id}" idUnidad="${product.id_unidad || 1}" espTalla="${product.especificacion_talla || ''}" avaNombre="${avatarSrc}" class="col-12 col-sm-6 col-md-4 col-xl-3 d-flex align-items-stretch">
+                <div proId="${product.id}" proNombre="${product.nombre}" conNombre="${product.concentracion}" addNombre="${product.adicional}" nLabNombre="${product.laboratorio_id}" nTypeNombre="${product.tipo_id}" nPreNombre="${product.presentacion_id}" idUnidad="${product.id_unidad || 1}" espTalla="${product.especificacion_talla || ''}" avaNombre="${avatarSrc}" class="col-12 col-sm-6 col-md-4 col-xl-3 d-flex align-items-stretch">
                     <div class="card product-card w-100 shadow-sm border-0 d-flex flex-column justify-content-between">
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -322,7 +319,6 @@ $(document).ready(function() {
         const nombre = $(elemento).attr('proNombre');
         const concentracion = $(elemento).attr('conNombre');
         const adicional = $(elemento).attr('addNombre');
-        const precio = $(elemento).attr('preNombre');
         const laboratorio = $(elemento).attr('nLabNombre');
         const tipo = $(elemento).attr('nTypeNombre');
         const presentacion = $(elemento).attr('nPreNombre');

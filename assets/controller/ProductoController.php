@@ -8,7 +8,6 @@ if (isset($_POST['funcion'])) {
             $nombre = isset($_POST['nombre']) ? trim($_POST['nombre']) : '';
             $concentracion = isset($_POST['concentracion']) ? trim($_POST['concentracion']) : '';
             $adicional = isset($_POST['adicional']) ? trim($_POST['adicional']) : '';
-            $precio = (isset($_POST['precio']) && is_numeric($_POST['precio'])) ? $_POST['precio'] : 0.0;
             $prod_lab = isset($_POST['prod_lab']) ? $_POST['prod_lab'] : '';
             $prod_tip_prod = isset($_POST['prod_tip_prod']) ? $_POST['prod_tip_prod'] : '';
             $prod_present = isset($_POST['prod_present']) ? $_POST['prod_present'] : '';
@@ -18,7 +17,7 @@ if (isset($_POST['funcion'])) {
             if (empty($nombre) || empty($prod_lab) || empty($prod_tip_prod) || empty($prod_present)) {
                 echo 'Faltan datos obligatorios para el registro del insumo.';
             } else {
-                $producto->crear($nombre, $concentracion, $adicional, $precio, $avatar, $prod_lab, $prod_tip_prod, $prod_present, $id_unidad, $especificacion_talla);
+                $producto->crear($nombre, $concentracion, $adicional, $avatar, $prod_lab, $prod_tip_prod, $prod_present, $id_unidad, $especificacion_talla);
             }
         break;
         case 'cambiar_avatar':
@@ -63,7 +62,6 @@ if (isset($_POST['funcion'])) {
                     'nombre' => $objeto['nombre'],
                     'concentracion' => $objeto['concentracion'] ?? '',
                     'adicional' => $objeto['adicional'] ?? '',
-                    'precio' => $objeto['precio'],
                     'stock' => $total,
                     'nombre_laboratorio' => $objeto['nombre_laboratorio'],
                     'tipo' => $objeto['tipo'],
@@ -86,7 +84,6 @@ if (isset($_POST['funcion'])) {
             $nombre = isset($_POST['nombre']) ? trim($_POST['nombre']) : '';
             $concentracion = isset($_POST['concentracion']) ? trim($_POST['concentracion']) : '';
             $adicional = isset($_POST['adicional']) ? trim($_POST['adicional']) : '';
-            $precio = (isset($_POST['precio']) && is_numeric($_POST['precio'])) ? $_POST['precio'] : 0.0;
             $prod_lab = isset($_POST['prod_lab']) ? $_POST['prod_lab'] : '';
             $prod_tip_prod = isset($_POST['prod_tip_prod']) ? $_POST['prod_tip_prod'] : '';
             $prod_present = isset($_POST['prod_present']) ? $_POST['prod_present'] : '';
@@ -95,7 +92,7 @@ if (isset($_POST['funcion'])) {
             if (empty($nombre) || empty($prod_lab) || empty($prod_tip_prod) || empty($prod_present)) {
                 echo 'Faltan datos obligatorios para actualizar el insumo.';
             } else {
-                $producto->editar($id_edit_prod, $nombre, $concentracion, $adicional, $precio, $prod_lab, $prod_tip_prod, $prod_present, $id_unidad, $especificacion_talla);
+                $producto->editar($id_edit_prod, $nombre, $concentracion, $adicional, $prod_lab, $prod_tip_prod, $prod_present, $id_unidad, $especificacion_talla);
             }
         break;
         case 'borrar_produts':

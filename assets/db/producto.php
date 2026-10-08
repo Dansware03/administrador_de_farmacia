@@ -7,9 +7,8 @@ class Producto {
         $db = new Conexion();
         $this->acceso = $db->pdo;
     }
-    public function crear($nombre, $concentracion, $adicional, $precio, $avatar, $prod_lab, $prod_tip_prod, $prod_present, $id_unidad = 1, $especificacion_talla = '') {
+    public function crear($nombre, $concentracion, $adicional, $avatar = 'ProductDefault.png', $prod_lab = '', $prod_tip_prod = '', $prod_present = '', $id_unidad = 1, $especificacion_talla = '') {
         try {
-            $precio = is_numeric($precio) ? $precio : 0.0;
             $sql = "SELECT id_producto FROM producto WHERE nombre = :nombre and concentracion=:concentracion and adicional=:adicional and prod_lab=:laboratorio and prod_tip_prod=:tipo and prod_present=:presentacion";
             $query = $this->acceso->prepare($sql);
             $query->execute(array(':nombre' => $nombre, ':concentracion' => $concentracion, ':adicional' => $adicional, ':laboratorio' => $prod_lab, ':tipo' => $prod_tip_prod, ':presentacion' => $prod_present));
@@ -17,13 +16,12 @@ class Producto {
             if (!empty($result)) {
                 throw new Exception('El insumo o producto ya existe.');
             }
-            $sql = "INSERT INTO producto (nombre, concentracion, adicional, precio, avatar, prod_lab, prod_tip_prod, prod_present, id_unidad, especificacion_talla) VALUES (:nombre, :concentracion, :adicional, :precio, :avatar, :laboratorio, :tipo, :presentacion, :id_unidad, :especificacion_talla)";
+            $sql = "INSERT INTO producto (nombre, concentracion, adicional, avatar, prod_lab, prod_tip_prod, prod_present, id_unidad, especificacion_talla) VALUES (:nombre, :concentracion, :adicional, :avatar, :laboratorio, :tipo, :presentacion, :id_unidad, :especificacion_talla)";
             $query = $this->acceso->prepare($sql);
             if ($query->execute(array(
                 ':nombre' => $nombre,
                 ':concentracion' => $concentracion,
                 ':adicional' => $adicional,
-                ':precio' => $precio,
                 ':avatar' => $avatar,
                 ':laboratorio' => $prod_lab,
                 ':tipo' => $prod_tip_prod,
@@ -47,7 +45,6 @@ class Producto {
                 producto.nombre,
                 producto.concentracion,
                 producto.adicional,
-                producto.precio,
                 producto.especificacion_talla,
                 producto.id_unidad,
                 unidad_medida.nombre AS unidad_medida,
@@ -91,17 +88,15 @@ class Producto {
         $query = $this->acceso->prepare($sql);
         $query->execute(array(':id' => $id, ':nombre' => $nombre));
     }
-    public function editar($id_edit_prod, $nombre, $concentracion, $adicional, $precio, $prod_lab, $prod_tip_prod, $prod_present, $id_unidad = 1, $especificacion_talla = '') {
+    public function editar($id_edit_prod, $nombre, $concentracion, $adicional, $prod_lab = '', $prod_tip_prod = '', $prod_present = '', $id_unidad = 1, $especificacion_talla = '') {
         try {
-            $precio = is_numeric($precio) ? $precio : 0.0;
-            $sql_update = "UPDATE producto SET nombre = :nombre, concentracion = :concentracion, adicional = :adicional, precio = :precio, prod_lab = :laboratorio, prod_tip_prod = :tipo, prod_present = :presentacion, id_unidad = :id_unidad, especificacion_talla = :especificacion_talla WHERE id_producto = :id_edit_prod";
+            $sql_update = "UPDATE producto SET nombre = :nombre, concentracion = :concentracion, adicional = :adicional, prod_lab = :laboratorio, prod_tip_prod = :tipo, prod_present = :presentacion, id_unidad = :id_unidad, especificacion_talla = :especificacion_talla WHERE id_producto = :id_edit_prod";
             $query_update = $this->acceso->prepare($sql_update);
             $query_update->execute(array(
                 ':id_edit_prod' => $id_edit_prod,
                 ':nombre' => $nombre,
                 ':concentracion' => $concentracion,
                 ':adicional' => $adicional,
-                ':precio' => $precio,
                 ':laboratorio' => $prod_lab,
                 ':tipo' => $prod_tip_prod,
                 ':presentacion' => $prod_present,

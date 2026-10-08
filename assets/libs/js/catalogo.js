@@ -209,7 +209,7 @@ $(document).ready(function () {
         const fabricanteTexto = product.nombre_laboratorio || 'N/A';
 
         return `
-          <div proId="${product.id}" proNombre="${product.nombre}" productStock="${product.stock}" conNombre="${product.concentracion}" addNombre="${product.adicional}" preNombre="${product.precio || 0}" nLabNombre="${product.laboratorio_id}" nTypeNombre="${product.tipo_id}" nPreNombre="${product.presentacion_id}" idUnidad="${product.id_unidad || 1}" uniMedida="${unidadNombre}" uniCodigo="${unidadCodigo}" espTalla="${product.especificacion_talla || ''}" avaNombre="${avatarSrc}" class="col-12 col-sm-6 col-lg-4 col-xl-3 d-flex align-items-stretch">
+          <div proId="${product.id}" proNombre="${product.nombre}" productStock="${product.stock}" conNombre="${product.concentracion}" addNombre="${product.adicional}" nLabNombre="${product.laboratorio_id}" nTypeNombre="${product.tipo_id}" nPreNombre="${product.presentacion_id}" idUnidad="${product.id_unidad || 1}" uniMedida="${unidadNombre}" uniCodigo="${unidadCodigo}" espTalla="${product.especificacion_talla || ''}" avaNombre="${avatarSrc}" class="col-12 col-sm-6 col-lg-4 col-xl-3 d-flex align-items-stretch">
             <div class="product-card-modern w-100 d-flex flex-column justify-content-between">
               <div>
                 <!-- Encabezado de la tarjeta -->
